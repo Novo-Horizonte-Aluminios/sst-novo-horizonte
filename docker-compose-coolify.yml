@@ -122,7 +122,7 @@ services:
       - EVOLUTION_ADMIN_TOKEN=${EVOLUTION_ADMIN_TOKEN:-NH_Admin_Evo_2026_Secure_TOKEN}
       - EVOLUTION_PUBLIC_S3=false
     labels:
-      - "coolify.fqdn=https://chat.novohorizonte.com"
+      - "coolify.fqdn=https://chat.novohorizonte.com:3000"
     networks:
       - coolify
     healthcheck:
@@ -188,7 +188,7 @@ services:
       - CHATWOOT_IMPORT_PLACEHOLDER_MEDIA_MESSAGE=false
       - WEBHOOK_GLOBAL_ENABLED=false
     labels:
-      - "coolify.fqdn=https://api.novohorizonte.com"
+      - "coolify.fqdn=https://api.novohorizonte.com:3000"
     networks:
       - coolify
     volumes:
@@ -222,7 +222,7 @@ services:
     networks:
       - coolify
     labels:
-      - "coolify.fqdn=https://api2.novohorizonte.com"
+      - "coolify.fqdn=https://api2.novohorizonte.com:3000"
     volumes:
       - evo_go_connector_data:/app/data
     depends_on:
@@ -249,7 +249,7 @@ services:
       EVOLUTION_API_URL: ${SERVER_URL:-https://api.novohorizonte.com}
       EVOLUTION_API_KEY: ${EVOLUTION_API_KEY:-NH_Global_Key_Evo_2026_APIKEY}
     labels:
-      - "coolify.fqdn=https://kanban.novohorizonte.com/api,https://kanban.novohorizonte.com/webhooks,https://kanban.novohorizonte.com/health,https://kanban.novohorizonte.com/socket.io,https://kanban.novohorizonte.com/dashboard-script,https://kanban.novohorizonte.com/uploads"
+      - "coolify.fqdn=https://kanban.novohorizonte.com:3000/api,https://kanban.novohorizonte.com:3000/webhooks,https://kanban.novohorizonte.com:3000/health,https://kanban.novohorizonte.com:3000/socket.io,https://kanban.novohorizonte.com:3000/dashboard-script,https://kanban.novohorizonte.com:3000/uploads"
     networks:
       - coolify
     volumes:
@@ -269,7 +269,7 @@ services:
     networks:
       - coolify
     labels:
-      - "coolify.fqdn=https://kanban.novohorizonte.com"
+      - "coolify.fqdn=https://kanban.novohorizonte.com:80"
 
 # ==========================================
 # REDES E VOLUMES
