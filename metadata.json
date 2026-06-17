@@ -1,0 +1,6 @@
+{
+  "name": "SST Novo Horizonte Alumínios",
+  "description": "Sistema de Gestão de SST e EPI completo em conformidade com as Normas Regulamentadoras brasileiras (NRs) com IA especialista para a Novo Horizonte Alumínios.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,3 +1,0 @@
-Acessando Dashboard Script
-
-https://seudominio.com.br/super_admin/app_config?config=internal
