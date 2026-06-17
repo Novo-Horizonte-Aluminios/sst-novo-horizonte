@@ -5,9 +5,10 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 
-dotenv.config();
+import dotenv from 'dotenv';
+import { query, initDb } from './src/db.js';
 
-// Load structured types and initial mock datasets
+dotenv.config();
 import { 
   INITIAL_COMPANIES, 
   INITIAL_EMPLOYEES, 
@@ -92,6 +93,9 @@ const db = {
 };
 
 async function startServer() {
+  // Inicializa as tabelas do PostgreSQL no startup
+  await initDb();
+
   const app = express();
   app.use(express.json({ limit: '10mb' }));
   const PORT = 3000;
@@ -120,198 +124,299 @@ async function startServer() {
   // --- API ROUTING DEFINITION ---
   
   // Enterprise Tenants
-  app.get('/api/companies', (req, res) => {
-    res.json(db.companies);
-  });
-
-  app.post('/api/companies', (req, res) => {
-    const newCompany = {
-      id: 'c_' + Date.now(),
-      ...req.body
-    };
-    db.companies.push(newCompany);
-    res.status(201).json(newCompany);
-  });
-
-  // Employee Directory
-  app.get('/api/employees', (req, res) => {
-    res.json(db.employees);
-  });
-
-  app.post('/api/employees', (req, res) => {
-    const newEmp = {
-      id: 'e_' + Date.now(),
-      status: 'Ativo',
-      ...req.body
-    };
-    db.employees.push(newEmp);
-    res.status(201).json(newEmp);
-  });
-
-  app.put('/api/employees/:id', (req, res) => {
-    const { id } = req.params;
-    const index = db.employees.findIndex(e => e.id === id);
-    if (index !== -1) {
-      db.employees[index] = {
-        ...db.employees[index],
-        ...req.body,
-        id // exclude changing the id
-      };
-      res.json(db.employees[index]);
-    } else {
-      res.status(404).json({ error: 'Employee not found' });
+  app.get('/api/companies', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM companies');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
     }
   });
 
-  app.delete('/api/employees/:id', (req, res) => {
-    const { id } = req.params;
-    const index = db.employees.findIndex(e => e.id === id);
-    if (index !== -1) {
-      const deleted = db.employees.splice(index, 1);
-      res.json(deleted[0]);
-    } else {
-      res.status(404).json({ error: 'Employee not found' });
+  app.post('/api/companies', async (req, res) => {
+    try {
+      const id = 'c_' + Date.now();
+      const { name, tradingName, cnpj, address } = req.body;
+      await query(
+        'INSERT INTO companies (id, name, trading_name, cnpj, address) VALUES ($1, $2, $3, $4, $5)',
+        [id, name, tradingName, cnpj, address]
+      );
+      res.status(201).json({ id, name, tradingName, cnpj, address });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  // Employee Directory
+  app.get('/api/employees', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM employees');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/employees', async (req, res) => {
+    try {
+      const id = 'e_' + Date.now();
+      const status = 'Ativo';
+      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, phone, email } = req.body;
+      await query(
+        'INSERT INTO employees (id, name, cpf, rg, birth_date, matricula, company_id, sector, role, manager, admission_date, status, phone, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)',
+        [id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email]
+      );
+      res.status(201).json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.put('/api/employees/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email } = req.body;
+      
+      const check = await query('SELECT id FROM employees WHERE id = $1', [id]);
+      if (check.rows.length === 0) return res.status(404).json({ error: 'Employee not found' });
+
+      await query(
+        'UPDATE employees SET name=$1, cpf=$2, rg=$3, birth_date=$4, matricula=$5, company_id=$6, sector=$7, role=$8, manager=$9, admission_date=$10, status=$11, phone=$12, email=$13 WHERE id=$14',
+        [name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, id]
+      );
+      res.json({ id, ...req.body });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.delete('/api/employees/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await query('DELETE FROM employees WHERE id = $1 RETURNING *', [id]);
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      } else {
+        res.status(404).json({ error: 'Employee not found' });
+      }
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
     }
   });
 
   // Master PPE Register
-  app.get('/api/ppes', (req, res) => {
-    res.json(db.ppes);
+  app.get('/api/ppes', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM ppes');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
-  app.post('/api/ppes', (req, res) => {
-    const newPpe = {
-      id: 'p_' + Date.now(),
-      caStatus: 'Válido',
-      ...req.body
-    };
-    db.ppes.push(newPpe);
-    res.status(201).json(newPpe);
+  app.post('/api/ppes', async (req, res) => {
+    try {
+      const id = 'p_' + Date.now();
+      const { name, ca, validityDate, stock, minStock, description } = req.body;
+      const stockCount = stock || 0;
+      const minStockCount = minStock || 0;
+      await query(
+        'INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [id, name, ca, validityDate, stockCount, minStockCount, description]
+      );
+      res.status(201).json({ id, name, ca, validityDate, stockCount, minStockCount, description, caStatus: 'Válido' });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
   // Individual stock adjustment
-  app.put('/api/ppes/:id/stock', (req, res) => {
-    const { id } = req.params;
-    const { stockCount } = req.body;
-    const ppe = db.ppes.find(p => p.id === id);
-    if (!ppe) {
-      return res.status(404).json({ error: 'PPE not found' });
+  app.put('/api/ppes/:id/stock', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { stockCount } = req.body;
+      
+      const check = await query('SELECT * FROM ppes WHERE id = $1', [id]);
+      if (check.rows.length === 0) return res.status(404).json({ error: 'PPE not found' });
+
+      if (stockCount !== undefined) {
+        await query('UPDATE ppes SET stock = $1 WHERE id = $2', [parseInt(stockCount), id]);
+      }
+      res.json({ ...check.rows[0], stock: stockCount !== undefined ? parseInt(stockCount) : check.rows[0].stock });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
     }
-    if (stockCount !== undefined) {
-      ppe.stockCount = parseInt(stockCount);
-    }
-    res.json(ppe);
   });
 
   // Bulk replenishment of understocked PPEs
-  app.post('/api/ppes/replenish-understocked', (req, res) => {
-    const updated: any[] = [];
-    db.ppes.forEach(p => {
-      if (p.stockCount <= p.minStock) {
-        // Boost up to twice the safety stock (minStock * 2)
-        const deficit = (p.minStock * 2) - p.stockCount;
-        p.stockCount += deficit;
+  app.post('/api/ppes/replenish-understocked', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM ppes WHERE stock <= min_stock');
+      const updated = [];
+      for (const p of result.rows) {
+        const deficit = (p.min_stock * 2) - p.stock;
+        const newStock = p.stock + deficit;
+        await query('UPDATE ppes SET stock = $1 WHERE id = $2', [newStock, p.id]);
+        p.stock = newStock;
         updated.push(p);
       }
-    });
-    res.json({ success: true, updated, allPpes: db.ppes });
+      const allPpes = await query('SELECT * FROM ppes');
+      res.json({ success: true, updated, allPpes: allPpes.rows });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
   // PPE Deliveries and NR-06 receipts
-  app.get('/api/deliveries', (req, res) => {
-    res.json(db.deliveries);
+  app.get('/api/deliveries', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM deliveries');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
-  app.post('/api/deliveries', (req, res) => {
-    const delivery = {
-      id: 'd_' + Date.now(),
-      deliveryDate: new Date().toISOString().split('T')[0],
-      status: 'Entregue',
-      ...req.body
-    };
-    
-    // Decrement stock if possible
-    const ppe = db.ppes.find(p => p.id === delivery.ppeId);
-    if (ppe) {
-      ppe.stockCount = Math.max(0, ppe.stockCount - (delivery.quantity || 1));
-    }
+  app.post('/api/deliveries', async (req, res) => {
+    try {
+      const id = 'd_' + Date.now();
+      const deliveryDate = new Date().toISOString().split('T')[0];
+      const status = 'Entregue';
+      const { ppeId, employeeId, quantity } = req.body;
+      const qty = quantity || 1;
 
-    db.deliveries.push(delivery);
-    res.status(201).json(delivery);
+      // Decrement stock if possible
+      const ppe = await query('SELECT stock FROM ppes WHERE id = $1', [ppeId]);
+      if (ppe.rows.length > 0) {
+        const newStock = Math.max(0, ppe.rows[0].stock - qty);
+        await query('UPDATE ppes SET stock = $1 WHERE id = $2', [newStock, ppeId]);
+      }
+
+      await query(
+        'INSERT INTO deliveries (id, delivery_date, status, ppe_id, employee_id, quantity) VALUES ($1, $2, $3, $4, $5, $6)',
+        [id, deliveryDate, status, ppeId, employeeId, qty]
+      );
+      res.status(201).json({ id, deliveryDate, status, ppeId, employeeId, quantity: qty });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
   // Training, LMS, and certificates
-  app.get('/api/trainings', (req, res) => {
-    res.json(db.trainings);
+  app.get('/api/trainings', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM trainings');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
-  app.get('/api/employee-trainings', (req, res) => {
-    res.json(db.employeeTrainings);
+  app.get('/api/employee-trainings', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM employee_trainings');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
-  app.post('/api/employee-trainings', (req, res) => {
-    const cert = {
-      id: 'et_' + Date.now(),
-      status: 'Aprovado',
-      ...req.body
-    };
-    db.employeeTrainings.push(cert);
-    res.status(201).json(cert);
+  app.post('/api/employee-trainings', async (req, res) => {
+    try {
+      const id = 'et_' + Date.now();
+      const status = 'Aprovado';
+      const { employeeId, trainingId } = req.body;
+      await query(
+        'INSERT INTO employee_trainings (id, employee_id, training_id, status) VALUES ($1, $2, $3, $4)',
+        [id, employeeId, trainingId, status]
+      );
+      res.status(201).json({ id, employeeId, trainingId, status });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
   // Accident, Incident and PDCA control
-  app.get('/api/accidents', (req, res) => {
-    res.json(db.accidents);
-  });
-
-  app.post('/api/accidents', (req, res) => {
-    const accident = {
-      id: 'a_' + Date.now(),
-      status: 'Em Investigação',
-      ...req.body
-    };
-    db.accidents.push(accident);
-    res.status(201).json(accident);
-  });
-
-  app.get('/api/action-plans', (req, res) => {
-    res.json(db.actionPlans);
-  });
-
-  app.post('/api/action-plans', (req, res) => {
-    const plan = {
-      id: 'ap_' + Date.now(),
-      status: 'Pendente',
-      ...req.body
-    };
-    db.actionPlans.push(plan);
-    res.status(201).json(plan);
-  });
-
-  app.put('/api/action-plans/:id', (req, res) => {
-    const { id } = req.params;
-    const { status, title, responsible, deadline } = req.body;
-    const plan = db.actionPlans.find(p => p.id === id);
-    if (!plan) {
-      return res.status(404).json({ error: 'Action plan not found' });
+  app.get('/api/accidents', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM accidents');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
     }
-    if (status !== undefined) plan.status = status;
-    if (title !== undefined) plan.title = title;
-    if (responsible !== undefined) plan.responsible = responsible;
-    if (deadline !== undefined) plan.deadline = deadline;
-    res.json(plan);
+  });
+
+  app.post('/api/accidents', async (req, res) => {
+    try {
+      const id = 'a_' + Date.now();
+      const status = 'Em Investigação';
+      const { description } = req.body;
+      await query(
+        'INSERT INTO accidents (id, status, description) VALUES ($1, $2, $3)',
+        [id, status, description]
+      );
+      res.status(201).json({ id, status, description });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.get('/api/action-plans', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM action_plans');
+      res.json(result.rows);
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/action-plans', async (req, res) => {
+    try {
+      const id = 'ap_' + Date.now();
+      const status = 'Pendente';
+      const { title, responsible, deadline } = req.body;
+      await query(
+        'INSERT INTO action_plans (id, status, title, responsible, deadline) VALUES ($1, $2, $3, $4, $5)',
+        [id, status, title, responsible, deadline]
+      );
+      res.status(201).json({ id, status, title, responsible, deadline });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.put('/api/action-plans/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, title, responsible, deadline } = req.body;
+      
+      const check = await query('SELECT id FROM action_plans WHERE id = $1', [id]);
+      if (check.rows.length === 0) return res.status(404).json({ error: 'Action plan not found' });
+
+      await query(
+        'UPDATE action_plans SET status=$1, title=$2, responsible=$3, deadline=$4 WHERE id=$5',
+        [status, title, responsible, deadline, id]
+      );
+      res.json({ id, status, title, responsible, deadline });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
   // Chemical Safety/FISPQ
-  app.get('/api/fispq', (req, res) => {
-    res.json(db.fispq);
+  app.get('/api/fispq', async (req, res) => {
+    try {
+      res.json(db.fispq); // Keeping FISPQ in-memory as it might not be migrated to SQL yet
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
   });
 
   // --- TWILIO / WHATSAPP INTEGRATION ENDPOINTS ---
-  app.get('/api/whatsapp/logs', (req, res) => {
-    res.json(db.whatsappLogs);
+  app.get('/api/whatsapp/logs', async (req, res) => {
+    res.json(db.whatsappLogs); // Keep logs in-memory to avoid breaking UI until table is mapped
   });
-  app.get('/api/twilio/logs', (req, res) => {
+  app.get('/api/twilio/logs', async (req, res) => {
     res.json(db.whatsappLogs);
   });
 
