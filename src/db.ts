@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -88,7 +89,31 @@ export const initDb = async () => {
         responsible VARCHAR(255),
         deadline DATE
       );
+
+      CREATE TABLE IF NOT EXISTS users (
+        id VARCHAR(50) PRIMARY KEY,
+        username VARCHAR(100) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
+
+    // Verificar e criar usuários iniciais se não existirem
+    const userCheck = await client.query("SELECT id FROM users WHERE username = 'admin'");
+    if (userCheck.rows.length === 0) {
+      console.log('Criando usuários padrão no PostgreSQL...');
+      const adminHash = crypto.createHash('sha256').update('admin123').digest('hex');
+      const marcosHash = crypto.createHash('sha256').update('sst123').digest('hex');
+      
+      await client.query(`
+        INSERT INTO users (id, username, password_hash, name, role) VALUES 
+        ('u_admin', 'admin', $1, 'Administrador Principal', 'Admin'),
+        ('u_marcos', 'marcos', $2, 'Dr. Marcos Patrício', 'SST')
+      `, [adminHash, marcosHash]);
+    }
+
     console.log('Tabelas inicializadas com sucesso.');
   } catch (err) {
     console.error('Erro ao inicializar o banco de dados:', err);

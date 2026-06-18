@@ -13,13 +13,31 @@ import AIChatTab from './components/AIChatTab.tsx';
 import ReportsTab from './components/ReportsTab.tsx';
 import BackupTab from './components/BackupTab.tsx';
 import RiskMapTab from './components/RiskMapTab.tsx';
+import Login from './components/Login.tsx';
+import UsersTab from './components/UsersTab.tsx';
 
 import { Company, Employee, PPE, PPEDelivery, EmployeeTraining, AccidentReport, ActionPlan, FISPQDocument, Training } from './types';
 
 export default function App() {
+  const [currentUser, setCurrentUser] = useState<{ id: string; username: string; name: string; role: string } | null>(() => {
+    const saved = localStorage.getItem('sst_current_user');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedCompanyId, setSelectedCompanyId] = useState('c1');
-  const [userRole, setUserRole] = useState('SST');
+
+  const userRole = currentUser?.role || 'SST';
+
+  const handleLoginSuccess = (user: { id: string; username: string; name: string; role: string }) => {
+    setCurrentUser(user);
+    localStorage.setItem('sst_current_user', JSON.stringify(user));
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('sst_current_user');
+    setActiveTab('dashboard');
+  };
 
   // Unified global data state synchronizing with server REST API
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -269,6 +287,10 @@ export default function App() {
     }
   };
 
+  if (!currentUser) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
   const activeCompany = companies.find(c => c.id === selectedCompanyId) || companies[0];
 
   return (
@@ -281,7 +303,6 @@ export default function App() {
         selectedCompanyId={selectedCompanyId}
         setSelectedCompanyId={setSelectedCompanyId}
         userRole={userRole}
-        setUserRole={setUserRole}
         companies={companies}
       />
 
@@ -303,16 +324,23 @@ export default function App() {
           <div className="flex items-center gap-4 text-xs">
             <div className="text-right">
               <span className="text-[11px] font-bold text-slate-800 uppercase tracking-tight block">
-                {userRole === 'SST' ? 'Dr. Marcos Patrício' : userRole === 'Almoxarife' ? 'Luiz Gonzaga' : 'Acesso Geral'}
+                {currentUser.name}
               </span>
               <span className="text-[9px] font-mono text-safety-green font-bold uppercase tracking-wider block">
-                {userRole} • Credenciado
+                {currentUser.role} • Credenciado
               </span>
             </div>
 
             <div className="px-2 py-0.5 bg-safety-green/10 text-safety-green border border-safety-green/20 rounded text-[9px] font-mono font-bold uppercase">
               SESMT Ativo
             </div>
+
+            <button
+              onClick={handleLogout}
+              className="px-2 py-1 bg-slate-100 hover:bg-red-50 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded text-[10px] font-bold text-slate-600 transition-all cursor-pointer"
+            >
+              Sair
+            </button>
           </div>
         </header>
 
@@ -433,6 +461,10 @@ export default function App() {
 
               {activeTab === 'backup' && (
                 <BackupTab />
+              )}
+
+              {activeTab === 'users' && currentUser.role === 'Admin' && (
+                <UsersTab currentUser={currentUser} />
               )}
 
 

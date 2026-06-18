@@ -24,7 +24,6 @@ interface SidebarProps {
   selectedCompanyId: string;
   setSelectedCompanyId: (id: string) => void;
   userRole: string;
-  setUserRole: (role: string) => void;
   companies: any[];
 }
 
@@ -34,7 +33,6 @@ export default function Sidebar({
   selectedCompanyId,
   setSelectedCompanyId,
   userRole,
-  setUserRole,
   companies
 }: SidebarProps) {
   const menuItems = [
@@ -50,7 +48,8 @@ export default function Sidebar({
     { id: 'fispq', label: 'SDS / FISPQ Químicos', icon: Flame },
     { id: 'whatsapp_alerts', label: 'Alertas WhatsApp', icon: MessageCircle },
     { id: 'risk_map', label: 'Mapa de Riscos por Imagem', icon: Radar },
-    { id: 'backup', label: 'Backup & Segurança', icon: Database }
+    { id: 'backup', label: 'Backup & Segurança', icon: Database },
+    ...(userRole === 'Admin' ? [{ id: 'users', label: 'Usuários do Sistema', icon: Users }] : [])
   ];
 
   return (
@@ -63,25 +62,6 @@ export default function Sidebar({
         </div>
         <div className="text-[9px] uppercase tracking-widest opacity-55 mt-1.5 font-mono font-bold">
           SST Interno
-        </div>
-      </div>
-
-      {/* User Role (Multi-Tenant Selector Removed, Single Company System) */}
-      <div className="p-3.5 border-b border-[#1e293b] bg-[#0f172a]/40 space-y-2 text-[10px]">
-        <div>
-          <label className="text-[9px] font-mono text-[#64748b] uppercase tracking-wider block mb-1 font-bold">
-            Perfil de Acesso
-          </label>
-          <select
-            value={userRole}
-            onChange={(e) => setUserRole(e.target.value)}
-            className="w-full bg-[#1e293b] border border-[#334155] text-[11px] text-white rounded px-2 py-1 focus:outline-none focus:border-safety-green font-mono"
-          >
-            <option value="SST">Dr. Marcos (SST)</option>
-            <option value="Almoxarife">Luiz G. (Almoxarife)</option>
-            <option value="Gestor">Gestor Geral</option>
-            <option value="Colaborador">Trabalhador</option>
-          </select>
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 import { query, initDb } from './src/db.js';
 
 dotenv.config();
@@ -126,6 +127,92 @@ async function startServer() {
 
   // --- API ROUTING DEFINITION ---
   
+  // Auth API
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      if (!username || !password) {
+        return res.status(400).json({ error: 'Username e Password são obrigatórios.' });
+      }
+      
+      const hash = crypto.createHash('sha256').update(password).digest('hex');
+      
+      const result = await query(
+        'SELECT id, username, name, role FROM users WHERE username = $1 AND password_hash = $2',
+        [username.toLowerCase().trim(), hash]
+      );
+      
+      if (result.rows.length === 0) {
+        return res.status(401).json({ error: 'Usuário ou senha incorretos.' });
+      }
+      
+      res.json(result.rows[0]);
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro no servidor: ' + e.message });
+    }
+  });
+
+  // User Management API
+  app.get('/api/users', async (req, res) => {
+    try {
+      const result = await query('SELECT id, username, name, role, created_at FROM users ORDER BY created_at DESC');
+      res.json(result.rows);
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro no servidor' });
+    }
+  });
+
+  app.post('/api/users', async (req, res) => {
+    try {
+      const { username, password, name, role } = req.body;
+      if (!username || !password || !name || !role) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+      }
+      
+      // Check if username already exists
+      const check = await query('SELECT id FROM users WHERE username = $1', [username.toLowerCase().trim()]);
+      if (check.rows.length > 0) {
+        return res.status(400).json({ error: 'Este nome de usuário já está em uso.' });
+      }
+      
+      const id = 'u_' + Date.now();
+      const hash = crypto.createHash('sha256').update(password).digest('hex');
+      
+      await query(
+        'INSERT INTO users (id, username, password_hash, name, role) VALUES ($1, $2, $3, $4, $5)',
+        [id, username.toLowerCase().trim(), hash, name, role]
+      );
+      
+      res.status(201).json({ id, username: username.toLowerCase().trim(), name, role });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro no servidor' });
+    }
+  });
+
+  app.delete('/api/users/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Prevent deleting the main admin user
+      if (id === 'u_admin') {
+        return res.status(400).json({ error: 'Não é possível remover o administrador principal do sistema.' });
+      }
+      
+      const result = await query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
+      }
+      
+      res.json({ success: true, id });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro no servidor' });
+    }
+  });
+
   // Enterprise Tenants
   app.get('/api/companies', async (req, res) => {
     try {
