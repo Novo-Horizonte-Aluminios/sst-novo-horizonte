@@ -193,6 +193,112 @@ export const initDb = async () => {
 
       ALTER TABLE action_plans ADD COLUMN IF NOT EXISTS accident_id VARCHAR(50);
       ALTER TABLE action_plans ADD COLUMN IF NOT EXISTS evidence TEXT;
+
+      CREATE TABLE IF NOT EXISTS fispq_docs (
+        id VARCHAR(50) PRIMARY KEY,
+        chemical_name VARCHAR(255) NOT NULL,
+        manufacturer VARCHAR(255),
+        revision_date DATE,
+        version VARCHAR(50),
+        ghs_classification TEXT,
+        cas_number VARCHAR(100),
+        physical_state VARCHAR(100),
+        risk_phrases TEXT,
+        epc_measures TEXT,
+        file_url TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS sectors (
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        processes TEXT,
+        risks TEXT,
+        company_id VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS job_roles (
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        sector_id VARCHAR(50),
+        risks TEXT,
+        required_ppes TEXT,
+        company_id VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS epi_matrix (
+        id VARCHAR(50) PRIMARY KEY,
+        role_id VARCHAR(50),
+        role_name VARCHAR(255),
+        ppe_id VARCHAR(50),
+        ppe_name VARCHAR(255),
+        is_mandatory BOOLEAN DEFAULT true,
+        justification TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS inspections (
+        id VARCHAR(50) PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        type VARCHAR(100),
+        sector VARCHAR(100),
+        responsible VARCHAR(255),
+        scheduled_date DATE,
+        completed_date DATE,
+        status VARCHAR(50) DEFAULT 'Agendada',
+        observations TEXT,
+        score NUMERIC,
+        nc_count INTEGER DEFAULT 0,
+        company_id VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS inspection_items (
+        id VARCHAR(50) PRIMARY KEY,
+        inspection_id VARCHAR(50) NOT NULL,
+        description TEXT NOT NULL,
+        category VARCHAR(100),
+        nr_reference VARCHAR(100),
+        result VARCHAR(50),
+        observation TEXT,
+        photo_url TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS documents_sst (
+        id VARCHAR(50) PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        type VARCHAR(100),
+        document_number VARCHAR(100),
+        responsible VARCHAR(255),
+        elaboration_date DATE,
+        revision_date DATE,
+        expiry_date DATE,
+        validity_months INTEGER,
+        status VARCHAR(50) DEFAULT 'Vigente',
+        file_url TEXT,
+        description TEXT,
+        nr_references TEXT,
+        company_id VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS whatsapp_logs (
+        id VARCHAR(50) PRIMARY KEY,
+        employee_id VARCHAR(50),
+        employee_name VARCHAR(255),
+        alert_type VARCHAR(100),
+        detail TEXT,
+        phone VARCHAR(50),
+        sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        status VARCHAR(50),
+        message TEXT,
+        error_detail TEXT
+      );
     `);
 
     // Verificar e criar usuários iniciais se não existirem
@@ -240,6 +346,93 @@ export const initDb = async () => {
         ('t1', 'Treinamento NR-35 Trabalho em Altura', 'NR-35', 24, 'Treinamento NR-35 Trabalho em Altura', 'Segurança em Altura', 8, 24),
         ('t2', 'Treinamento NR-12 Segurança em Máquinas', 'NR-12', 12, 'Treinamento NR-12 Segurança em Máquinas', 'Segurança Industrial', 16, 12),
         ('t3', 'Integração de Segurança (NR-01)', 'NR-01', 12, 'Integração de Segurança (NR-01)', 'Normativo Geral', 4, 12)
+      `);
+    }
+
+    // Seeder para FISPQ
+    const fispqCheck = await client.query("SELECT id FROM fispq_docs");
+    if (fispqCheck.rows.length === 0) {
+      console.log('Semeando FISPQ iniciais...');
+      await client.query(`
+        INSERT INTO fispq_docs (id, chemical_name, manufacturer, revision_date, version, ghs_classification, cas_number, physical_state, risk_phrases, epc_measures) VALUES
+        ('fispq1', 'Alumínio em Pó (Pó Metálico)', 'Sulfam Industrial Ltda.', '2024-06-01', '03', 'Perigo: Inflamável (Cat.2); Tóxico (Cat.4); Perigoso para Ambiente Aquático', '7429-90-5', 'Sólido (pó fino cinzento)', '["H228 - Sólido inflamável","H302 - Nocivo se ingerido","H400 - Muito tóxico para organismos aquáticos"]', '["Luvas de proteção (NR-06/CA)","Proteção respiratória P3","Óculos de vedação","Não usar perto de fontes de calor"]'),
+        ('fispq2', 'Silicato de Sódio (Solução)', 'Química São Paulo LTDA', '2023-11-20', '02', 'Atenção: Irritante (Cat.2); Corrosivo (Cat.1C)', '1344-09-8', 'Líquido viscoso (transparente a amarelado)', '["H314 - Causa queimaduras graves na pele","H318 - Causa lesão ocular grave"]', '["Luvas de borracha butílica","Óculos de proteção vedados","Avental impermeável","Lavar imediatamente com água em caso de contato"]'),
+        ('fispq3', 'Fluido de Corte Semissintético (Emulsão)', 'Master Químicos S/A', '2024-01-15', '01', 'Atenção: Irritante para a pele (Cat.2); Nocivo (Cat.4)', 'Mistura', 'Líquido (branco-leitoso após diluição)', '["H302 - Nocivo se ingerido","H315 - Provoca irritação cutânea","H317 - Pode provocar reação alérgica cutânea"]', '["Luvas de nitrila (NR-06/CA)","Evitar contato prolongado com a pele","Usar óculos de segurança durante o manuseio"]')
+      `);
+    }
+
+    // Seeder para Setores
+    const sectorCheck = await client.query("SELECT id FROM sectors");
+    if (sectorCheck.rows.length === 0) {
+      console.log('Semeando setores iniciais...');
+      await client.query(`
+        INSERT INTO sectors (id, name, description, processes, risks, company_id) VALUES
+        ('sec1', 'Usinagem', 'Setor de usinagem e torneamento de peças de alumínio', '["Torneamento","Fresagem","Retífica"]', '["Ruído acima de 85dB","Fragmentos de alumínio","Fluidos de corte","Vibração"]', 'c1'),
+        ('sec2', 'Soldagem e Montagem', 'Setor de soldagem MIG/TIG e montagem de estruturas', '["Soldagem MIG","Soldagem TIG","Montagem de estruturas"]', '["Fumos metálicos","Radiação UV","Calor intenso","Choque elétrico"]', 'c1'),
+        ('sec3', 'Almoxarifado', 'Controle de estoque de EPIs e insumos', '["Recebimento de materiais","Inventário","Distribuição de EPIs"]', '["Esforço físico","Queda de objetos","Poeira"]', 'c1'),
+        ('sec4', 'Administrativo', 'Setor administrativo e financeiro', '["Processamento de dados","Atendimento ao cliente","Gestão financeira"]', '["Ergonomia","Estresse","LER/DORT"]', 'c1')
+      `);
+    }
+
+    // Seeder para Cargos
+    const rolesCheck = await client.query("SELECT id FROM job_roles");
+    if (rolesCheck.rows.length === 0) {
+      console.log('Semeando cargos iniciais...');
+      await client.query(`
+        INSERT INTO job_roles (id, name, description, sector_id, risks, required_ppes, company_id) VALUES
+        ('role1', 'Torneiro Mecânico', 'Operador de tornos e fresadoras CNC', 'sec1', '["Ruído","Fragmentos metálicos","Vibração","Fluidos de corte"]', '["ppe1","ppe2"]', 'c1'),
+        ('role2', 'Soldador', 'Soldagem MIG/TIG em estruturas de alumínio', 'sec2', '["Fumos metálicos","Radiação UV","Calor","Choque elétrico"]', '["ppe2","ppe3"]', 'c1'),
+        ('role3', 'Almoxarife', 'Controle e distribuição de materiais e EPIs', 'sec3', '["Esforço físico","Queda de objetos"]', '["ppe3"]', 'c1'),
+        ('role4', 'Técnico de Segurança', 'Análise de riscos, inspeções e auditorias de SST', 'sec1', '["Risco geral de fábrica"]', '["ppe1","ppe2","ppe3"]', 'c1')
+      `);
+    }
+
+    // Seeder para Documentos SST
+    const docsCheck = await client.query("SELECT id FROM documents_sst");
+    if (docsCheck.rows.length === 0) {
+      console.log('Semeando documentos SST iniciais...');
+      await client.query(`
+        INSERT INTO documents_sst (id, title, type, document_number, responsible, elaboration_date, revision_date, expiry_date, validity_months, status, description, nr_references, company_id) VALUES
+        ('doc1', 'PGR - Programa de Gerenciamento de Riscos', 'PGR', 'PGR-NH-2024-001', 'Dr. Marcos Patrício', '2024-01-15', '2024-07-15', '2026-01-15', 24, 'Vigente', 'Programa de Gerenciamento de Riscos conforme NR-01 e NR-09 para todas as atividades da Novo Horizonte Alumínios.', '["NR-01","NR-09"]', 'c1'),
+        ('doc2', 'LTCAT - Laudo Técnico das Condições Ambientais', 'LTCAT', 'LTCAT-NH-2024-001', 'Engenheiro Raimundo Costa', '2024-02-20', '2024-08-20', '2025-02-20', 12, 'Vigente', 'Laudo técnico de avaliação das condições de trabalho para fins previdenciários (aposentadoria especial).', '["NR-09","IN INSS 77/2015"]', 'c1'),
+        ('doc3', 'PCMSO - Programa de Controle Médico de Saúde Ocupacional', 'PCMSO', 'PCMSO-NH-2024-001', 'Dr. Ana Beatriz (Médico do Trabalho)', '2024-03-01', '2025-03-01', '2026-03-01', 24, 'Vigente', 'Programa de controle médico com cronograma de exames ocupacionais periódicos, admissionais e demissionais.', '["NR-07"]', 'c1'),
+        ('doc4', 'DDS - Diálogo Diário de Segurança (Registro Anual)', 'DDS', 'DDS-NH-2025-001', 'Dr. Marcos Patrício', '2025-01-02', '2025-01-02', '2025-12-31', 12, 'Vigente', 'Registro consolidado dos DDS realizados ao longo do ano com temas e participantes.', '["NR-01"]', 'c1')
+      `);
+    }
+
+    // Seeder para Inspeções
+    const inspCheck = await client.query("SELECT id FROM inspections");
+    if (inspCheck.rows.length === 0) {
+      console.log('Semeando inspeções iniciais...');
+      await client.query(`
+        INSERT INTO inspections (id, title, type, sector, responsible, scheduled_date, completed_date, status, observations, score, nc_count, company_id) VALUES
+        ('insp1', 'Inspeção de EPI e EPCs - Usinagem', 'Inspeção Geral', 'Usinagem', 'Dr. Marcos Patrício', '2026-06-01', '2026-06-01', 'Concluída', 'Verificados todos os equipamentos do setor. Foram encontradas 2 não conformidades menores.', 88, 2, 'c1'),
+        ('insp2', 'Verificação de Extintores - Planta Geral', 'Prevenção de Incêndio', 'Toda a Planta', 'Dr. Marcos Patrício', '2026-06-10', '2026-06-10', 'Concluída', 'Todos os extintores dentro da validade. Sinalização adequada.', 100, 0, 'c1'),
+        ('insp3', 'Checklist NR-12 - Máquinas e Equipamentos', 'NR-12', 'Usinagem', 'Eng. Raimundo Costa', '2026-07-01', NULL, 'Agendada', NULL, NULL, 0, 'c1')
+      `);
+
+      await client.query(`
+        INSERT INTO inspection_items (id, inspection_id, description, category, nr_reference, result, observation) VALUES
+        ('ii1', 'insp1', 'EPIs disponíveis e em bom estado para todos os funcionários', 'EPI/EPC', 'NR-06', 'Conforme', NULL),
+        ('ii2', 'insp1', 'Protetor auricular sendo utilizado por todos os expostos a ruído', 'EPI/EPC', 'NR-06', 'Conforme', NULL),
+        ('ii3', 'insp1', 'Sinalização de obrigatoriedade de uso de EPI afixada', 'Sinalização', 'NR-26', 'Não Conforme', 'Sinalização faltando na entrada do setor de torneamento'),
+        ('ii4', 'insp2', 'Extintores dentro da validade e desobstruídos', 'Incêndio', 'NR-23', 'Conforme', NULL),
+        ('ii5', 'insp2', 'Rotas de fuga sinalizadas e desobstruídas', 'Emergência', 'NR-23', 'Conforme', NULL)
+      `);
+    }
+
+    // Seeder para WhatsApp Logs
+    const waCheck = await client.query("SELECT id FROM whatsapp_logs LIMIT 1");
+    if (waCheck.rows.length === 0) {
+      console.log('Semeando logs de WhatsApp iniciais...');
+      await client.query(`
+        INSERT INTO whatsapp_logs (id, employee_id, employee_name, alert_type, detail, phone, sent_at, status, message) VALUES
+        ('wl_1', 'e1', 'Carlos Henrique Silva', 'Treinamento Vencido', 'Trabalho em Altura (NR-35)', '+5551988887755', '2026-06-15T13:42:00Z',
+         'Simulado',
+         E'⚠️ ALERTA DE SST - NOVO HORIZONTE ALUMÍNIOS ⚠️\n\nOlá, Carlos Henrique Silva!\nEste é um aviso automático do SESMT. O seu treinamento mandatório Trabalho em Altura (NR-35) está vencido.\n\nPor favor, fale com a supervisão ou equipe de SST para confirmar sua escala!'),
+        ('wl_2', 'e2', 'Juliana Montenegro', 'CA de EPI Vencendo', 'Bota de Segurança de Couro Cano Curto', '+5551977775544', '2026-06-16T17:15:00Z',
+         'Simulado',
+         E'⚠️ ALERTA DE SST - NOVO HORIZONTE ALUMÍNIOS ⚠️\n\nOlá, Juliana Montenegro!\nEste é um aviso automático do SESMT. O CA do seu EPI Bota de Segurança (CA: 41209) está próximo do vencimento.\n\nDirija-se ao Almoxarifado para realizar a substituição (NR-06).')
       `);
     }
 

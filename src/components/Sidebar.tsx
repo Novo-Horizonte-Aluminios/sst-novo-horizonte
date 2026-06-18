@@ -15,7 +15,9 @@ import {
   Compass,
   MessageCircle,
   Database,
-  Radar
+  Radar,
+  ClipboardCheck,
+  BookOpen
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -43,6 +45,8 @@ export default function Sidebar({
     { id: 'ppes', label: 'Garantia de EPI (CAs)', icon: Shield },
     { id: 'trainings', label: 'Treinamentos LMS', icon: GraduationCap },
     { id: 'incidents', label: 'Análise de Acidentes', icon: ShieldAlert },
+    { id: 'inspections', label: 'Inspeções e Checklists', icon: ClipboardCheck },
+    { id: 'documents', label: 'Gestão Documental', icon: BookOpen },
     { id: 'reports', label: 'Central de Relatórios', icon: ScrollText },
     { id: 'ai', label: 'Especialista IA SST', icon: Sparkles },
     { id: 'fispq', label: 'SDS / FISPQ Químicos', icon: Flame },

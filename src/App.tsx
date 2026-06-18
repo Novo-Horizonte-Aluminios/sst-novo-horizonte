@@ -7,6 +7,8 @@ import StockTab from './components/StockTab.tsx';
 import DeliveryTab from './components/DeliveryTab.tsx';
 import TrainingTab from './components/TrainingTab.tsx';
 import IncidentTab from './components/IncidentTab.tsx';
+import InspectionTab from './components/InspectionTab.tsx';
+import DocumentsTab from './components/DocumentsTab.tsx';
 import FispqTab from './components/FispqTab.tsx';
 import WhatsAppTab from './components/WhatsAppTab.tsx';
 import AIChatTab from './components/AIChatTab.tsx';
@@ -433,6 +435,14 @@ export default function App() {
                   onAddActionPlan={handleAddActionPlan}
                   onUpdateActionPlan={handleUpdateActionPlan}
                 />
+              )}
+
+              {activeTab === 'inspections' && (
+                <InspectionTab />
+              )}
+
+              {activeTab === 'documents' && (
+                <DocumentsTab />
               )}
 
               {activeTab === 'fispq' && (

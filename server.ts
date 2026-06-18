@@ -232,6 +232,14 @@ async function startServer() {
     return newRow;
   };
 
+  // Helper to safely parse JSON strings from DB (returns fallback on failure)
+  const safeJsonParse = (val: any, fallback: any = null) => {
+    if (val === null || val === undefined) return fallback;
+    if (typeof val !== 'string') return val;
+    try { return JSON.parse(val); } catch { return fallback; }
+  };
+
+
   // Enterprise Tenants
   app.get('/api/companies', async (req, res) => {
     try {
@@ -517,21 +525,319 @@ async function startServer() {
     }
   });
 
-  // Chemical Safety/FISPQ
+  // ─── FISPQ (Chemical Safety) – full PostgreSQL CRUD ──────────────────────
   app.get('/api/fispq', async (req, res) => {
     try {
-      res.json(db.fispq); // Keeping FISPQ in-memory as it might not be migrated to SQL yet
-    } catch (e) {
-      res.status(500).json({ error: 'DB Error' });
-    }
+      const result = await query('SELECT * FROM fispq_docs ORDER BY created_at DESC');
+      res.json(result.rows.map(r => ({
+        id: r.id,
+        chemicalName: r.chemical_name,
+        manufacturer: r.manufacturer,
+        revisionDate: r.revision_date ? r.revision_date.toISOString().slice(0,10) : null,
+        version: r.version,
+        ghsClassification: r.ghs_classification,
+        casNumber: r.cas_number,
+        physicalState: r.physical_state,
+        riskPhrases: safeJsonParse(r.risk_phrases, []),
+        epcMeasures: safeJsonParse(r.epc_measures, []),
+        fileUrl: r.file_url
+      })));
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
   });
 
-  // --- TWILIO / WHATSAPP INTEGRATION ENDPOINTS ---
+  app.post('/api/fispq', async (req, res) => {
+    try {
+      const id = 'fispq_' + Date.now();
+      const { chemicalName, manufacturer, revisionDate, version, ghsClassification, casNumber, physicalState, riskPhrases, epcMeasures, fileUrl } = req.body;
+      await query(
+        'INSERT INTO fispq_docs (id, chemical_name, manufacturer, revision_date, version, ghs_classification, cas_number, physical_state, risk_phrases, epc_measures, file_url) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+        [id, chemicalName, manufacturer, revisionDate||null, version||null, ghsClassification||null, casNumber||null, physicalState||null, JSON.stringify(riskPhrases||[]), JSON.stringify(epcMeasures||[]), fileUrl||null]
+      );
+      res.status(201).json({ id, chemicalName, manufacturer, revisionDate, version, ghsClassification, casNumber, physicalState, riskPhrases, epcMeasures, fileUrl });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.put('/api/fispq/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { chemicalName, manufacturer, revisionDate, version, ghsClassification, casNumber, physicalState, riskPhrases, epcMeasures, fileUrl } = req.body;
+      await query(
+        'UPDATE fispq_docs SET chemical_name=$1, manufacturer=$2, revision_date=$3, version=$4, ghs_classification=$5, cas_number=$6, physical_state=$7, risk_phrases=$8, epc_measures=$9, file_url=$10 WHERE id=$11',
+        [chemicalName, manufacturer, revisionDate||null, version||null, ghsClassification||null, casNumber||null, physicalState||null, JSON.stringify(riskPhrases||[]), JSON.stringify(epcMeasures||[]), fileUrl||null, id]
+      );
+      res.json({ id, chemicalName, manufacturer, revisionDate, version, ghsClassification, casNumber, physicalState, riskPhrases, epcMeasures, fileUrl });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.delete('/api/fispq/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM fispq_docs WHERE id=$1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  // ─── SECTORS ──────────────────────────────────────────────────────────────
+  app.get('/api/sectors', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM sectors ORDER BY name');
+      res.json(result.rows.map(r => ({
+        id: r.id, name: r.name, description: r.description,
+        processes: safeJsonParse(r.processes, []),
+        risks: safeJsonParse(r.risks, []),
+        companyId: r.company_id
+      })));
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.post('/api/sectors', async (req, res) => {
+    try {
+      const id = 'sec_' + Date.now();
+      const { name, description, processes, risks, companyId } = req.body;
+      await query('INSERT INTO sectors (id, name, description, processes, risks, company_id) VALUES ($1,$2,$3,$4,$5,$6)',
+        [id, name, description||null, JSON.stringify(processes||[]), JSON.stringify(risks||[]), companyId||'c1']);
+      res.status(201).json({ id, name, description, processes, risks, companyId });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.put('/api/sectors/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description, processes, risks, companyId } = req.body;
+      await query('UPDATE sectors SET name=$1, description=$2, processes=$3, risks=$4, company_id=$5 WHERE id=$6',
+        [name, description||null, JSON.stringify(processes||[]), JSON.stringify(risks||[]), companyId||'c1', id]);
+      res.json({ id, name, description, processes, risks, companyId });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.delete('/api/sectors/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM sectors WHERE id=$1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  // ─── JOB ROLES ────────────────────────────────────────────────────────────
+  app.get('/api/job-roles', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM job_roles ORDER BY name');
+      res.json(result.rows.map(r => ({
+        id: r.id, name: r.name, description: r.description,
+        sectorId: r.sector_id,
+        risks: safeJsonParse(r.risks, []),
+        requiredPpes: safeJsonParse(r.required_ppes, []),
+        companyId: r.company_id
+      })));
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.post('/api/job-roles', async (req, res) => {
+    try {
+      const id = 'role_' + Date.now();
+      const { name, description, sectorId, risks, requiredPpes, companyId } = req.body;
+      await query('INSERT INTO job_roles (id, name, description, sector_id, risks, required_ppes, company_id) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+        [id, name, description||null, sectorId||null, JSON.stringify(risks||[]), JSON.stringify(requiredPpes||[]), companyId||'c1']);
+      res.status(201).json({ id, name, description, sectorId, risks, requiredPpes, companyId });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.put('/api/job-roles/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description, sectorId, risks, requiredPpes, companyId } = req.body;
+      await query('UPDATE job_roles SET name=$1, description=$2, sector_id=$3, risks=$4, required_ppes=$5, company_id=$6 WHERE id=$7',
+        [name, description||null, sectorId||null, JSON.stringify(risks||[]), JSON.stringify(requiredPpes||[]), companyId||'c1', id]);
+      res.json({ id, name, description, sectorId, risks, requiredPpes, companyId });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.delete('/api/job-roles/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM job_roles WHERE id=$1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  // ─── INSPECTIONS ──────────────────────────────────────────────────────────
+  app.get('/api/inspections', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM inspections ORDER BY scheduled_date DESC');
+      res.json(result.rows.map(r => ({
+        id: r.id, title: r.title, type: r.type, sector: r.sector,
+        responsible: r.responsible,
+        scheduledDate: r.scheduled_date ? r.scheduled_date.toISOString().slice(0,10) : null,
+        completedDate: r.completed_date ? r.completed_date.toISOString().slice(0,10) : null,
+        status: r.status, observations: r.observations,
+        score: r.score, ncCount: r.nc_count, companyId: r.company_id
+      })));
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.post('/api/inspections', async (req, res) => {
+    try {
+      const id = 'insp_' + Date.now();
+      const { title, type, sector, responsible, scheduledDate, completedDate, status, observations, score, ncCount, companyId } = req.body;
+      const currentStatus = status || 'Agendada';
+      await query(
+        'INSERT INTO inspections (id, title, type, sector, responsible, scheduled_date, completed_date, status, observations, score, nc_count, company_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+        [id, title, type||null, sector||null, responsible||null, scheduledDate||null, completedDate||null, currentStatus, observations||null, score||null, ncCount||0, companyId||'c1']
+      );
+      res.status(201).json({ id, title, type, sector, responsible, scheduledDate, completedDate, status: currentStatus, observations, score, ncCount, companyId });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.put('/api/inspections/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { title, type, sector, responsible, scheduledDate, completedDate, status, observations, score, ncCount } = req.body;
+      await query(
+        'UPDATE inspections SET title=$1, type=$2, sector=$3, responsible=$4, scheduled_date=$5, completed_date=$6, status=$7, observations=$8, score=$9, nc_count=$10 WHERE id=$11',
+        [title, type||null, sector||null, responsible||null, scheduledDate||null, completedDate||null, status, observations||null, score||null, ncCount||0, id]
+      );
+      res.json({ id, title, type, sector, responsible, scheduledDate, completedDate, status, observations, score, ncCount });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.delete('/api/inspections/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM inspection_items WHERE inspection_id=$1', [req.params.id]);
+      await query('DELETE FROM inspections WHERE id=$1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.get('/api/inspections/:id/items', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM inspection_items WHERE inspection_id=$1 ORDER BY created_at', [req.params.id]);
+      res.json(result.rows.map(r => ({
+        id: r.id, inspectionId: r.inspection_id, description: r.description,
+        category: r.category, nrReference: r.nr_reference,
+        result: r.result, observation: r.observation, photoUrl: r.photo_url
+      })));
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.post('/api/inspections/:id/items', async (req, res) => {
+    try {
+      const itemId = 'ii_' + Date.now();
+      const inspectionId = req.params.id;
+      const { description, category, nrReference, result, observation, photoUrl } = req.body;
+      await query(
+        'INSERT INTO inspection_items (id, inspection_id, description, category, nr_reference, result, observation, photo_url) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+        [itemId, inspectionId, description, category||null, nrReference||null, result||null, observation||null, photoUrl||null]
+      );
+      res.status(201).json({ id: itemId, inspectionId, description, category, nrReference, result, observation, photoUrl });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.put('/api/inspection-items/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { description, category, nrReference, result, observation, photoUrl } = req.body;
+      await query(
+        'UPDATE inspection_items SET description=$1, category=$2, nr_reference=$3, result=$4, observation=$5, photo_url=$6 WHERE id=$7',
+        [description, category||null, nrReference||null, result||null, observation||null, photoUrl||null, id]
+      );
+      res.json({ id, description, category, nrReference, result, observation, photoUrl });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.delete('/api/inspection-items/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM inspection_items WHERE id=$1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  // ─── DOCUMENTS SST ────────────────────────────────────────────────────────
+  app.get('/api/documents-sst', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM documents_sst ORDER BY expiry_date ASC');
+      res.json(result.rows.map(r => ({
+        id: r.id, title: r.title, type: r.type,
+        documentNumber: r.document_number, responsible: r.responsible,
+        elaborationDate: r.elaboration_date ? r.elaboration_date.toISOString().slice(0,10) : null,
+        revisionDate: r.revision_date ? r.revision_date.toISOString().slice(0,10) : null,
+        expiryDate: r.expiry_date ? r.expiry_date.toISOString().slice(0,10) : null,
+        validityMonths: r.validity_months, status: r.status,
+        fileUrl: r.file_url, description: r.description,
+        nrReferences: safeJsonParse(r.nr_references, []),
+        companyId: r.company_id
+      })));
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.post('/api/documents-sst', async (req, res) => {
+    try {
+      const id = 'doc_' + Date.now();
+      const { title, type, documentNumber, responsible, elaborationDate, revisionDate, expiryDate, validityMonths, status, fileUrl, description, nrReferences, companyId } = req.body;
+      const currentStatus = status || 'Vigente';
+      await query(
+        'INSERT INTO documents_sst (id, title, type, document_number, responsible, elaboration_date, revision_date, expiry_date, validity_months, status, file_url, description, nr_references, company_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)',
+        [id, title, type||null, documentNumber||null, responsible||null, elaborationDate||null, revisionDate||null, expiryDate||null, validityMonths||null, currentStatus, fileUrl||null, description||null, JSON.stringify(nrReferences||[]), companyId||'c1']
+      );
+      res.status(201).json({ id, title, type, documentNumber, responsible, elaborationDate, revisionDate, expiryDate, validityMonths, status: currentStatus, fileUrl, description, nrReferences, companyId });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.put('/api/documents-sst/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { title, type, documentNumber, responsible, elaborationDate, revisionDate, expiryDate, validityMonths, status, fileUrl, description, nrReferences } = req.body;
+      await query(
+        'UPDATE documents_sst SET title=$1, type=$2, document_number=$3, responsible=$4, elaboration_date=$5, revision_date=$6, expiry_date=$7, validity_months=$8, status=$9, file_url=$10, description=$11, nr_references=$12 WHERE id=$13',
+        [title, type||null, documentNumber||null, responsible||null, elaborationDate||null, revisionDate||null, expiryDate||null, validityMonths||null, status, fileUrl||null, description||null, JSON.stringify(nrReferences||[]), id]
+      );
+      res.json({ id, title, type, documentNumber, responsible, elaborationDate, revisionDate, expiryDate, validityMonths, status, fileUrl, description, nrReferences });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  app.delete('/api/documents-sst/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM documents_sst WHERE id=$1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: 'DB Error' }); }
+  });
+
+  // --- WHATSAPP LOGS (PostgreSQL Backed) ---
   app.get('/api/whatsapp/logs', async (req, res) => {
-    res.json(db.whatsappLogs); // Keep logs in-memory to avoid breaking UI until table is mapped
+    try {
+      const result = await query('SELECT * FROM whatsapp_logs ORDER BY sent_at DESC LIMIT 100');
+      res.json(result.rows.map(r => ({
+        id: r.id,
+        employeeId: r.employee_id,
+        employeeName: r.employee_name,
+        alertType: r.alert_type,
+        detail: r.detail,
+        phone: r.phone,
+        sentAt: r.sent_at ? r.sent_at.toISOString() : null,
+        status: r.status,
+        message: r.message,
+        errorDetail: r.error_detail
+      })));
+    } catch (e: any) {
+      console.error('Error fetching WhatsApp logs from DB:', e);
+      // Fallback to in-memory logs if DB fails
+      res.json(db.whatsappLogs);
+    }
   });
   app.get('/api/twilio/logs', async (req, res) => {
-    res.json(db.whatsappLogs);
+    try {
+      const result = await query('SELECT * FROM whatsapp_logs ORDER BY sent_at DESC LIMIT 100');
+      res.json(result.rows.map(r => ({
+        id: r.id,
+        employeeId: r.employee_id,
+        employeeName: r.employee_name,
+        alertType: r.alert_type,
+        detail: r.detail,
+        phone: r.phone,
+        sentAt: r.sent_at ? r.sent_at.toISOString() : null,
+        status: r.status,
+        message: r.message,
+        errorDetail: r.error_detail
+      })));
+    } catch (e: any) {
+      res.json(db.whatsappLogs);
+    }
   });
 
   // --- INTEGRATION HEALTH STATE (Evolution API & n8n) ---
@@ -702,8 +1008,9 @@ async function startServer() {
         isN8nConfigured ? 'n8n' : ''
       ].filter(Boolean).join(' + ');
 
+      const newLogId = 'wl_' + Date.now();
       const newLog = {
-        id: 'wl_' + Date.now(),
+        id: newLogId,
         employeeId: employeeId || 'e_unk',
         employeeName,
         alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : 'Treinamento Vencido',
@@ -715,7 +1022,16 @@ async function startServer() {
         errorDetail: errorOccurred ? errorMessage : undefined,
         channel: channelInfo
       };
-      db.whatsappLogs.unshift(newLog);
+      // Persist to PostgreSQL
+      try {
+        await query(
+          'INSERT INTO whatsapp_logs (id, employee_id, employee_name, alert_type, detail, phone, sent_at, status, message, error_detail) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+          [newLogId, newLog.employeeId, newLog.employeeName, newLog.alertType, newLog.detail, newLog.phone, new Date(), newLog.status, newLog.message, newLog.errorDetail || null]
+        );
+      } catch (dbErr) {
+        console.error('Failed to persist WhatsApp log to DB, falling back to memory:', dbErr);
+        db.whatsappLogs.unshift(newLog);
+      }
 
       if (errorOccurred && !evoResult && !n8nResult) {
         res.status(500).json({ error: `Falha no disparo: ${errorMessage}`, simulated: false, log: newLog });
@@ -730,8 +1046,9 @@ async function startServer() {
       }
     } else {
       // Graceful simulated mode
+      const simulatedLogId = 'wl_' + Date.now();
       const simulatedLog = {
-        id: 'wl_' + Date.now(),
+        id: simulatedLogId,
         employeeId: employeeId || 'e_unk',
         employeeName,
         alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : 'Treinamento Vencido',
@@ -741,7 +1058,16 @@ async function startServer() {
         status: 'Simulado',
         message: messageText
       };
-      db.whatsappLogs.unshift(simulatedLog);
+      // Persist simulation log to PostgreSQL
+      try {
+        await query(
+          'INSERT INTO whatsapp_logs (id, employee_id, employee_name, alert_type, detail, phone, sent_at, status, message) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          [simulatedLogId, simulatedLog.employeeId, simulatedLog.employeeName, simulatedLog.alertType, simulatedLog.detail, simulatedLog.phone, new Date(), 'Simulado', simulatedLog.message]
+        );
+      } catch (dbErr) {
+        console.error('Failed to persist simulated WhatsApp log to DB:', dbErr);
+        db.whatsappLogs.unshift(simulatedLog);
+      }
 
       res.status(200).json({ 
         success: true, 
