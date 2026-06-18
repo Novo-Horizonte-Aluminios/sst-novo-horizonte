@@ -228,6 +228,44 @@ export default function DashboardTab({
   // Mini Chart components built in raw Tailwind CSS (guarantees lightweight zero-dependency visual beauty)
   return (
     <div className="space-y-4">
+      {/* Fluxos de Operação Rápidos */}
+      <div className="bg-white p-4 rounded border border-slate-200 shadow-sm">
+        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+          <Workflow className="w-3.5 h-3.5 text-slate-400" />
+          Fluxos de Operação Rápidos
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+          <button 
+            onClick={() => onNavigate('delivery')}
+            className="p-3 bg-slate-50 hover:bg-safety-green/5 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+          >
+            <CheckCircle2 className="w-4 h-4 text-safety-green" />
+            Entrega de EPI
+          </button>
+          <button 
+            onClick={() => onNavigate('ppes')}
+            className="p-3 bg-slate-50 hover:bg-safety-green/5 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+          >
+            <Shield className="w-4 h-4 text-[#0369a1]" />
+            Auditar CAs
+          </button>
+          <button 
+            onClick={() => onNavigate('incidents')}
+            className="p-3 bg-slate-50 hover:bg-red-50 hover:text-red-700 border border-slate-200 hover:border-red-350 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+          >
+            <AlertTriangle className="w-4 h-4 text-red-500" />
+            Comunicar Risco
+          </button>
+          <button 
+            onClick={() => onNavigate('ai')}
+            className="p-3 bg-slate-50 hover:bg-safety-green/5 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+            SST Especialista
+          </button>
+        </div>
+      </div>
+
       {/* Tab Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-4 rounded border border-slate-200 gap-3">
         <div>
