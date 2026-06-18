@@ -542,112 +542,145 @@ export default function DeliveryTab({
             </div>
 
             {activeReceiptEmployee ? (
-              <div className="bg-slate-50 p-3.5 rounded border border-slate-200 font-sans leading-relaxed text-[10px] text-slate-800 space-y-3 print-receipt">
-                
-                {/* Receipt Header */}
-                <div className="text-center pb-2 border-b border-slate-200 space-y-0.5">
-                  <h4 className="font-extrabold text-slate-900 uppercase tracking-tight text-[10px]">
-                    REGISTRO E CONTROLE DE ENTREGA DE EPI
-                  </h4>
-                  <p className="text-[9px] text-slate-400 uppercase font-mono">Portaria SIT/MTE n.º 107 e NR-06</p>
-                </div>
+              /* =====================================================
+                 FICHA PROFISSIONAL NR-06 — Modelo tabular regulamentar
+                 ===================================================== */
+              <div className="print-receipt bg-white border border-slate-300 font-sans text-[9px] text-slate-800" style={{fontFamily: 'Arial, sans-serif'}}>
 
-                {/* Company & Employee Bio details */}
-                <div className="grid grid-cols-2 gap-3 text-[9px] border-b border-slate-200 pb-2">
-                  <div className="space-y-0.5 text-slate-600">
-                    <p className="text-[8px] text-slate-400 font-mono uppercase font-bold">EMPREGADORA</p>
-                    <p className="font-bold text-slate-800 text-[10px]">{currentCompany?.name}</p>
-                    <p>CNPJ: {currentCompany?.cnpj}</p>
-                    <p>CNAE: {currentCompany?.cnae}</p>
+                {/* ── CABEÇALHO ── */}
+                <div className="flex items-center border-b-2 border-slate-700 px-3 py-2 gap-3">
+                  {/* Foto do colaborador */}
+                  <div className="shrink-0">
+                    {activeReceiptEmployee.photoUrl ? (
+                      <img src={activeReceiptEmployee.photoUrl} alt="Foto" className="w-12 h-12 rounded-full object-cover border-2 border-slate-300" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center">
+                        <User className="w-6 h-6 text-slate-400" />
+                      </div>
+                    )}
                   </div>
 
-                  <div className="space-y-0.5 text-slate-600">
-                    <p className="text-[8px] text-slate-400 font-mono uppercase font-bold">COLABORADOR(A)</p>
-                    <p className="font-bold text-slate-800 text-[10px]">{activeReceiptEmployee.name}</p>
-                    <p>CPF: {activeReceiptEmployee.cpf}</p>
-                    <p>Cargo: {activeReceiptEmployee.role} | Setor: {activeReceiptEmployee.sector}</p>
+                  {/* Título central */}
+                  <div className="flex-1 text-center">
+                    <p className="text-[8px] font-bold text-slate-500 uppercase">Portaria SIT/MTE n.º 107 — NR-06</p>
+                    <h1 className="text-[13px] font-extrabold text-slate-900 uppercase leading-tight">
+                      FICHA DE FORNECIMENTO DE<br />EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL (EPI)
+                    </h1>
+                  </div>
+
+                  {/* Logo da empresa */}
+                  <div className="shrink-0 text-right">
+                    <p className="text-[11px] font-extrabold text-green-700 leading-tight uppercase">{currentCompany?.tradingName || currentCompany?.name}</p>
+                    <p className="text-[8px] text-slate-500">Segurança do Trabalho</p>
                   </div>
                 </div>
 
-                {/* Delivered Items Log */}
-                <div>
-                  <h5 className="font-bold text-slate-900 uppercase text-[8px] tracking-wider mb-1.5">Equipamentos Fornecidos</h5>
-                  {activeReceiptDeliveries.length > 0 ? (
-                    <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
-                      {activeReceiptDeliveries.map((del, i) => (
-                        <div key={del.id} className="p-1.5 bg-white rounded border border-slate-200 flex justify-between items-center text-[9px]">
-                          <div>
-                            <p className="font-bold text-slate-800 leading-tight">{del.ppeName}</p>
-                            <p className="text-[8px] text-slate-400 font-mono leading-none mt-0.5">CA MTE: <strong>{del.caNumber}</strong> | Motivo: {del.reason}</p>
-                          </div>
-                          <div className="text-right">
-                            <span className="font-mono font-bold text-slate-700 bg-slate-100 px-1 py-0.5 rounded text-[8px]">
-                              Qtd: {del.quantity}
-                            </span>
-                            <p className="text-[8px] text-slate-400 font-mono mt-0.5">{del.deliveryDate}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-slate-400 italic py-3 text-center text-[9px]">Nenhum EPI fornecido registrado para este colaborador até o momento.</p>
-                  )}
+                {/* ── DADOS DA EMPRESA E COLABORADOR ── */}
+                <div className="border-b border-slate-300 px-3 py-2 grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9px]">
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Empresa:</span><span>{currentCompany?.name}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Admissão:</span><span>{activeReceiptEmployee.admissionDate || '—'}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Colaborador:</span><span className="font-semibold">{activeReceiptEmployee.name}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">CNPJ:</span><span>{currentCompany?.cnpj}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Cargo:</span><span>{activeReceiptEmployee.role}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">CPF:</span><span>{activeReceiptEmployee.cpf}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Setor:</span><span>{activeReceiptEmployee.sector}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Nº Matrícula:</span><span className="font-bold">{activeReceiptEmployee.matricula}</span></div>
+                  <div className="col-span-2 text-center mt-1 font-bold text-[9px] uppercase border-t border-slate-200 pt-1">
+                    Data de Emissão do Relatório: {new Date().toLocaleDateString('pt-BR')}
+                  </div>
                 </div>
 
-                {/* Regulatory terms & agreement conforming to NR-06 */}
-                <div className="text-[8.5px] text-slate-500 leading-normal border-t border-slate-200 pt-2 space-y-1">
-                  <p className="font-bold uppercase text-[7.5px] text-slate-600">Termo de Recebimento de EPI (NR-06)</p>
-                  <p className="text-justify leading-snug">
-                    Declaro que recebi gratuitamente os equipamentos de proteção individual indicados, adequados aos riscos no cumprimento do meu contrato laboral. Comprometo-me a usar apenas para a finalidade que se destina, mantendo guarda e conservação sob as penas da lei trabalhista brasileira.
+                {/* ── TABELA DE EPIs ── */}
+                <table className="w-full border-collapse text-[8.5px]">
+                  <thead>
+                    <tr className="bg-slate-700 text-white">
+                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-10">QTDE</th>
+                      <th className="border border-slate-500 px-1.5 py-1.5 text-left font-bold uppercase">DESCRIÇÃO DO EQUIPAMENTO</th>
+                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-20">DATA DA ENTREGA</th>
+                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-20">Nº CA MTE</th>
+                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-28">MOTIVO</th>
+                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-36">ASSINATURA DO COLABORADOR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activeReceiptDeliveries.length > 0 ? activeReceiptDeliveries.map((del, i) => (
+                      <tr key={del.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                        <td className="border border-slate-300 px-1.5 py-2 text-center font-bold">{String(del.quantity).padStart(2, '0')}</td>
+                        <td className="border border-slate-300 px-1.5 py-2 font-semibold uppercase">{del.ppeName}</td>
+                        <td className="border border-slate-300 px-1.5 py-2 text-center font-mono">{del.deliveryDate}</td>
+                        <td className="border border-slate-300 px-1.5 py-2 text-center font-mono">{del.caNumber}</td>
+                        <td className="border border-slate-300 px-1.5 py-2 text-center">{del.reason}</td>
+                        <td className="border border-slate-300 px-1.5 py-2 text-center">
+                          {/* Coluna adaptável por método de assinatura */}
+                          {del.signingMethod === 'assinatura_digital' && del.signatureData && del.signatureData.startsWith('data:') ? (
+                            <img src={del.signatureData} alt="Assinatura" className="h-8 mx-auto object-contain" />
+                          ) : del.signingMethod === 'biometria' ? (
+                            <div className="flex flex-col items-center gap-0.5">
+                              <Fingerprint className="w-4 h-4 text-green-700" />
+                              <span className="text-[7px] font-bold text-green-700 uppercase">Biometria</span>
+                              <span className="text-[6px] font-mono text-slate-400 break-all leading-tight max-w-[100px]">
+                                {del.signatureData?.replace('Biometria Futronic: FUT-', 'FUT-').substring(0, 20)}...
+                              </span>
+                            </div>
+                          ) : del.signingMethod === 'senha' ? (
+                            <div className="flex flex-col items-center gap-0.5">
+                              <Lock className="w-4 h-4 text-blue-600" />
+                              <span className="text-[7px] font-bold text-blue-700 uppercase">PIN Validado</span>
+                            </div>
+                          ) : del.signingMethod === 'selfie' && del.selfieUrl ? (
+                            <img src={del.selfieUrl} alt="Selfie" className="w-8 h-8 rounded-full object-cover mx-auto border border-slate-300" />
+                          ) : (
+                            <span className="text-slate-400 italic text-[7px]">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    )) : (
+                      <tr>
+                        <td colSpan={6} className="border border-slate-300 px-2 py-4 text-center text-slate-400 italic">
+                          Nenhum EPI registrado para este colaborador.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+
+                {/* ── TERMO DE RESPONSABILIDADE ── */}
+                <div className="px-3 py-2 border-t border-slate-300 text-[8px] text-slate-600">
+                  <p className="font-bold uppercase mb-0.5">Termo de Recebimento de EPI (NR-06 / Portaria SIT/MTE n.º 107):</p>
+                  <p className="text-justify leading-relaxed">
+                    Declaro que recebi gratuitamente os equipamentos de proteção individual relacionados acima, adequados aos riscos inerentes ao cumprimento do meu contrato de trabalho. Comprometo-me a utilizá-los apenas para a finalidade que se destinam, conservando-os adequadamente e comunicando ao empregador qualquer alteração que o torne impróprio para uso, sob penas da legislação trabalhista vigente.
                   </p>
                 </div>
 
-                {/* Imprinted worker validation visual */}
-                {activeReceiptDeliveries.length > 0 && (() => {
-                  const lastDel = activeReceiptDeliveries[activeReceiptDeliveries.length - 1];
-                  const isBiometric = lastDel.signingMethod === 'biometria';
-                  const bioHash = isBiometric && lastDel.signatureData
-                    ? lastDel.signatureData.replace('Biometria Futronic: ', '')
-                    : null;
-                  return (
-                    <div className="border-t border-slate-200 pt-2 space-y-2">
-                      {/* Biometric proof block */}
-                      {isBiometric && bioHash && (
-                        <div className="print-biometric-badge bg-green-50 border border-green-200 rounded p-2 text-[8px]">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <Fingerprint className="w-3 h-3 text-green-700" />
-                            <span className="font-extrabold text-green-800 uppercase tracking-wide">
-                              ✔ ASSINADO POR BIOMETRIA DIGITAL — Futronic FS80H
-                            </span>
-                          </div>
-                          <p className="text-green-700 font-mono break-all leading-relaxed">
-                            Hash SHA-256: {bioHash}
-                          </p>
-                          <p className="text-green-600 mt-0.5">
-                            A identidade do colaborador foi verificada por leitura biométrica do polegar no terminal de coleta associado a este registro. Esta assinatura possui validade jurídica conforme a LGPD e NR-06.
-                          </p>
-                        </div>
-                      )}
+                {/* ── RODAPÉ: ASSINATURAS ── */}
+                <div className="px-3 py-2 border-t-2 border-slate-700 grid grid-cols-3 gap-4 text-[8px]">
+                  <div className="text-center">
+                    <div className="border-b border-slate-700 mb-1 pb-3"></div>
+                    <p className="font-bold uppercase">Responsável SST</p>
+                    <p className="text-slate-500">{currentCompany?.sstResponsible}</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="border-b border-slate-700 mb-1 pb-3"></div>
+                    <p className="font-bold uppercase">Colaborador(a)</p>
+                    <p className="text-slate-500">{activeReceiptEmployee.name}</p>
+                    <p className="text-[7px] text-slate-400">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="border-b border-slate-700 mb-1 pb-3"></div>
+                    <p className="font-bold uppercase">Gestor / RH</p>
+                    <p className="text-slate-500">{currentCompany?.rhResponsible}</p>
+                  </div>
+                </div>
 
-                      {/* SST Responsible + Document hash */}
-                      <div className="flex justify-between items-end text-[9px]">
-                        <div>
-                          <span className="text-[7px] text-slate-400 font-mono uppercase block">SST Resp</span>
-                          <p className="font-bold text-slate-800 text-[9px] leading-tight">{currentCompany?.sstResponsible}</p>
-                        </div>
-                        <div className="text-center font-mono text-[7px] text-slate-400 bg-slate-100 p-1 rounded border border-slate-200 leading-none">
-                          <span className="text-[7px] font-mono text-safety-green font-extrabold uppercase tracking-wide block mb-0.5">
-                            ✔ SEGURO GARANTIDO
-                          </span>
-                          <span>MD5: {lastDel.id}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-
+                {/* ── HASH DE INTEGRIDADE DO DOCUMENTO ── */}
+                <div className="px-3 py-1.5 bg-slate-100 border-t border-slate-300 flex justify-between items-center text-[7px] font-mono text-slate-400">
+                  <span>Sistema SST Novo Horizonte Alumínios — {new Date().toLocaleString('pt-BR')}</span>
+                  <span>DOC-ID: {activeReceiptDeliveries[0]?.id?.substring(0, 16).toUpperCase()}</span>
+                </div>
               </div>
+
+
+
             ) : (
               <div className="bg-slate-50 border border-dashed border-slate-200 p-12 text-center text-slate-400 rounded flex flex-col items-center justify-center gap-1.5">
                 <Eye className="w-8 h-8 text-slate-350 bg-slate-100/40" />
