@@ -138,8 +138,10 @@ export default function DeliveryTab({
     setBiometricError(null);
     setBiometricHash(null);
     try {
-      // Connect to the Futronic Local Bridge running on the host machine
-      const response = await fetch('http://localhost:8080/scan');
+      // Conecta ao Agente Futronic via HTTPS (porta 8443) para funcionar em sites HTTPS
+      // IMPORTANTE: Na primeira vez, o usuário precisa acessar https://localhost:8443 no Chrome
+      // e clicar em "Avançado > Continuar" para aceitar o certificado local autoassinado.
+      const response = await fetch('https://localhost:8443/scan');
       if (!response.ok) {
         throw new Error('Falha na comunicação com o leitor.');
       }
@@ -150,7 +152,7 @@ export default function DeliveryTab({
         setBiometricError(data.error || 'Erro ao extrair biometria.');
       }
     } catch (err) {
-      setBiometricError('Agente Futronic Local não encontrado. Certifique-se de que o Bridge está rodando na porta 8080.');
+      setBiometricError('Agente Futronic Local não encontrado. Certifique-se de que o Bridge está rodando. Na 1ª vez, acesse https://localhost:8443 no Chrome e aceite o certificado.');
     } finally {
       setIsScanningBiometrics(false);
     }

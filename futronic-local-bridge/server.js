@@ -1,19 +1,29 @@
 const express = require('express');
 const cors = require('cors');
+const https = require('https');
+const selfsigned = require('selfsigned');
 const scanner = require('./scanner');
 
 const app = express();
-const PORT = 8080;
+const HTTP_PORT = 8080;   // Mantido para testes locais (http)
+const HTTPS_PORT = 8443;  // Porta segura para o site em produção (https)
 
-// Permite conexões do sistema web hospedado
-app.use(cors());
+// Gera um certificado autoassinado válido para localhost
+const attrs = [{ name: 'commonName', value: 'localhost' }];
+const pems = selfsigned.generate(attrs, { days: 3650 });
 
-// Rota de verificação
+// CORS: permite chamadas do nosso site de produção E de localhost
+app.use(cors({
+    origin: ['https://sst.novohorizonte.com', 'http://localhost:5173', 'http://localhost:3000'],
+    methods: ['GET']
+}));
+
+// Rota de verificação de saúde
 app.get('/', (req, res) => {
-    res.json({ status: 'Futronic Local Bridge is running', version: '1.0.0' });
+    res.json({ status: 'Futronic Local Bridge is running', version: '2.0.0', https: true });
 });
 
-// Rota acionada pelo site quando o botão "Capturar Digital" é clicado
+// Rota de captura biométrica
 app.get('/scan', async (req, res) => {
     try {
         const result = await scanner.captureBiometrics();
@@ -28,10 +38,16 @@ app.get('/scan', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
+// Servidor HTTPS (para o site de produção em https://)
+const httpsServer = https.createServer({ key: pems.private, cert: pems.cert }, app);
+httpsServer.listen(HTTPS_PORT, () => {
     console.log(`=========================================`);
-    console.log(` FUTRONIC FS80H - LOCAL BRIDGE AGENT`);
+    console.log(` FUTRONIC FS80H - LOCAL BRIDGE AGENT v2`);
     console.log(`=========================================`);
-    console.log(`Servidor rodando e ouvindo a porta ${PORT}`);
-    console.log(`Mantenha esta janela aberta para que o site possa acessar o leitor.`);
+    console.log(`Servidor HTTPS rodando na porta ${HTTPS_PORT}`);
+    console.log(`Servidor HTTP   rodando na porta ${HTTP_PORT}`);
+    console.log(`Mantenha esta janela aberta!`);
 });
+
+// Servidor HTTP (para testes locais)
+app.listen(HTTP_PORT);
