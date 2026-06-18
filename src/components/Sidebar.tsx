@@ -55,12 +55,24 @@ export default function Sidebar({
   return (
     <aside className="w-[220px] bg-[#0f172a] text-[#94a3b8] flex flex-col h-full flex-shrink-0 border-r border-[#1e293b] font-sans antialiased select-none">
       {/* Brand Header */}
-      <div className="p-5 border-b border-[#1e293b]">
-        <div className="text-white font-extrabold text-sm tracking-tight leading-none flex flex-col gap-1 uppercase">
-          <span>Novo Horizonte</span>
-          <span className="text-safety-green text-xs font-semibold">Alumínios</span>
+      <div className="p-4 border-b border-[#1e293b] flex flex-col items-center">
+        <div className="w-full flex justify-center py-1">
+          <img 
+            src="/logo_horizontal.png" 
+            alt="Novo Horizonte Alumínios" 
+            className="h-10 w-auto object-contain filter brightness-0 invert"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+              const textLogo = document.getElementById('sidebar-text-logo');
+              if (textLogo) textLogo.style.display = 'block';
+            }}
+          />
         </div>
-        <div className="text-[9px] uppercase tracking-widest opacity-55 mt-1.5 font-mono font-bold">
+        <div id="sidebar-text-logo" className="hidden text-white font-extrabold text-xs tracking-tight leading-none text-center uppercase">
+          <span>Novo Horizonte</span>
+          <span className="text-safety-green text-[10px] font-semibold block">Alumínios</span>
+        </div>
+        <div className="text-[8px] uppercase tracking-widest text-[#94a3b8]/40 mt-2 font-mono font-black text-center w-full">
           SST Interno
         </div>
       </div>

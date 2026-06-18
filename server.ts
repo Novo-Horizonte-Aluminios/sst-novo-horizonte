@@ -214,10 +214,29 @@ async function startServer() {
   });
 
   // Enterprise Tenants
+  // Helper to convert snake_case fields from database to camelCase for frontend compatibility
+  const toCamel = (row: any) => {
+    if (!row) return row;
+    const newRow: any = {};
+    for (const key of Object.keys(row)) {
+      const camelKey = key.replace(/_([a-z0-9])/g, (_, g) => g.toUpperCase());
+      let val = row[key];
+      // Auto-deserialize JSON arrays or objects
+      if ((camelKey === 'rootCauses5Whys' || camelKey === 'ishikawa') && typeof val === 'string') {
+        try {
+          val = JSON.parse(val);
+        } catch (e) {}
+      }
+      newRow[camelKey] = val;
+    }
+    return newRow;
+  };
+
+  // Enterprise Tenants
   app.get('/api/companies', async (req, res) => {
     try {
       const result = await query('SELECT * FROM companies');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -226,12 +245,12 @@ async function startServer() {
   app.post('/api/companies', async (req, res) => {
     try {
       const id = 'c_' + Date.now();
-      const { name, tradingName, cnpj, address } = req.body;
+      const { name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible } = req.body;
       await query(
-        'INSERT INTO companies (id, name, trading_name, cnpj, address) VALUES ($1, $2, $3, $4, $5)',
-        [id, name, tradingName, cnpj, address]
+        'INSERT INTO companies (id, name, trading_name, cnpj, address, cnae, risk_degree, sst_responsible, rh_responsible) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        [id, name, tradingName, cnpj, address, cnae, riskDegree || null, sstResponsible || null, rhResponsible || null]
       );
-      res.status(201).json({ id, name, tradingName, cnpj, address });
+      res.status(201).json({ id, name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -241,7 +260,7 @@ async function startServer() {
   app.get('/api/employees', async (req, res) => {
     try {
       const result = await query('SELECT * FROM employees');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -251,12 +270,12 @@ async function startServer() {
     try {
       const id = 'e_' + Date.now();
       const status = 'Ativo';
-      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, phone, email } = req.body;
+      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, phone, email, signature, photoUrl } = req.body;
       await query(
-        'INSERT INTO employees (id, name, cpf, rg, birth_date, matricula, company_id, sector, role, manager, admission_date, status, phone, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)',
-        [id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email]
+        'INSERT INTO employees (id, name, cpf, rg, birth_date, matricula, company_id, sector, role, manager, admission_date, status, phone, email, signature, photo_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)',
+        [id, name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null]
       );
-      res.status(201).json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email });
+      res.status(201).json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -265,16 +284,16 @@ async function startServer() {
   app.put('/api/employees/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email } = req.body;
+      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl } = req.body;
       
       const check = await query('SELECT id FROM employees WHERE id = $1', [id]);
       if (check.rows.length === 0) return res.status(404).json({ error: 'Employee not found' });
 
       await query(
-        'UPDATE employees SET name=$1, cpf=$2, rg=$3, birth_date=$4, matricula=$5, company_id=$6, sector=$7, role=$8, manager=$9, admission_date=$10, status=$11, phone=$12, email=$13 WHERE id=$14',
-        [name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, id]
+        'UPDATE employees SET name=$1, cpf=$2, rg=$3, birth_date=$4, matricula=$5, company_id=$6, sector=$7, role=$8, manager=$9, admission_date=$10, status=$11, phone=$12, email=$13, signature=$14, photo_url=$15 WHERE id=$16',
+        [name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null, id]
       );
-      res.json({ id, ...req.body });
+      res.json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -285,7 +304,7 @@ async function startServer() {
       const { id } = req.params;
       const result = await query('DELETE FROM employees WHERE id = $1 RETURNING *', [id]);
       if (result.rows.length > 0) {
-        res.json(result.rows[0]);
+        res.json(toCamel(result.rows[0]));
       } else {
         res.status(404).json({ error: 'Employee not found' });
       }
@@ -298,7 +317,7 @@ async function startServer() {
   app.get('/api/ppes', async (req, res) => {
     try {
       const result = await query('SELECT * FROM ppes');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -307,14 +326,15 @@ async function startServer() {
   app.post('/api/ppes', async (req, res) => {
     try {
       const id = 'p_' + Date.now();
-      const { name, ca, validityDate, stock, minStock, description } = req.body;
-      const stockCount = stock || 0;
-      const minStockCount = minStock || 0;
+      const { name, ca, validityDate, stock, minStock, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus, fispqRelation, manualUrl } = req.body;
+      const stockCount = stock !== undefined ? stock : (req.body.stockCount || 0);
+      const minStockCount = minStock !== undefined ? minStock : (req.body.minStock || 0);
+      const currentCaStatus = caStatus || 'Válido';
       await query(
-        'INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        [id, name, ca, validityDate, stockCount, minStockCount, description]
+        'INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description, internal_code, bar_code, brand, manufacturer, category, ca_number, ca_issue_date, ca_expiry_date, ca_status, fispq_relation, manual_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)',
+        [id, name, ca || caNumber, validityDate || caExpiryDate || null, stockCount, minStockCount, description, internalCode || null, barCode || null, brand || null, manufacturer || null, category || null, caNumber || ca || null, caIssueDate || null, caExpiryDate || validityDate || null, currentCaStatus, fispqRelation || null, manualUrl || null]
       );
-      res.status(201).json({ id, name, ca, validityDate, stockCount, minStockCount, description, caStatus: 'Válido' });
+      res.status(201).json({ id, name, ca, validityDate, stockCount, minStockCount, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus: currentCaStatus, fispqRelation, manualUrl });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -332,7 +352,8 @@ async function startServer() {
       if (stockCount !== undefined) {
         await query('UPDATE ppes SET stock = $1 WHERE id = $2', [parseInt(stockCount), id]);
       }
-      res.json({ ...check.rows[0], stock: stockCount !== undefined ? parseInt(stockCount) : check.rows[0].stock });
+      const updated = await query('SELECT * FROM ppes WHERE id = $1', [id]);
+      res.json(toCamel(updated.rows[0]));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -348,10 +369,10 @@ async function startServer() {
         const newStock = p.stock + deficit;
         await query('UPDATE ppes SET stock = $1 WHERE id = $2', [newStock, p.id]);
         p.stock = newStock;
-        updated.push(p);
+        updated.push(toCamel(p));
       }
       const allPpes = await query('SELECT * FROM ppes');
-      res.json({ success: true, updated, allPpes: allPpes.rows });
+      res.json({ success: true, updated, allPpes: allPpes.rows.map(toCamel) });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -361,7 +382,7 @@ async function startServer() {
   app.get('/api/deliveries', async (req, res) => {
     try {
       const result = await query('SELECT * FROM deliveries');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -371,9 +392,9 @@ async function startServer() {
     try {
       const id = 'd_' + Date.now();
       const deliveryDate = new Date().toISOString().split('T')[0];
-      const status = 'Entregue';
-      const { ppeId, employeeId, quantity } = req.body;
+      const { ppeId, employeeId, quantity, employeeName, ppeName, caNumber, reason, signingMethod, signatureData, selfieUrl, status } = req.body;
       const qty = quantity || 1;
+      const currentStatus = status || 'Entregue';
 
       // Decrement stock if possible
       const ppe = await query('SELECT stock FROM ppes WHERE id = $1', [ppeId]);
@@ -383,10 +404,10 @@ async function startServer() {
       }
 
       await query(
-        'INSERT INTO deliveries (id, delivery_date, status, ppe_id, employee_id, quantity) VALUES ($1, $2, $3, $4, $5, $6)',
-        [id, deliveryDate, status, ppeId, employeeId, qty]
+        'INSERT INTO deliveries (id, delivery_date, status, ppe_id, employee_id, quantity, employee_name, ppe_name, ca_number, reason, signing_method, signature_data, selfie_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)',
+        [id, deliveryDate, currentStatus, ppeId, employeeId, qty, employeeName || null, ppeName || null, caNumber || null, reason || null, signingMethod || null, signatureData || null, selfieUrl || null]
       );
-      res.status(201).json({ id, deliveryDate, status, ppeId, employeeId, quantity: qty });
+      res.status(201).json({ id, deliveryDate, status: currentStatus, ppeId, employeeId, quantity: qty, employeeName, ppeName, caNumber, reason, signingMethod, signatureData, selfieUrl });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -396,7 +417,7 @@ async function startServer() {
   app.get('/api/trainings', async (req, res) => {
     try {
       const result = await query('SELECT * FROM trainings');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -405,7 +426,7 @@ async function startServer() {
   app.get('/api/employee-trainings', async (req, res) => {
     try {
       const result = await query('SELECT * FROM employee_trainings');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -414,13 +435,13 @@ async function startServer() {
   app.post('/api/employee-trainings', async (req, res) => {
     try {
       const id = 'et_' + Date.now();
-      const status = 'Aprovado';
-      const { employeeId, trainingId } = req.body;
+      const { employeeId, trainingId, employeeName, trainingTitle, nr, issueDate, expiryDate, score, status } = req.body;
+      const currentStatus = status || 'Aprovado';
       await query(
-        'INSERT INTO employee_trainings (id, employee_id, training_id, status) VALUES ($1, $2, $3, $4)',
-        [id, employeeId, trainingId, status]
+        'INSERT INTO employee_trainings (id, employee_id, training_id, status, employee_name, training_title, nr, issue_date, expiry_date, score) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+        [id, employeeId, trainingId, currentStatus, employeeName || null, trainingTitle || null, nr || null, issueDate || null, expiryDate || null, score || null]
       );
-      res.status(201).json({ id, employeeId, trainingId, status });
+      res.status(201).json({ id, employeeId, trainingId, status: currentStatus, employeeName, trainingTitle, nr, issueDate, expiryDate, score });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -430,7 +451,7 @@ async function startServer() {
   app.get('/api/accidents', async (req, res) => {
     try {
       const result = await query('SELECT * FROM accidents');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -439,13 +460,16 @@ async function startServer() {
   app.post('/api/accidents', async (req, res) => {
     try {
       const id = 'a_' + Date.now();
-      const status = 'Em Investigação';
-      const { description } = req.body;
+      const { date, type, reporterName, sector, description, rootCauses5Whys, ishikawa, severity, status } = req.body;
+      const currentStatus = status || 'Registrado';
+      const rootCausesStr = Array.isArray(rootCauses5Whys) ? JSON.stringify(rootCauses5Whys) : '[]';
+      const ishikawaStr = ishikawa && typeof ishikawa === 'object' ? JSON.stringify(ishikawa) : '{}';
+
       await query(
-        'INSERT INTO accidents (id, status, description) VALUES ($1, $2, $3)',
-        [id, status, description]
+        'INSERT INTO accidents (id, status, description, date, type, reporter_name, sector, severity, root_causes_5whys, ishikawa) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+        [id, currentStatus, description, date || null, type || null, reporterName || null, sector || null, severity || null, rootCausesStr, ishikawaStr]
       );
-      res.status(201).json({ id, status, description });
+      res.status(201).json({ id, status: currentStatus, description, date, type, reporterName, sector, severity, rootCauses5Whys, ishikawa });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -454,7 +478,7 @@ async function startServer() {
   app.get('/api/action-plans', async (req, res) => {
     try {
       const result = await query('SELECT * FROM action_plans');
-      res.json(result.rows);
+      res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -463,13 +487,13 @@ async function startServer() {
   app.post('/api/action-plans', async (req, res) => {
     try {
       const id = 'ap_' + Date.now();
-      const status = 'Pendente';
-      const { title, responsible, deadline } = req.body;
+      const { title, responsible, deadline, accidentId, status, evidence } = req.body;
+      const currentStatus = status || 'Pendente';
       await query(
-        'INSERT INTO action_plans (id, status, title, responsible, deadline) VALUES ($1, $2, $3, $4, $5)',
-        [id, status, title, responsible, deadline]
+        'INSERT INTO action_plans (id, status, title, responsible, deadline, accident_id, evidence) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [id, currentStatus, title, responsible, deadline || null, accidentId || null, evidence || null]
       );
-      res.status(201).json({ id, status, title, responsible, deadline });
+      res.status(201).json({ id, status: currentStatus, title, responsible, deadline, accidentId, evidence });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -478,16 +502,16 @@ async function startServer() {
   app.put('/api/action-plans/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const { status, title, responsible, deadline } = req.body;
+      const { status, title, responsible, deadline, accidentId, evidence } = req.body;
       
       const check = await query('SELECT id FROM action_plans WHERE id = $1', [id]);
       if (check.rows.length === 0) return res.status(404).json({ error: 'Action plan not found' });
 
       await query(
-        'UPDATE action_plans SET status=$1, title=$2, responsible=$3, deadline=$4 WHERE id=$5',
-        [status, title, responsible, deadline, id]
+        'UPDATE action_plans SET status=$1, title=$2, responsible=$3, deadline=$4, accident_id=$5, evidence=$6 WHERE id=$7',
+        [status, title, responsible, deadline || null, accidentId || null, evidence || null, id]
       );
-      res.json({ id, status, title, responsible, deadline });
+      res.json({ id, status, title, responsible, deadline, accidentId, evidence });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
