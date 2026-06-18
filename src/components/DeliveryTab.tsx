@@ -670,7 +670,7 @@ export default function DeliveryTab({
                   const colabName  = activeReceiptEmployee.name;
 
                   return (
-                    <div className="px-3 py-4 mt-4 border-t-2 border-slate-800 grid grid-cols-3 gap-6 text-[10px]">
+                    <div className="px-10 py-4 mt-6 border-t-2 border-slate-800 grid grid-cols-2 gap-16 text-xs">
 
                       {/* SST */}
                       <div className="text-center">
@@ -681,8 +681,8 @@ export default function DeliveryTab({
                           </p>
                         </div>
                         <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1 tracking-wider text-xs">Responsável SST</p>
-                        <p className="text-slate-500 text-[9px]">{sstName}</p>
+                        <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Responsável SST</p>
+                        <p className="text-slate-500 text-[10px]">{sstName}</p>
                       </div>
 
                       {/* Colaborador(a) */}
@@ -694,21 +694,8 @@ export default function DeliveryTab({
                           </p>
                         </div>
                         <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1 tracking-wider text-xs">Colaborador(a)</p>
-                        <p className="text-slate-500 text-[9px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
-                      </div>
-
-                      {/* Gestor RH */}
-                      <div className="text-center">
-                        <div className="relative h-16 flex items-end justify-center pb-1">
-                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '26px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
-                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
-                            {rhName}
-                          </p>
-                        </div>
-                        <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1 tracking-wider text-xs">Gestor / RH</p>
-                        <p className="text-slate-500 text-[9px]">{rhName}</p>
+                        <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Colaborador(a)</p>
+                        <p className="text-slate-500 text-[10px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
                       </div>
 
                     </div>
