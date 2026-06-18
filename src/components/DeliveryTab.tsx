@@ -551,7 +551,7 @@ export default function DeliveryTab({
               /* =====================================================
                  FICHA PROFISSIONAL NR-06 — Modelo tabular regulamentar
                  ===================================================== */
-              <div className="print-receipt bg-white border border-slate-300 font-sans text-[9px] text-slate-800" style={{fontFamily: 'Arial, sans-serif'}}>
+              <div className="print-receipt bg-white border border-slate-300 text-[9px] text-slate-800" style={{fontFamily: "'Inter', sans-serif"}}>
 
                 {/* ── CABEÇALHO ── */}
                 <div className="flex items-center border-b-2 border-slate-700 px-3 py-2 gap-3">
