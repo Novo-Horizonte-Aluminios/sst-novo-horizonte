@@ -575,16 +575,16 @@ export default function DeliveryTab({
                   </div>
 
                   {/* Logo da empresa */}
-                  <div className="shrink-0 text-right">
-                    <p className="text-[11px] font-extrabold text-green-700 leading-tight uppercase">{currentCompany?.tradingName || currentCompany?.name}</p>
-                    <p className="text-[8px] text-slate-500">Segurança do Trabalho</p>
+                  <div className="shrink-0 text-right flex flex-col items-end justify-center">
+                    <img src="/logo_horizontal.png" alt="Novo Horizonte Alumínios" className="h-8 object-contain mb-1" />
+                    <p className="text-[8px] text-slate-500 font-semibold uppercase">Segurança do Trabalho</p>
                   </div>
                 </div>
 
                 {/* ── DADOS DA EMPRESA E COLABORADOR ── */}
                 <div className="border-b border-slate-300 px-3 py-2 grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9px]">
                   <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Empresa:</span><span>{currentCompany?.name}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Admissão:</span><span>{activeReceiptEmployee.admissionDate || '—'}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Admissão:</span><span>{activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—'}</span></div>
                   <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Colaborador:</span><span className="font-semibold">{activeReceiptEmployee.name}</span></div>
                   <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">CNPJ:</span><span>{currentCompany?.cnpj}</span></div>
                   <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Cargo:</span><span>{activeReceiptEmployee.role}</span></div>
@@ -613,7 +613,9 @@ export default function DeliveryTab({
                       <tr key={del.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                         <td className="border border-slate-300 px-1.5 py-2 text-center font-bold">{String(del.quantity).padStart(2, '0')}</td>
                         <td className="border border-slate-300 px-1.5 py-2 font-semibold uppercase">{del.ppeName}</td>
-                        <td className="border border-slate-300 px-1.5 py-2 text-center font-mono">{del.deliveryDate}</td>
+                        <td className="border border-slate-300 px-1.5 py-2 text-center font-mono">
+                          {del.deliveryDate ? new Date(del.deliveryDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—'}
+                        </td>
                         <td className="border border-slate-300 px-1.5 py-2 text-center font-mono">{del.caNumber}</td>
                         <td className="border border-slate-300 px-1.5 py-2 text-center">{del.reason}</td>
                         <td className="border border-slate-300 px-1.5 py-2 text-center">
