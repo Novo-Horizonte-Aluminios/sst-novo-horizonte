@@ -4,8 +4,6 @@ import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
-
-import dotenv from 'dotenv';
 import { query, initDb } from './src/db.js';
 
 dotenv.config();
@@ -93,8 +91,13 @@ const db = {
 };
 
 async function startServer() {
-  // Inicializa as tabelas do PostgreSQL no startup
-  await initDb();
+  // Inicializa as tabelas do PostgreSQL no startup (tolerante a falhas)
+  try {
+    await initDb();
+    console.log('Banco de dados inicializado com sucesso.');
+  } catch (err) {
+    console.error('AVISO: Não foi possível conectar ao banco de dados. O servidor continuará com dados em memória.', err);
+  }
 
   const app = express();
   app.use(express.json({ limit: '10mb' }));
