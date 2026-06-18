@@ -16,7 +16,9 @@ import {
   AlertCircle,
   QrCode,
   Smartphone,
-  Send
+  Send,
+  Search,
+  ChevronDown
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, Company } from '../types';
 import { exportDeliveriesToExcel, exportDeliveriesToPDF } from '../utils/exportUtils';
@@ -65,6 +67,29 @@ export default function DeliveryTab({
 
   // Printable selected employee receipt
   const [selectedReceiptEmpId, setSelectedReceiptEmpId] = useState('');
+
+  // Combobox states
+  const [searchTermDelivery, setSearchTermDelivery] = useState('');
+  const [isOpenDelivery, setIsOpenDelivery] = useState(false);
+  const [searchTermReceipt, setSearchTermReceipt] = useState('');
+  const [isOpenReceipt, setIsOpenReceipt] = useState(false);
+
+  // Refs for click outside
+  const deliveryDropdownRef = useRef<HTMLDivElement>(null);
+  const receiptDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (deliveryDropdownRef.current && !deliveryDropdownRef.current.contains(event.target as Node)) {
+        setIsOpenDelivery(false);
+      }
+      if (receiptDropdownRef.current && !receiptDropdownRef.current.contains(event.target as Node)) {
+        setIsOpenReceipt(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // System users for auto-populating receipt signatures
   const [systemUsers, setSystemUsers] = useState<{id: string; name: string; role: string}[]>([]);
@@ -225,6 +250,32 @@ export default function DeliveryTab({
   const activeReceiptEmployee = employees.find(e => e.id === selectedReceiptEmpId);
   const activeReceiptDeliveries = deliveries.filter(d => d.employeeId === selectedReceiptEmpId);
 
+  // Helper variables for combobox filtering
+  const selectedEmployeeObj = companyEmployees.find(e => e.id === selectedEmpId);
+  const filteredEmployeesDelivery = companyEmployees.filter(emp => {
+    const term = searchTermDelivery.toLowerCase();
+    return (
+      emp.name.toLowerCase().includes(term) ||
+      (emp.matricula && emp.matricula.toLowerCase().includes(term)) ||
+      (emp.cpf && emp.cpf.toLowerCase().includes(term)) ||
+      (emp.role && emp.role.toLowerCase().includes(term)) ||
+      (emp.sector && emp.sector.toLowerCase().includes(term))
+    );
+  });
+
+  const filteredEmployeesReceipt = employees
+    .filter(e => e.companyId === activeCompanyId)
+    .filter(emp => {
+      const term = searchTermReceipt.toLowerCase();
+      return (
+        emp.name.toLowerCase().includes(term) ||
+        (emp.matricula && emp.matricula.toLowerCase().includes(term)) ||
+        (emp.cpf && emp.cpf.toLowerCase().includes(term)) ||
+        (emp.role && emp.role.toLowerCase().includes(term)) ||
+        (emp.sector && emp.sector.toLowerCase().includes(term))
+      );
+    });
+
   return (
     <div className="space-y-4 text-xs">
       
@@ -265,24 +316,67 @@ export default function DeliveryTab({
             <form onSubmit={handleSubmitDelivery} className="space-y-3 text-slate-700">
               
               {/* Select target worker */}
-              <div>
+              <div className="relative" ref={deliveryDropdownRef}>
                 <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Colaborador Destinatário</label>
-                <select
-                  required
-                  value={selectedEmpId}
-                  onChange={(e) => {
-                    setSelectedEmpId(e.target.value);
-                    if (!selectedReceiptEmpId) setSelectedReceiptEmpId(e.target.value);
-                  }}
-                  className="w-full border border-slate-200 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white text-[11px]"
+                <input type="hidden" name="employeeId" value={selectedEmpId} required />
+                <button
+                  type="button"
+                  onClick={() => setIsOpenDelivery(!isOpenDelivery)}
+                  className="w-full border border-slate-200 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white text-[11px] text-left flex justify-between items-center cursor-pointer"
                 >
-                  <option value="">Selecione o Colaborador...</option>
-                  {companyEmployees.map((emp) => (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.role} - {emp.matricula})
-                    </option>
-                  ))}
-                </select>
+                  <span className={selectedEmployeeObj ? "text-slate-800 font-medium" : "text-slate-400"}>
+                    {selectedEmployeeObj 
+                      ? `${selectedEmployeeObj.name} (${selectedEmployeeObj.role} - ${selectedEmployeeObj.matricula})`
+                      : "Selecione o Colaborador..."}
+                  </span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+
+                {isOpenDelivery && (
+                  <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded shadow-lg max-h-60 flex flex-col">
+                    <div className="p-1.5 border-b border-slate-100 flex items-center gap-1.5 bg-slate-50">
+                      <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <input
+                        type="text"
+                        placeholder="Buscar por nome, setor, matrícula, CPF..."
+                        value={searchTermDelivery}
+                        onChange={(e) => setSearchTermDelivery(e.target.value)}
+                        className="w-full bg-transparent border-none focus:outline-none text-[11px] text-slate-700 py-0.5"
+                        autoFocus
+                      />
+                    </div>
+                    <ul className="overflow-y-auto py-1 max-h-48 text-[11px]">
+                      {filteredEmployeesDelivery.length === 0 ? (
+                        <li className="p-2 text-slate-400 italic text-center">Nenhum colaborador encontrado</li>
+                      ) : (
+                        filteredEmployeesDelivery.map((emp) => (
+                          <li
+                            key={emp.id}
+                            onClick={() => {
+                              setSelectedEmpId(emp.id);
+                              if (!selectedReceiptEmpId) setSelectedReceiptEmpId(emp.id);
+                              setIsOpenDelivery(false);
+                              setSearchTermDelivery('');
+                            }}
+                            className={`p-2 px-3 hover:bg-safety-green/10 hover:text-safety-green cursor-pointer flex justify-between items-center transition-colors ${
+                              selectedEmpId === emp.id ? "bg-safety-green/5 text-safety-green font-bold" : "text-slate-700"
+                            }`}
+                          >
+                            <div>
+                              <span className="block font-medium">{emp.name}</span>
+                              <span className="block text-[9px] text-slate-400 font-normal">
+                                {emp.role} {emp.sector ? `• ${emp.sector}` : ''}
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                              Mat: {emp.matricula}
+                            </span>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {/* Select PPE and Qty */}
@@ -561,16 +655,58 @@ export default function DeliveryTab({
               </div>
               
               {/* Select recipe to check */}
-              <select
-                value={selectedReceiptEmpId}
-                onChange={(e) => setSelectedReceiptEmpId(e.target.value)}
-                className="border border-slate-200 rounded p-1 text-[10px] bg-white font-sans focus:outline-none"
-              >
-                <option value="">Selecione Colaborador...</option>
-                {employees.filter(e => e.companyId === activeCompanyId).map(e => (
-                  <option key={e.id} value={e.id}>{e.name}</option>
-                ))}
-              </select>
+              <div className="relative" ref={receiptDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsOpenReceipt(!isOpenReceipt)}
+                  className="border border-slate-200 rounded p-1.5 px-2.5 text-[10px] bg-white text-slate-700 font-sans focus:outline-none flex justify-between items-center gap-1.5 min-w-[160px] cursor-pointer"
+                >
+                  <span className={activeReceiptEmployee ? "text-slate-800 font-medium font-semibold" : "text-slate-450"}>
+                    {activeReceiptEmployee ? activeReceiptEmployee.name : "Selecione Colaborador..."}
+                  </span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+
+                {isOpenReceipt && (
+                  <div className="absolute right-0 z-50 w-64 mt-1 bg-white border border-slate-200 rounded shadow-lg max-h-60 flex flex-col">
+                    <div className="p-1.5 border-b border-slate-100 flex items-center gap-1.5 bg-slate-50">
+                      <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <input
+                        type="text"
+                        placeholder="Buscar por nome, setor, matrícula..."
+                        value={searchTermReceipt}
+                        onChange={(e) => setSearchTermReceipt(e.target.value)}
+                        className="w-full bg-transparent border-none focus:outline-none text-[10px] text-slate-700 py-0.5"
+                        autoFocus
+                      />
+                    </div>
+                    <ul className="overflow-y-auto py-1 max-h-48 text-[10px]">
+                      {filteredEmployeesReceipt.length === 0 ? (
+                        <li className="p-2 text-slate-400 italic text-center">Nenhum colaborador encontrado</li>
+                      ) : (
+                        filteredEmployeesReceipt.map((emp) => (
+                          <li
+                            key={emp.id}
+                            onClick={() => {
+                              setSelectedReceiptEmpId(emp.id);
+                              setIsOpenReceipt(false);
+                              setSearchTermReceipt('');
+                            }}
+                            className={`p-1.5 px-2.5 hover:bg-slate-50 cursor-pointer flex flex-col justify-start transition-colors ${
+                              selectedReceiptEmpId === emp.id ? "bg-slate-50 text-slate-950 font-bold" : "text-slate-600"
+                            }`}
+                          >
+                            <span className="font-semibold text-[10px]">{emp.name}</span>
+                            <span className="text-[8.5px] text-slate-400 font-normal">
+                              Mat: {emp.matricula} {emp.role ? `• ${emp.role}` : ''}
+                            </span>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
 
             {activeReceiptEmployee ? (
