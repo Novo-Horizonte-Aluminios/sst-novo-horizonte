@@ -156,7 +156,7 @@ async function startServer() {
   // User Management API
   app.get('/api/users', async (req, res) => {
     try {
-      const result = await query('SELECT id, username, name, role, created_at FROM users ORDER BY created_at DESC');
+      const result = await query('SELECT id, username, name, role, email, whatsapp, created_at FROM users ORDER BY created_at DESC');
       res.json(result.rows);
     } catch (e: any) {
       console.error(e);
@@ -166,7 +166,7 @@ async function startServer() {
 
   app.post('/api/users', async (req, res) => {
     try {
-      const { username, password, name, role } = req.body;
+      const { username, password, name, role, email, whatsapp } = req.body;
       if (!username || !password || !name || !role) {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
       }
@@ -180,12 +180,61 @@ async function startServer() {
       const id = 'u_' + Date.now();
       const hash = crypto.createHash('sha256').update(password).digest('hex');
       
+      // Add email and whatsapp columns if they don't exist (safe migration)
+      try {
+        await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT');
+        await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS whatsapp TEXT');
+      } catch (_) {}
+
       await query(
-        'INSERT INTO users (id, username, password_hash, name, role) VALUES ($1, $2, $3, $4, $5)',
-        [id, username.toLowerCase().trim(), hash, name, role]
+        'INSERT INTO users (id, username, password_hash, name, role, email, whatsapp) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [id, username.toLowerCase().trim(), hash, name, role, email || null, whatsapp || null]
       );
       
-      res.status(201).json({ id, username: username.toLowerCase().trim(), name, role });
+      res.status(201).json({ id, username: username.toLowerCase().trim(), name, role, email, whatsapp });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro no servidor' });
+    }
+  });
+
+  // Update user profile (self-edit or admin editing any user)
+  app.put('/api/users/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, email, whatsapp, password, role, requesterId, requesterRole } = req.body;
+
+      // Authorization: only Admin can change role or edit others
+      const isSelf = requesterId === id;
+      const isAdmin = requesterRole === 'Admin';
+
+      if (!isSelf && !isAdmin) {
+        return res.status(403).json({ error: 'Sem permissão para editar este usuário.' });
+      }
+
+      // Build dynamic update
+      const updates: string[] = ['name=$1', 'email=$2', 'whatsapp=$3'];
+      const values: any[] = [name, email || null, whatsapp || null];
+      let idx = 4;
+
+      // Only admin can change role
+      if (isAdmin && role) {
+        updates.push(`role=$${idx++}`);
+        values.push(role);
+      }
+
+      // Password change (optional)
+      if (password && password.trim().length >= 4) {
+        const hash = crypto.createHash('sha256').update(password).digest('hex');
+        updates.push(`password_hash=$${idx++}`);
+        values.push(hash);
+      }
+
+      values.push(id);
+      await query(`UPDATE users SET ${updates.join(', ')} WHERE id=$${idx}`, values);
+
+      const updated = await query('SELECT id, username, name, role, email, whatsapp FROM users WHERE id=$1', [id]);
+      res.json(updated.rows[0]);
     } catch (e: any) {
       console.error(e);
       res.status(500).json({ error: 'Erro no servidor' });
