@@ -236,31 +236,7 @@ export default function DeliveryTab({
             Módulo de controle individual de EPIs e conformidade do eSocial S-2240. Gere de forma imediata laudos e planilhas regulamentares.
           </p>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              const comp = companies.find(c => c.id === activeCompanyId);
-              exportDeliveriesToExcel(deliveries, employees, comp ? comp.tradingName : "Novo Horizonte Alumínios");
-            }}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded transition cursor-pointer shadow-sm font-semibold"
-          >
-            <Download className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Exportar Excel</span>
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => {
-              const comp = companies.find(c => c.id === activeCompanyId);
-              exportDeliveriesToPDF(deliveries, employees, comp ? comp.tradingName : "Novo Horizonte Alumínios");
-            }}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 bg-slate-900 hover:bg-slate-950 text-white rounded transition cursor-pointer shadow-sm font-semibold"
-          >
-            <Printer className="w-3.5 h-3.5 text-amber-400" />
-            <span>Baixar PDF</span>
-          </button>
-        </div>
+
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
