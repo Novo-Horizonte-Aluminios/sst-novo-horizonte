@@ -18,10 +18,12 @@ interface UsersTabProps {
 const ROLE_COLORS: Record<string, string> = {
   Admin:       'bg-blue-50 text-blue-600 border border-blue-100',
   SST:         'bg-emerald-50 text-emerald-600 border border-emerald-100',
+  GestorRH:    'bg-pink-50 text-pink-600 border border-pink-100',
   Almoxarife:  'bg-amber-50 text-amber-600 border border-amber-100',
   Gestor:      'bg-violet-50 text-violet-600 border border-violet-100',
   Colaborador: 'bg-slate-100 text-slate-600 border border-slate-200',
 };
+
 
 export default function UsersTab({ currentUser }: UsersTabProps) {
   const isAdmin = currentUser.role === 'Admin';
@@ -257,6 +259,7 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
                   className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 px-2.5 text-xs outline-none transition-all">
                   <option value="SST">Técnico de Segurança (SST)</option>
                   <option value="Admin">Administrador do Sistema</option>
+                  <option value="GestorRH">Gestor de RH</option>
                   <option value="Almoxarife">Almoxarife (EPIs)</option>
                   <option value="Gestor">Gestor Geral</option>
                   <option value="Colaborador">Trabalhador / Operador</option>
@@ -416,6 +419,7 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
                     className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 px-2.5 text-xs outline-none disabled:opacity-50">
                     <option value="SST">Técnico de Segurança (SST)</option>
                     <option value="Admin">Administrador do Sistema</option>
+                    <option value="GestorRH">Gestor de RH</option>
                     <option value="Almoxarife">Almoxarife (EPIs)</option>
                     <option value="Gestor">Gestor Geral</option>
                     <option value="Colaborador">Trabalhador / Operador</option>
