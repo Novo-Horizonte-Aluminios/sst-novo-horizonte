@@ -138,10 +138,7 @@ export default function DeliveryTab({
     setBiometricError(null);
     setBiometricHash(null);
     try {
-      // Conecta ao Agente Futronic via HTTPS (porta 8443) para funcionar em sites HTTPS
-      // IMPORTANTE: Na primeira vez, o usuário precisa acessar https://localhost:8443 no Chrome
-      // e clicar em "Avançado > Continuar" para aceitar o certificado local autoassinado.
-      const response = await fetch('https://localhost:8443/scan');
+      const response = await fetch('http://localhost:8080/scan');
       if (!response.ok) {
         throw new Error('Falha na comunicação com o leitor.');
       }

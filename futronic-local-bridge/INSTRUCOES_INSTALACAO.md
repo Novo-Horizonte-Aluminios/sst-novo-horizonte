@@ -2,23 +2,19 @@
 
 Para que a leitura da biometria via Futronic FS80H funcione no Sistema Web, este "Agente Local" precisa estar rodando no plano de fundo do computador físico onde o leitor USB está conectado.
 
-## Passo a Passo para Computadores Novos
+## Passo a Passo Simplificado (Usando o Executável)
 
-1. **Instale o Node.js:**
-   - Baixe e instale a versão "LTS" (Long Term Support) do [Node.js](https://nodejs.org/pt-br/).
+1. **Copie o Executável:**
+   - Pegue o arquivo `FutronicBridge.exe` gerado e coloque em uma pasta segura no novo computador (ex: `C:\SST_Bridge\`).
 
-2. **Copie esta pasta:**
-   - Copie a pasta inteira `futronic-local-bridge` para o novo computador (ex: salve na pasta Documentos ou C:\).
+2. **Como fazer rodar sozinho ao ligar o PC (Início Automático):**
+   - No teclado, aperte a tecla **Windows + R**.
+   - Na janela "Executar" que vai abrir, digite: `shell:startup` e dê Enter.
+   - Uma pasta chamada "Inicializar" vai se abrir.
+   - Clique com o botão direito no arquivo `FutronicBridge.exe`, selecione "Copiar".
+   - Vá na pasta "Inicializar", clique com o botão direito e selecione **"Colar Atalho"**.
 
-3. **Inicie o Agente:**
-   - Abra a pasta copiada.
-   - Abra o **Terminal** ou **Prompt de Comando (CMD)** dentro desta pasta.
-   - Digite o comando: `npm install` (isso baixará as dependências, só precisa ser feito uma vez).
-   - Digite o comando: `node server.js`
-   
-4. **Pronto!**
-   - Uma tela preta ficará aberta informando: *"FUTRONIC FS80H - LOCAL BRIDGE AGENT | Servidor rodando na porta 8080"*.
-   - Basta minimizar esta tela e abrir o site do SST no Google Chrome normalmente.
-   - Quando você clicar em "Capturar Digital" no site, ele se comunicará invisivelmente com essa tela preta para ler o USB.
-
-> **DICA AVANÇADA:** Para evitar ter que abrir essa tela preta toda vez que o Windows iniciar, no futuro podemos compilar este código com ferramentas como o `pkg` ou `pm2` para rodar como um **Serviço do Windows** invisível.
+3. **Pronto!**
+   - Agora, toda vez que o computador for ligado, o Agente abrirá sozinho em segundo plano.
+   - Você pode dar dois cliques no `.exe` agora para iniciar a primeira vez sem precisar reiniciar.
+   - Ao abrir o sistema SST e clicar em "Capturar Digital", ele fará a leitura perfeitamente.
