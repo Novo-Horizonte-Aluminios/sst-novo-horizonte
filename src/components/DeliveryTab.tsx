@@ -50,6 +50,11 @@ export default function DeliveryTab({
   const [selfieOptionSelected, setSelfieOptionSelected] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150');
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // Biometric states
+  const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
+  const [biometricError, setBiometricError] = useState<string | null>(null);
+  const [biometricHash, setBiometricHash] = useState<string | null>(null);
+
   // Canvas drawing properties
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -128,6 +133,29 @@ export default function DeliveryTab({
     setHasSignaturePoints(false);
   };
 
+  const handleCaptureBiometrics = async () => {
+    setIsScanningBiometrics(true);
+    setBiometricError(null);
+    setBiometricHash(null);
+    try {
+      // Connect to the Futronic Local Bridge running on the host machine
+      const response = await fetch('http://localhost:8080/scan');
+      if (!response.ok) {
+        throw new Error('Falha na comunicação com o leitor.');
+      }
+      const data = await response.json();
+      if (data.success && data.hash) {
+        setBiometricHash(data.hash);
+      } else {
+        setBiometricError(data.error || 'Erro ao extrair biometria.');
+      }
+    } catch (err) {
+      setBiometricError('Agente Futronic Local não encontrado. Certifique-se de que o Bridge está rodando na porta 8080.');
+    } finally {
+      setIsScanningBiometrics(false);
+    }
+  };
+
   const handleSubmitDelivery = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEmpId || !selectedPpeId) {
@@ -151,7 +179,11 @@ export default function DeliveryTab({
     } else if (signingMethod === 'senha') {
       signatureValue = `PIN Assinado: ${pinNumber || 'MTE-9932'}`;
     } else if (signingMethod === 'biometria') {
-      signatureValue = `Hash Biométrico Integrado: SHA256-${Date.now()}`;
+      if (!biometricHash) {
+        alert('Por favor, efetue a captura da biometria primeiro.');
+        return;
+      }
+      signatureValue = `Biometria Futronic: ${biometricHash}`;
     } else {
       signatureValue = `Selfie Anexa: ${selfieOptionSelected}`;
     }
@@ -424,15 +456,28 @@ export default function DeliveryTab({
 
                   {signingMethod === 'biometria' && (
                     <div className="text-center py-3 space-y-1.5">
-                      <Fingerprint className="w-8 h-8 text-safety-green mx-auto animate-pulse" />
-                      <span className="font-bold text-slate-800 block text-[10px]">Sensor Capacitivo Integrado</span>
+                      <Fingerprint className={`w-8 h-8 mx-auto ${isScanningBiometrics ? 'text-blue-500 animate-spin' : 'text-safety-green animate-pulse'}`} />
+                      <span className="font-bold text-slate-800 block text-[10px]">Sensor Futronic FS80H</span>
                       <p className="text-[9px] text-slate-400 max-w-xs mx-auto">Posicione o polegar do funcionário no coletor associado ao terminal.</p>
+                      
+                      {biometricError && (
+                        <div className="text-red-500 text-[9px] font-bold mt-2 bg-red-50 p-1.5 rounded border border-red-200">
+                          {biometricError}
+                        </div>
+                      )}
+                      {biometricHash && (
+                        <div className="text-safety-green text-[9px] font-bold mt-2 bg-safety-green/10 p-1.5 rounded border border-safety-green/20 break-all">
+                          ✓ Digital Capturada com Sucesso
+                        </div>
+                      )}
+
                       <button
                         type="button"
-                        onClick={() => alert('Biometria biométrica registrada via USB-2')}
-                        className="bg-[#1e293b] hover:bg-[#0f172a] text-white font-bold px-2.5 py-1 rounded text-[9px] uppercase font-sans"
+                        onClick={handleCaptureBiometrics}
+                        disabled={isScanningBiometrics || !!biometricHash}
+                        className="bg-[#1e293b] hover:bg-[#0f172a] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-3 py-1.5 rounded text-[9px] uppercase font-sans mt-2"
                       >
-                        Capturação de Teste
+                        {isScanningBiometrics ? 'Aguardando Leitor...' : biometricHash ? 'Biometria Pronta' : 'Capturar Digital'}
                       </button>
                     </div>
                   )}
