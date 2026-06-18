@@ -68,6 +68,10 @@ export default function DeliveryTab({
   // Printable selected employee receipt
   const [selectedReceiptEmpId, setSelectedReceiptEmpId] = useState('');
 
+  // Filter states for receipt deliveries (defaults to current month and year)
+  const [filterMonth, setFilterMonth] = useState<string>(String(new Date().getMonth() + 1));
+  const [filterYear, setFilterYear] = useState<string>(String(new Date().getFullYear()));
+
   // Combobox states
   const [searchTermDelivery, setSearchTermDelivery] = useState('');
   const [isOpenDelivery, setIsOpenDelivery] = useState(false);
@@ -248,7 +252,16 @@ export default function DeliveryTab({
 
   // Receipt visual logic
   const activeReceiptEmployee = employees.find(e => e.id === selectedReceiptEmpId);
-  const activeReceiptDeliveries = deliveries.filter(d => d.employeeId === selectedReceiptEmpId);
+  const activeReceiptDeliveries = deliveries.filter(d => {
+    if (d.employeeId !== selectedReceiptEmpId) return false;
+    if (!d.deliveryDate) return false;
+    const date = new Date(d.deliveryDate);
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1;
+    const matchesMonth = filterMonth === 'all' || String(month) === filterMonth;
+    const matchesYear = filterYear === 'all' || String(year) === filterYear;
+    return matchesMonth && matchesYear;
+  });
 
   // Helper variables for combobox filtering
   const selectedEmployeeObj = companyEmployees.find(e => e.id === selectedEmpId);
@@ -354,7 +367,7 @@ export default function DeliveryTab({
                             key={emp.id}
                             onClick={() => {
                               setSelectedEmpId(emp.id);
-                              if (!selectedReceiptEmpId) setSelectedReceiptEmpId(emp.id);
+                              setSelectedReceiptEmpId(emp.id);
                               setIsOpenDelivery(false);
                               setSearchTermDelivery('');
                             }}
@@ -655,57 +668,40 @@ export default function DeliveryTab({
               </div>
               
               {/* Select recipe to check */}
-              <div className="relative" ref={receiptDropdownRef}>
-                <button
-                  type="button"
-                  onClick={() => setIsOpenReceipt(!isOpenReceipt)}
-                  className="border border-slate-200 rounded p-1.5 px-2.5 text-[10px] bg-white text-slate-700 font-sans focus:outline-none flex justify-between items-center gap-1.5 min-w-[160px] cursor-pointer"
+              {/* Filtro de Mês e Ano */}
+              <div className="flex items-center gap-1.5 text-[10px]">
+                <span className="text-slate-400 font-bold uppercase text-[9px]">Filtro:</span>
+                <select
+                  value={filterMonth}
+                  onChange={(e) => setFilterMonth(e.target.value)}
+                  className="border border-slate-200 rounded p-1 text-[10px] bg-white text-slate-700 font-semibold focus:outline-none focus:border-safety-green cursor-pointer"
                 >
-                  <span className={activeReceiptEmployee ? "text-slate-800 font-medium font-semibold" : "text-slate-450"}>
-                    {activeReceiptEmployee ? activeReceiptEmployee.name : "Selecione Colaborador..."}
-                  </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                </button>
+                  <option value="all">Mês (Todos)</option>
+                  <option value="1">Janeiro</option>
+                  <option value="2">Fevereiro</option>
+                  <option value="3">Março</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Maio</option>
+                  <option value="6">Junho</option>
+                  <option value="7">Julho</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Setembro</option>
+                  <option value="10">Outubro</option>
+                  <option value="11">Novembro</option>
+                  <option value="12">Dezembro</option>
+                </select>
 
-                {isOpenReceipt && (
-                  <div className="absolute right-0 z-50 w-64 mt-1 bg-white border border-slate-200 rounded shadow-lg max-h-60 flex flex-col">
-                    <div className="p-1.5 border-b border-slate-100 flex items-center gap-1.5 bg-slate-50">
-                      <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <input
-                        type="text"
-                        placeholder="Buscar por nome, setor, matrícula..."
-                        value={searchTermReceipt}
-                        onChange={(e) => setSearchTermReceipt(e.target.value)}
-                        className="w-full bg-transparent border-none focus:outline-none text-[10px] text-slate-700 py-0.5"
-                        autoFocus
-                      />
-                    </div>
-                    <ul className="overflow-y-auto py-1 max-h-48 text-[10px]">
-                      {filteredEmployeesReceipt.length === 0 ? (
-                        <li className="p-2 text-slate-400 italic text-center">Nenhum colaborador encontrado</li>
-                      ) : (
-                        filteredEmployeesReceipt.map((emp) => (
-                          <li
-                            key={emp.id}
-                            onClick={() => {
-                              setSelectedReceiptEmpId(emp.id);
-                              setIsOpenReceipt(false);
-                              setSearchTermReceipt('');
-                            }}
-                            className={`p-1.5 px-2.5 hover:bg-slate-50 cursor-pointer flex flex-col justify-start transition-colors ${
-                              selectedReceiptEmpId === emp.id ? "bg-slate-50 text-slate-950 font-bold" : "text-slate-600"
-                            }`}
-                          >
-                            <span className="font-semibold text-[10px]">{emp.name}</span>
-                            <span className="text-[8.5px] text-slate-400 font-normal">
-                              Mat: {emp.matricula} {emp.role ? `• ${emp.role}` : ''}
-                            </span>
-                          </li>
-                        ))
-                      )}
-                    </ul>
-                  </div>
-                )}
+                <select
+                  value={filterYear}
+                  onChange={(e) => setFilterYear(e.target.value)}
+                  className="border border-slate-200 rounded p-1 text-[10px] bg-white text-slate-700 font-semibold focus:outline-none focus:border-safety-green cursor-pointer"
+                >
+                  <option value="all">Ano (Todos)</option>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                </select>
               </div>
             </div>
 
