@@ -13,7 +13,10 @@ import {
   Sparkles,
   Download,
   Eye,
-  AlertCircle
+  AlertCircle,
+  QrCode,
+  Smartphone,
+  Send
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, Company } from '../types';
 import { exportDeliveriesToExcel, exportDeliveriesToPDF } from '../utils/exportUtils';
@@ -43,7 +46,7 @@ export default function DeliveryTab({
   const [selectedPpeId, setSelectedPpeId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [reason, setReason] = useState<'Entrega Inicial' | 'Substituição' | 'Extravio' | 'Danificado'>('Entrega Inicial');
-  const [signingMethod, setSigningMethod] = useState<'assinatura_digital' | 'biometria' | 'senha' | 'selfie'>('assinatura_digital');
+  const [signingMethod, setSigningMethod] = useState<'assinatura_digital' | 'biometria' | 'senha' | 'selfie' | 'link'>('assinatura_digital');
   
   // Custom states
   const [pinNumber, setPinNumber] = useState('');
@@ -338,7 +341,7 @@ export default function DeliveryTab({
               {/* Signing workflow configurations */}
               <div>
                 <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Método de Assinatura Regulatória (NR-06)</label>
-                <div className="grid grid-cols-4 gap-1.5 mb-2">
+                <div className="grid grid-cols-5 gap-1 mb-2">
                   <button
                     type="button"
                     onClick={() => setSigningMethod('assinatura_digital')}
@@ -389,6 +392,19 @@ export default function DeliveryTab({
                   >
                     <Camera className="w-3.5 h-3.5" />
                     <span className="text-[8px] uppercase tracking-tight">Selfie</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSigningMethod('link')}
+                    className={`p-2 rounded border text-center transition flex flex-col items-center gap-1 font-bold ${
+                      signingMethod === 'link' 
+                        ? 'border-safety-green bg-safety-green/10 text-safety-green' 
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span className="text-[8px] uppercase tracking-tight">Celular</span>
                   </button>
                 </div>
 
@@ -491,6 +507,33 @@ export default function DeliveryTab({
                           alt="Selfie check" 
                         />
                         <span className="text-[8px] font-mono text-safety-green font-bold mt-0.5 block uppercase">Câmera Ativa</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {signingMethod === 'link' && (
+                    <div className="flex flex-col items-center py-2 space-y-3">
+                      <div className="text-center space-y-1">
+                        <span className="text-[10px] text-slate-500 font-mono block">Assinatura no Celular do Colaborador</span>
+                        <p className="text-[9px] text-slate-400 max-w-[200px] leading-snug">Envie o link seguro para o WhatsApp ou mostre o QR Code para o funcionário assinar a ficha no próprio aparelho.</p>
+                      </div>
+                      
+                      <div className="flex gap-4 w-full justify-center">
+                        <button
+                          type="button"
+                          className="flex items-center gap-1.5 px-3 py-2 bg-[#25D366] hover:bg-[#1ebd57] text-white rounded font-bold text-[9px] uppercase transition shadow-sm"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          Enviar WhatsApp
+                        </button>
+                        
+                        <button
+                          type="button"
+                          className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded font-bold text-[9px] uppercase transition shadow-sm"
+                        >
+                          <QrCode className="w-3.5 h-3.5" />
+                          Gerar QR Code
+                        </button>
                       </div>
                     </div>
                   )}
@@ -620,6 +663,11 @@ export default function DeliveryTab({
                             </div>
                           ) : del.signingMethod === 'selfie' && del.selfieUrl ? (
                             <img src={del.selfieUrl} alt="Selfie" className="w-10 h-10 rounded-full object-cover mx-auto border border-slate-300" />
+                          ) : del.signingMethod === 'link' ? (
+                            <div className="flex flex-col items-center gap-0.5 py-1">
+                              <Smartphone className="w-5 h-5 text-purple-600" />
+                              <span className="text-[10px] font-bold text-purple-700 uppercase">Via Link</span>
+                            </div>
                           ) : (
                             <span className="text-slate-400 italic text-[10px]">—</span>
                           )}
