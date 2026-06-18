@@ -6,8 +6,8 @@ dotenv.config();
 // Configuração do pool de conexões com o PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // Se for acessar via Vercel a um banco externo, ssl pode ser necessário
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  // SSL desabilitado: banco PostgreSQL do Coolify não suporta SSL (rede interna Docker)
+  ssl: false
 });
 
 export const query = (text: string, params?: any[]) => pool.query(text, params);
