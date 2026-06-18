@@ -473,8 +473,15 @@ export default function DeliveryTab({
                           onChange={(e) => setSelfieOptionSelected(e.target.value)}
                           className="w-full border border-slate-200 bg-white rounded p-1 text-[9px] focus:outline-none"
                         >
-                          <option value="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150">Juliana Montenegro (Fração Industrial)</option>
-                          <option value="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150">Carlos Henrique (Logística Extrema)</option>
+                          {companyEmployees.length === 0 ? (
+                            <option value="">Nenhum colaborador cadastrado</option>
+                          ) : (
+                            companyEmployees.map(emp => (
+                              <option key={emp.id} value={emp.photoUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150"}>
+                                {emp.name} {emp.sector ? `(${emp.sector})` : ''}
+                              </option>
+                            ))
+                          )}
                         </select>
                       </div>
                       <div className="col-span-1 text-center">
