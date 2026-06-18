@@ -551,7 +551,7 @@ export default function DeliveryTab({
               /* =====================================================
                  FICHA PROFISSIONAL NR-06 — Modelo tabular regulamentar
                  ===================================================== */
-              <div className="print-receipt bg-white border border-slate-300 text-[9px] text-slate-800" style={{fontFamily: "'Inter', sans-serif"}}>
+              <div className="print-receipt bg-white border border-slate-300 text-xs text-slate-800" style={{fontFamily: "'Inter', sans-serif"}}>
 
                 {/* ── CABEÇALHO ── */}
                 <div className="flex items-center border-b-2 border-slate-700 px-3 py-2 gap-3">
@@ -568,36 +568,36 @@ export default function DeliveryTab({
 
                   {/* Título central */}
                   <div className="flex-1 text-center">
-                    <p className="text-[8px] font-bold text-slate-500 uppercase">Portaria SIT/MTE n.º 107 — NR-06</p>
-                    <h1 className="text-[13px] font-extrabold text-slate-900 uppercase leading-tight">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase">Portaria SIT/MTE n.º 107 — NR-06</p>
+                    <h1 className="text-base font-extrabold text-slate-900 uppercase leading-tight">
                       FICHA DE FORNECIMENTO DE<br />EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL (EPI)
                     </h1>
                   </div>
 
                   {/* Logo da empresa */}
                   <div className="shrink-0 text-right flex flex-col items-end justify-center">
-                    <img src="/logo_horizontal.png" alt="Novo Horizonte Alumínios" className="h-8 object-contain mb-1" />
-                    <p className="text-[8px] text-slate-500 font-semibold uppercase">Segurança do Trabalho</p>
+                    <img src="/logo_horizontal.png" alt="Novo Horizonte Alumínios" className="h-10 object-contain mb-1" />
+                    <p className="text-[10px] text-slate-500 font-semibold uppercase">Segurança do Trabalho</p>
                   </div>
                 </div>
 
                 {/* ── DADOS DA EMPRESA E COLABORADOR ── */}
-                <div className="border-b border-slate-300 px-3 py-2 grid grid-cols-2 gap-x-6 gap-y-0.5 text-[9px]">
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Empresa:</span><span>{currentCompany?.name}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Admissão:</span><span>{activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—'}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Colaborador:</span><span className="font-semibold">{activeReceiptEmployee.name}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">CNPJ:</span><span>{currentCompany?.cnpj}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Cargo:</span><span>{activeReceiptEmployee.role}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">CPF:</span><span>{activeReceiptEmployee.cpf}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Setor:</span><span>{activeReceiptEmployee.sector}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-24 shrink-0">Nº Matrícula:</span><span className="font-bold">{activeReceiptEmployee.matricula}</span></div>
-                  <div className="col-span-2 text-center mt-1 font-bold text-[9px] uppercase border-t border-slate-200 pt-1">
+                <div className="border-b border-slate-300 px-3 py-3 grid grid-cols-2 gap-x-6 gap-y-1 text-xs">
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Empresa:</span><span>{currentCompany?.name}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Admissão:</span><span>{activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—'}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Colaborador:</span><span className="font-semibold">{activeReceiptEmployee.name}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">CNPJ:</span><span>{currentCompany?.cnpj}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Cargo:</span><span>{activeReceiptEmployee.role}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">CPF:</span><span>{activeReceiptEmployee.cpf}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Setor:</span><span>{activeReceiptEmployee.sector}</span></div>
+                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Nº Matrícula:</span><span className="font-bold">{activeReceiptEmployee.matricula}</span></div>
+                  <div className="col-span-2 text-center mt-2 font-bold text-xs uppercase border-t border-slate-200 pt-2">
                     Data de Emissão do Relatório: {new Date().toLocaleDateString('pt-BR')}
                   </div>
                 </div>
 
                 {/* ── TABELA DE EPIs ── */}
-                <table className="w-full border-collapse text-[8.5px]">
+                <table className="w-full border-collapse text-xs">
                   <thead>
                     <tr className="bg-slate-700 text-white">
                       <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-10">QTDE</th>
@@ -621,24 +621,24 @@ export default function DeliveryTab({
                         <td className="border border-slate-300 px-1.5 py-2 text-center">
                           {/* Coluna adaptável por método de assinatura */}
                           {del.signingMethod === 'assinatura_digital' && del.signatureData && del.signatureData.startsWith('data:') ? (
-                            <img src={del.signatureData} alt="Assinatura" className="h-8 mx-auto object-contain" />
+                            <img src={del.signatureData} alt="Assinatura" className="h-10 mx-auto object-contain" />
                           ) : del.signingMethod === 'biometria' ? (
-                            <div className="flex flex-col items-center gap-0.5">
-                              <Fingerprint className="w-4 h-4 text-green-700" />
-                              <span className="text-[7px] font-bold text-green-700 uppercase">Biometria</span>
-                              <span className="text-[6px] font-mono text-slate-400 break-all leading-tight max-w-[100px]">
+                            <div className="flex flex-col items-center gap-0.5 py-1">
+                              <Fingerprint className="w-5 h-5 text-green-700" />
+                              <span className="text-[10px] font-bold text-green-700 uppercase">Biometria</span>
+                              <span className="text-[9px] font-mono text-slate-500 break-all leading-tight max-w-[120px]">
                                 {del.signatureData?.replace('Biometria Futronic: FUT-', 'FUT-').substring(0, 20)}...
                               </span>
                             </div>
                           ) : del.signingMethod === 'senha' ? (
-                            <div className="flex flex-col items-center gap-0.5">
-                              <Lock className="w-4 h-4 text-blue-600" />
-                              <span className="text-[7px] font-bold text-blue-700 uppercase">PIN Validado</span>
+                            <div className="flex flex-col items-center gap-0.5 py-1">
+                              <Lock className="w-5 h-5 text-blue-600" />
+                              <span className="text-[10px] font-bold text-blue-700 uppercase">PIN Validado</span>
                             </div>
                           ) : del.signingMethod === 'selfie' && del.selfieUrl ? (
-                            <img src={del.selfieUrl} alt="Selfie" className="w-8 h-8 rounded-full object-cover mx-auto border border-slate-300" />
+                            <img src={del.selfieUrl} alt="Selfie" className="w-10 h-10 rounded-full object-cover mx-auto border border-slate-300" />
                           ) : (
-                            <span className="text-slate-400 italic text-[7px]">—</span>
+                            <span className="text-slate-400 italic text-[10px]">—</span>
                           )}
                         </td>
                       </tr>
@@ -653,8 +653,8 @@ export default function DeliveryTab({
                 </table>
 
                 {/* ── TERMO DE RESPONSABILIDADE ── */}
-                <div className="px-3 py-2 border-t border-slate-300 text-[8px] text-slate-600">
-                  <p className="font-bold uppercase mb-0.5">Termo de Recebimento de EPI (NR-06 / Portaria SIT/MTE n.º 107):</p>
+                <div className="px-4 py-3 border-t border-slate-300 text-[11px] text-slate-600">
+                  <p className="font-bold uppercase mb-1">Termo de Recebimento de EPI (NR-06 / Portaria SIT/MTE n.º 107):</p>
                   <p className="text-justify leading-relaxed">
                     Declaro que recebi gratuitamente os equipamentos de proteção individual relacionados acima, adequados aos riscos inerentes ao cumprimento do meu contrato de trabalho. Comprometo-me a utilizá-los apenas para a finalidade que se destinam, conservando-os adequadamente e comunicando ao empregador qualquer alteração que o torne impróprio para uso, sob penas da legislação trabalhista vigente.
                   </p>
@@ -670,45 +670,45 @@ export default function DeliveryTab({
                   const colabName  = activeReceiptEmployee.name;
 
                   return (
-                    <div className="px-3 py-2 border-t-2 border-slate-800 grid grid-cols-3 gap-6 text-[8px]">
+                    <div className="px-3 py-4 mt-4 border-t-2 border-slate-800 grid grid-cols-3 gap-6 text-[10px]">
 
                       {/* SST */}
                       <div className="text-center">
-                        <div className="relative h-10 flex items-end justify-center pb-0.5">
-                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '22px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
-                            className="absolute bottom-0.5 left-0 right-0 text-center leading-none">
+                        <div className="relative h-16 flex items-end justify-center pb-1">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '26px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
                             {sstName}
                           </p>
                         </div>
                         <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1 tracking-wider">Responsável SST</p>
-                        <p className="text-slate-400 text-[7px]">{sstName}</p>
+                        <p className="font-bold uppercase mt-1 tracking-wider text-xs">Responsável SST</p>
+                        <p className="text-slate-500 text-[9px]">{sstName}</p>
                       </div>
 
                       {/* Colaborador(a) */}
                       <div className="text-center">
-                        <div className="relative h-10 flex items-end justify-center pb-0.5">
-                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '20px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
-                            className="absolute bottom-0.5 left-0 right-0 text-center leading-none">
+                        <div className="relative h-16 flex items-end justify-center pb-1">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '24px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
                             {colabName}
                           </p>
                         </div>
                         <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1 tracking-wider">Colaborador(a)</p>
-                        <p className="text-slate-400 text-[7px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
+                        <p className="font-bold uppercase mt-1 tracking-wider text-xs">Colaborador(a)</p>
+                        <p className="text-slate-500 text-[9px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
                       </div>
 
                       {/* Gestor RH */}
                       <div className="text-center">
-                        <div className="relative h-10 flex items-end justify-center pb-0.5">
-                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '22px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
-                            className="absolute bottom-0.5 left-0 right-0 text-center leading-none">
+                        <div className="relative h-16 flex items-end justify-center pb-1">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '26px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
                             {rhName}
                           </p>
                         </div>
                         <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1 tracking-wider">Gestor / RH</p>
-                        <p className="text-slate-400 text-[7px]">{rhName}</p>
+                        <p className="font-bold uppercase mt-1 tracking-wider text-xs">Gestor / RH</p>
+                        <p className="text-slate-500 text-[9px]">{rhName}</p>
                       </div>
 
                     </div>
@@ -717,7 +717,7 @@ export default function DeliveryTab({
 
 
                 {/* ── HASH DE INTEGRIDADE DO DOCUMENTO ── */}
-                <div className="px-3 py-1.5 bg-slate-100 border-t border-slate-300 flex justify-between items-center text-[7px] font-mono text-slate-400">
+                <div className="px-4 py-2.5 bg-slate-100 border-t border-slate-300 flex justify-between items-center text-[9px] font-mono text-slate-500">
                   <span>Sistema SST Novo Horizonte Alumínios — {new Date().toLocaleString('pt-BR')}</span>
                   <span>DOC-ID: {activeReceiptDeliveries[0]?.id?.substring(0, 16).toUpperCase()}</span>
                 </div>
