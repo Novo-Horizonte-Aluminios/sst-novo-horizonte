@@ -63,6 +63,12 @@ export default function DeliveryTab({
   // Printable selected employee receipt
   const [selectedReceiptEmpId, setSelectedReceiptEmpId] = useState('');
 
+  // System users for auto-populating receipt signatures
+  const [systemUsers, setSystemUsers] = useState<{id: string; name: string; role: string}[]>([]);
+  useEffect(() => {
+    fetch('/api/users').then(r => r.json()).then(data => setSystemUsers(data)).catch(() => {});
+  }, []);
+
   // Draw setup
   useEffect(() => {
     if (signingMethod === 'assinatura_digital' && canvasRef.current) {
@@ -653,24 +659,60 @@ export default function DeliveryTab({
                 </div>
 
                 {/* ── RODAPÉ: ASSINATURAS ── */}
-                <div className="px-3 py-2 border-t-2 border-slate-700 grid grid-cols-3 gap-4 text-[8px]">
-                  <div className="text-center">
-                    <div className="border-b border-slate-700 mb-1 pb-3"></div>
-                    <p className="font-bold uppercase">Responsável SST</p>
-                    <p className="text-slate-500">{currentCompany?.sstResponsible}</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="border-b border-slate-700 mb-1 pb-3"></div>
-                    <p className="font-bold uppercase">Colaborador(a)</p>
-                    <p className="text-slate-500">{activeReceiptEmployee.name}</p>
-                    <p className="text-[7px] text-slate-400">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="border-b border-slate-700 mb-1 pb-3"></div>
-                    <p className="font-bold uppercase">Gestor / RH</p>
-                    <p className="text-slate-500">{currentCompany?.rhResponsible}</p>
-                  </div>
-                </div>
+                {(() => {
+                  // Busca automática pelos usuários do sistema por perfil
+                  const sstUser    = systemUsers.find(u => u.role === 'SST');
+                  const rhUser     = systemUsers.find(u => u.role === 'GestorRH');
+                  const sstName    = sstUser?.name || currentCompany?.sstResponsible || 'Responsável SST';
+                  const rhName     = rhUser?.name  || currentCompany?.rhResponsible  || 'Gestor / RH';
+                  const colabName  = activeReceiptEmployee.name;
+
+                  return (
+                    <div className="px-3 py-2 border-t-2 border-slate-800 grid grid-cols-3 gap-6 text-[8px]">
+
+                      {/* SST */}
+                      <div className="text-center">
+                        <div className="relative h-10 flex items-end justify-center pb-0.5">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '22px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-0.5 left-0 right-0 text-center leading-none">
+                            {sstName}
+                          </p>
+                        </div>
+                        <div className="border-b-2 border-slate-700" />
+                        <p className="font-bold uppercase mt-1 tracking-wider">Responsável SST</p>
+                        <p className="text-slate-400 text-[7px]">{sstName}</p>
+                      </div>
+
+                      {/* Colaborador(a) */}
+                      <div className="text-center">
+                        <div className="relative h-10 flex items-end justify-center pb-0.5">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '20px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-0.5 left-0 right-0 text-center leading-none">
+                            {colabName}
+                          </p>
+                        </div>
+                        <div className="border-b-2 border-slate-700" />
+                        <p className="font-bold uppercase mt-1 tracking-wider">Colaborador(a)</p>
+                        <p className="text-slate-400 text-[7px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
+                      </div>
+
+                      {/* Gestor RH */}
+                      <div className="text-center">
+                        <div className="relative h-10 flex items-end justify-center pb-0.5">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '22px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-0.5 left-0 right-0 text-center leading-none">
+                            {rhName}
+                          </p>
+                        </div>
+                        <div className="border-b-2 border-slate-700" />
+                        <p className="font-bold uppercase mt-1 tracking-wider">Gestor / RH</p>
+                        <p className="text-slate-400 text-[7px]">{rhName}</p>
+                      </div>
+
+                    </div>
+                  );
+                })()}
+
 
                 {/* ── HASH DE INTEGRIDADE DO DOCUMENTO ── */}
                 <div className="px-3 py-1.5 bg-slate-100 border-t border-slate-300 flex justify-between items-center text-[7px] font-mono text-slate-400">
