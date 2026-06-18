@@ -120,6 +120,21 @@ export default function App() {
     }
   };
 
+  const handleUpdateCompany = async (id: string, updatedCo: Partial<Company>) => {
+    try {
+      const res = await fetch(`/api/companies/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedCo)
+      });
+      const data = await res.json();
+      setCompanies(prev => prev.map(c => c.id === id ? data : c));
+      return data;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleAddEmployee = async (newEmp: Omit<Employee, 'id'>) => {
     try {
       const res = await fetch('/api/employees', {
@@ -380,6 +395,7 @@ export default function App() {
                   onAddEmployee={handleAddEmployee}
                   onUpdateEmployee={handleUpdateEmployee}
                   onDeleteEmployee={handleDeleteEmployee}
+                  onUpdateCompany={handleUpdateCompany}
                 />
               )}
 

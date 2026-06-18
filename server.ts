@@ -313,6 +313,24 @@ async function startServer() {
     }
   });
 
+  app.put('/api/companies/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible } = req.body;
+      
+      const check = await query('SELECT id FROM companies WHERE id = $1', [id]);
+      if (check.rows.length === 0) return res.status(404).json({ error: 'Company not found' });
+
+      await query(
+        'UPDATE companies SET name=$1, trading_name=$2, cnpj=$3, address=$4, cnae=$5, risk_degree=$6, sst_responsible=$7, rh_responsible=$8 WHERE id=$9',
+        [name, tradingName, cnpj, address, cnae, riskDegree || null, sstResponsible || null, rhResponsible || null, id]
+      );
+      res.json({ id, name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
   // Employee Directory
   app.get('/api/employees', async (req, res) => {
     try {

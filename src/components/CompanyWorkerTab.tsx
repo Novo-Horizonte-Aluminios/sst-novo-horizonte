@@ -29,6 +29,7 @@ interface CompanyWorkerTabProps {
   onAddEmployee: (emp: Omit<Employee, 'id'>) => Promise<any>;
   onUpdateEmployee: (id: string, updated: Partial<Employee>) => Promise<any>;
   onDeleteEmployee: (id: string) => Promise<any>;
+  onUpdateCompany?: (id: string, updated: Partial<Company>) => Promise<any>;
 }
 
 export default function CompanyWorkerTab({
@@ -37,7 +38,8 @@ export default function CompanyWorkerTab({
   activeCompanyId,
   onAddEmployee,
   onUpdateEmployee,
-  onDeleteEmployee
+  onDeleteEmployee,
+  onUpdateCompany
 }: CompanyWorkerTabProps) {
   const [employeeSearch, setEmployeeSearch] = useState('');
   const [showEmpModal, setShowEmpModal] = useState(false);
@@ -45,6 +47,11 @@ export default function CompanyWorkerTab({
   // Edit Employee State
   const [editingEmp, setEditingEmp] = useState<Employee | null>(null);
   
+  // Edit Company State
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  const [isUpdatingCompany, setIsUpdatingCompany] = useState(false);
+
   // Delete Employee Confirmation State
   const [deletingEmp, setDeletingEmp] = useState<Employee | null>(null);
 
@@ -354,6 +361,20 @@ export default function CompanyWorkerTab({
 
   const activeCompany = companies.find(c => c.id === activeCompanyId) || companies[0];
 
+  const handleUpdateCompanySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCompany || !onUpdateCompany) return;
+    setIsUpdatingCompany(true);
+    try {
+      await onUpdateCompany(editingCompany.id, editingCompany);
+      setShowCompanyModal(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsUpdatingCompany(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Header Info Card */}
@@ -367,8 +388,23 @@ export default function CompanyWorkerTab({
             Diretório oficial de colaboradores da empresa. Alinhado com as diretrizes da NR-01 (GRO) e NR-06 (EPI).
           </p>
         </div>
-        <div className="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded font-mono text-[9px] font-bold">
-          CNPJ: {activeCompany?.cnpj || '34.892.455/0001-38'}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded font-mono text-[9px] font-bold">
+            CNPJ: {activeCompany?.cnpj || '34.892.455/0001-38'}
+          </div>
+          {onUpdateCompany && (
+            <button
+              onClick={() => {
+                setEditingCompany({ ...activeCompany });
+                setShowCompanyModal(true);
+              }}
+              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded text-[9px] uppercase tracking-wider transition cursor-pointer flex items-center gap-1"
+              title="Editar dados cadastrais da empresa"
+            >
+              <Edit2 className="w-3 h-3 text-amber-400" />
+              Editar Empresa
+            </button>
+          )}
         </div>
       </div>
 
@@ -1185,6 +1221,124 @@ export default function CompanyWorkerTab({
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {/* --- EDIT COMPANY MODAL DIALOG --- */}
+      {showCompanyModal && editingCompany && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-lg rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-200 font-sans">
+            <div className="bg-slate-950 p-4 text-white flex justify-between items-center">
+              <div className="flex items-center gap-1.5">
+                <Building2 className="w-4 h-4 text-safety-green" />
+                <h3 className="font-bold text-xs uppercase tracking-wider">Editar Cadastro da Empresa</h3>
+              </div>
+              <button onClick={() => setShowCompanyModal(false)} className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateCompanySubmit} className="p-4 space-y-3.5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-slate-500">Razão Social</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingCompany.name}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, name: e.target.value })}
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-slate-500">Nome Fantasia</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingCompany.tradingName || ''}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, tradingName: e.target.value })}
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-slate-500">CNPJ</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingCompany.cnpj}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, cnpj: e.target.value })}
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-slate-500">CNAE</label>
+                  <input
+                    type="text"
+                    value={editingCompany.cnae || ''}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, cnae: e.target.value })}
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-slate-500">Grau de Risco (NR-04)</label>
+                  <select
+                    value={editingCompany.riskDegree || 1}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, riskDegree: parseInt(e.target.value) })}
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                  >
+                    <option value={1}>Grau 1 (Leve)</option>
+                    <option value={2}>Grau 2 (Moderado)</option>
+                    <option value={3}>Grau 3 (Médio)</option>
+                    <option value={4}>Grau 4 (Grave)</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-slate-500">Responsável SST</label>
+                  <input
+                    type="text"
+                    value={editingCompany.sstResponsible || ''}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, sstResponsible: e.target.value })}
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-slate-500">Responsável RH</label>
+                  <input
+                    type="text"
+                    value={editingCompany.rhResponsible || ''}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, rhResponsible: e.target.value })}
+                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-bold text-slate-500">Endereço Completo</label>
+                <input
+                  type="text"
+                  value={editingCompany.address || ''}
+                  onChange={(e) => setEditingCompany({ ...editingCompany, address: e.target.value })}
+                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                />
+              </div>
+
+              <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setShowCompanyModal(false)}
+                  className="px-3.5 py-1.5 hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isUpdatingCompany}
+                  className="px-4.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-950 transition uppercase text-[10px] tracking-wider cursor-pointer font-semibold disabled:opacity-50"
+                >
+                  {isUpdatingCompany ? 'Salvando...' : 'Salvar Empresa'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
