@@ -327,12 +327,12 @@ async function startServer() {
     try {
       const id = 'e_' + Date.now();
       const status = 'Ativo';
-      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, phone, email, signature, photoUrl } = req.body;
+      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, phone, email, signature, photoUrl, biometricTemplate } = req.body;
       await query(
-        'INSERT INTO employees (id, name, cpf, rg, birth_date, matricula, company_id, sector, role, manager, admission_date, status, phone, email, signature, photo_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)',
-        [id, name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null]
+        'INSERT INTO employees (id, name, cpf, rg, birth_date, matricula, company_id, sector, role, manager, admission_date, status, phone, email, signature, photo_url, biometric_template) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)',
+        [id, name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null, biometricTemplate || null]
       );
-      res.status(201).json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl });
+      res.status(201).json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl, biometricTemplate });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -341,16 +341,16 @@ async function startServer() {
   app.put('/api/employees/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl } = req.body;
+      const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl, biometricTemplate } = req.body;
       
       const check = await query('SELECT id FROM employees WHERE id = $1', [id]);
       if (check.rows.length === 0) return res.status(404).json({ error: 'Employee not found' });
 
       await query(
-        'UPDATE employees SET name=$1, cpf=$2, rg=$3, birth_date=$4, matricula=$5, company_id=$6, sector=$7, role=$8, manager=$9, admission_date=$10, status=$11, phone=$12, email=$13, signature=$14, photo_url=$15 WHERE id=$16',
-        [name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null, id]
+        'UPDATE employees SET name=$1, cpf=$2, rg=$3, birth_date=$4, matricula=$5, company_id=$6, sector=$7, role=$8, manager=$9, admission_date=$10, status=$11, phone=$12, email=$13, signature=$14, photo_url=$15, biometric_template=$16 WHERE id=$17',
+        [name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null, biometricTemplate || null, id]
       );
-      res.json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl });
+      res.json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl, biometricTemplate });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }

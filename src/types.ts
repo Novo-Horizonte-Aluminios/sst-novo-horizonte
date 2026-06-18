@@ -27,6 +27,7 @@ export interface Employee {
   photoUrl?: string;
   phone?: string;
   email?: string;
+  biometricTemplate?: string;
 }
 
 export interface RoleConfig {

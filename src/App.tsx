@@ -313,15 +313,7 @@ export default function App() {
         
         {/* Top Navbar Header */}
         <header className="h-14 bg-white border-b border-slate-200 px-6 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-3 text-xs text-slate-500">
-            <span>
-              Unidade: <strong className="text-slate-800">{activeCompany?.tradingName || 'Carregando...'}</strong>
-            </span>
-            <span className="h-4 w-px bg-slate-200"></span>
-            <span>
-              CNPJ: <strong className="text-slate-800 font-mono">{activeCompany?.cnpj || '--.---.---/----'}</strong>
-            </span>
-          </div>
+          <div></div>
 
           <div className="flex items-center gap-4 text-xs">
             <div className="text-right">

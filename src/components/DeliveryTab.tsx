@@ -172,6 +172,18 @@ export default function DeliveryTab({
   };
 
   const handleCaptureBiometrics = async () => {
+    if (!selectedEmpId) {
+      alert('Favor selecionar o Colaborador antes de efetuar a captura biométrica.');
+      return;
+    }
+    const employee = employees.find(emp => emp.id === selectedEmpId);
+    if (!employee) return;
+
+    if (!employee.biometricTemplate) {
+      setBiometricError('Atenção: Este colaborador não possui digital cadastrada no perfil dele. Acesse a aba de Diretório de Pessoal e cadastre a digital dele primeiro.');
+      return;
+    }
+
     setIsScanningBiometrics(true);
     setBiometricError(null);
     setBiometricHash(null);
@@ -182,7 +194,13 @@ export default function DeliveryTab({
       }
       const data = await response.json();
       if (data.success && data.hash) {
-        setBiometricHash(data.hash);
+        if (data.hash.trim().toLowerCase() === employee.biometricTemplate.trim().toLowerCase()) {
+          setBiometricHash(data.hash);
+          setBiometricError(null);
+        } else {
+          setBiometricError('Divergência Biométrica: Esta digital não pertence ao colaborador selecionado!');
+          setBiometricHash(null);
+        }
       } else {
         setBiometricError(data.error || 'Erro ao extrair biometria.');
       }

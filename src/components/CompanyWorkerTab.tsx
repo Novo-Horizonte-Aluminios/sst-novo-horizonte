@@ -53,8 +53,35 @@ export default function CompanyWorkerTab({
     name: '', cpf: '', rg: '', birthDate: '', matricula: '',
     companyId: activeCompanyId, sector: 'Usinagem', role: 'Operador de Máquinas',
     manager: 'Luiz Gonzaga', admissionDate: new Date().toISOString().split('T')[0],
-    phone: '', email: '', photoUrl: ''
+    phone: '', email: '', photoUrl: '', biometricTemplate: ''
   });
+
+  // Biometrics states for enrollment
+  const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
+  const [biometricError, setBiometricError] = useState<string | null>(null);
+
+  const handleRegisterBiometrics = async (isEdit: boolean) => {
+    setIsScanningBiometrics(true);
+    setBiometricError(null);
+    try {
+      const response = await fetch('http://localhost:8080/scan');
+      if (!response.ok) throw new Error('Falha na comunicação com o leitor.');
+      const data = await response.json();
+      if (data.success && data.hash) {
+        if (isEdit && editingEmp) {
+          setEditingEmp({ ...editingEmp, biometricTemplate: data.hash });
+        } else {
+          setNewEmp(prev => ({ ...prev, biometricTemplate: data.hash }));
+        }
+      } else {
+        setBiometricError(data.error || 'Erro ao extrair biometria.');
+      }
+    } catch (err) {
+      setBiometricError('Agente Futronic Local não encontrado. Certifique-se de que o Bridge está rodando.');
+    } finally {
+      setIsScanningBiometrics(false);
+    }
+  };
 
   // Real Bulk CSV Import States
   const [showBulkImport, setShowBulkImport] = useState(false);
@@ -283,7 +310,7 @@ export default function CompanyWorkerTab({
       name: '', cpf: '', rg: '', birthDate: '', matricula: '',
       companyId: activeCompanyId, sector: 'Usinagem', role: 'Operador de Máquinas',
       manager: 'Luiz Gonzaga', admissionDate: new Date().toISOString().split('T')[0],
-      phone: '', email: '', photoUrl: ''
+      phone: '', email: '', photoUrl: '', biometricTemplate: ''
     });
     setShowEmpModal(false);
   };
@@ -853,6 +880,30 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
+              {/* Biometria (Futronic) */}
+              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="space-y-0.5">
+                  <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital (Futronic)</span>
+                  <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
+                    Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
+                  </p>
+                  {biometricError && (
+                    <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
+                  )}
+                  {newEmp.biometricTemplate && (
+                    <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRegisterBiometrics(false)}
+                  disabled={isScanningBiometrics}
+                  className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
+                >
+                  {isScanningBiometrics ? "Aguardando leitor..." : newEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
+                </button>
+              </div>
+
               <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
@@ -1046,6 +1097,32 @@ export default function CompanyWorkerTab({
                     <option value="Afastado">Afastado</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Biometria (Futronic) */}
+              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="space-y-0.5">
+                  <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital (Futronic)</span>
+                  <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
+                    Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
+                  </p>
+                  {biometricError && (
+                    <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
+                  )}
+                  {editingEmp.biometricTemplate ? (
+                    <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
+                  ) : (
+                    <span className="text-amber-600 font-bold block text-[9.5px] mt-1">Nenhuma digital cadastrada para este funcionário.</span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRegisterBiometrics(true)}
+                  disabled={isScanningBiometrics}
+                  className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
+                >
+                  {isScanningBiometrics ? "Aguardando leitor..." : editingEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
+                </button>
               </div>
 
               <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
