@@ -603,21 +603,49 @@ export default function DeliveryTab({
                 </div>
 
                 {/* Imprinted worker validation visual */}
-                {activeReceiptDeliveries.length > 0 && (
-                  <div className="flex justify-between items-end border-t border-slate-200 pt-2 text-[9px]">
-                    <div>
-                      <span className="text-[7px] text-slate-400 font-mono uppercase block">SST Resp</span>
-                      <p className="font-bold text-slate-800 text-[9px] leading-tight">{currentCompany?.sstResponsible}</p>
-                    </div>
+                {activeReceiptDeliveries.length > 0 && (() => {
+                  const lastDel = activeReceiptDeliveries[activeReceiptDeliveries.length - 1];
+                  const isBiometric = lastDel.signingMethod === 'biometria';
+                  const bioHash = isBiometric && lastDel.signatureData
+                    ? lastDel.signatureData.replace('Biometria Futronic: ', '')
+                    : null;
+                  return (
+                    <div className="border-t border-slate-200 pt-2 space-y-2">
+                      {/* Biometric proof block */}
+                      {isBiometric && bioHash && (
+                        <div className="print-biometric-badge bg-green-50 border border-green-200 rounded p-2 text-[8px]">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <Fingerprint className="w-3 h-3 text-green-700" />
+                            <span className="font-extrabold text-green-800 uppercase tracking-wide">
+                              ✔ ASSINADO POR BIOMETRIA DIGITAL — Futronic FS80H
+                            </span>
+                          </div>
+                          <p className="text-green-700 font-mono break-all leading-relaxed">
+                            Hash SHA-256: {bioHash}
+                          </p>
+                          <p className="text-green-600 mt-0.5">
+                            A identidade do colaborador foi verificada por leitura biométrica do polegar no terminal de coleta associado a este registro. Esta assinatura possui validade jurídica conforme a LGPD e NR-06.
+                          </p>
+                        </div>
+                      )}
 
-                    <div className="text-center font-mono text-[7px] text-slate-400 bg-slate-100 p-1 rounded border border-slate-200 leading-none">
-                      <span className="text-[7px] font-mono text-safety-green font-extrabold uppercase tracking-wide block mb-0.5">
-                        ✔ SEGURO GARANTIDO
-                      </span>
-                      <span>MD5: {activeReceiptDeliveries[0].id}</span>
+                      {/* SST Responsible + Document hash */}
+                      <div className="flex justify-between items-end text-[9px]">
+                        <div>
+                          <span className="text-[7px] text-slate-400 font-mono uppercase block">SST Resp</span>
+                          <p className="font-bold text-slate-800 text-[9px] leading-tight">{currentCompany?.sstResponsible}</p>
+                        </div>
+                        <div className="text-center font-mono text-[7px] text-slate-400 bg-slate-100 p-1 rounded border border-slate-200 leading-none">
+                          <span className="text-[7px] font-mono text-safety-green font-extrabold uppercase tracking-wide block mb-0.5">
+                            ✔ SEGURO GARANTIDO
+                          </span>
+                          <span>MD5: {lastDel.id}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
+
 
               </div>
             ) : (

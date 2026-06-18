@@ -7,100 +7,145 @@ let ftrScanOpenDevice;
 let ftrScanCloseDevice;
 let ftrScanGetImageSize;
 let ftrScanGetImage;
+let ftrScanIsFingerPresent;
 
-// Tenta carregar a DLL e mapear as assinaturas C++
+// Carrega a DLL e mapeia todas as funções necessárias do SDK Futronic
 try {
     console.log('[Scanner] Inicializando ponte FFI para ftrScanAPI.dll...');
     const dllPath = path.join(__dirname, 'ftrScanAPI.dll');
     lib = koffi.load(dllPath);
 
-    // Assinaturas das funções do SDK da Futronic mapeadas usando tipos nativos do C (void*, int)
-    ftrScanOpenDevice = lib.func('void* ftrScanOpenDevice()');
-    ftrScanCloseDevice = lib.func('void ftrScanCloseDevice(void*)');
-    ftrScanGetImageSize = lib.func('int ftrScanGetImageSize(void*, _Out_ int*, _Out_ int*)');
-    ftrScanGetImage = lib.func('int ftrScanGetImage(void*, int, _Out_ uint8_t*)');
-    
-    console.log('[Scanner] Funções C++ mapeadas com sucesso!');
+    ftrScanOpenDevice        = lib.func('void* ftrScanOpenDevice()');
+    ftrScanCloseDevice       = lib.func('void ftrScanCloseDevice(void*)');
+    ftrScanGetImageSize      = lib.func('int ftrScanGetImageSize(void*, _Out_ int*, _Out_ int*)');
+    ftrScanGetImage          = lib.func('int ftrScanGetImage(void*, int, _Out_ uint8_t*)');
+    // Verifica se tem dedo no sensor SEM capturar
+    ftrScanIsFingerPresent   = lib.func('int ftrScanIsFingerPresent(void*, _Out_ int*)');
+
+    console.log('[Scanner] Funções C++ mapeadas com sucesso! (com detecção de presença de dedo)');
 } catch (error) {
     console.error('[Scanner] ERRO CRÍTICO AO CARREGAR DLL:', error.message);
-    console.log('Isso costuma ocorrer se o seu Node.js for 64-bits e a DLL for 32-bits (ou vice-versa).');
+}
+
+// Aguarda até 30 segundos por um dedo no sensor usando polling assíncrono
+function waitForFinger(handle, timeoutMs = 30000) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        const interval = setInterval(() => {
+            // Verifica timeout
+            if (Date.now() - startTime > timeoutMs) {
+                clearInterval(interval);
+                return reject(new Error('Tempo esgotado (30s). Nenhum dedo detectado no sensor.'));
+            }
+
+            try {
+                const isPresent = [0];
+                const result = ftrScanIsFingerPresent(handle, isPresent);
+
+                if (result && isPresent[0] !== 0) {
+                    clearInterval(interval);
+                    console.log('[Scanner] ✅ Dedo detectado no sensor! Capturando imagem...');
+                    resolve(true);
+                }
+                // Se isPresent[0] === 0, continua aguardando...
+            } catch (e) {
+                clearInterval(interval);
+                reject(e);
+            }
+        }, 200); // Verifica a cada 200ms
+    });
+}
+
+// Calcula o desvio padrão dos pixels para validar se é uma digital real
+function hasRealFingerprint(buffer, size) {
+    // Calcula a média
+    let sum = 0;
+    for (let i = 0; i < size; i++) sum += buffer[i];
+    const mean = sum / size;
+
+    // Calcula a variância
+    let variance = 0;
+    for (let i = 0; i < size; i++) {
+        const diff = buffer[i] - mean;
+        variance += diff * diff;
+    }
+    variance /= size;
+    const stdDev = Math.sqrt(variance);
+
+    console.log(`[Scanner] Estatísticas da imagem — Média: ${mean.toFixed(1)}, Desvio Padrão: ${stdDev.toFixed(1)}`);
+
+    // Um sensor vazio tem desvio padrão baixo (< 10).
+    // Uma digital real tem alto contraste — desvio padrão geralmente > 20.
+    return stdDev > 15;
 }
 
 async function captureBiometrics() {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         if (!lib) {
-            return resolve({ success: false, error: 'A DLL não pôde ser carregada pelo Node.js.' });
+            return resolve({ success: false, error: 'A DLL do Futronic não pôde ser carregada.' });
         }
 
+        let handle = null;
         try {
             console.log('\n----------------------------------------');
-            console.log('[Scanner] Tentando abrir o leitor físico...');
-            const handle = ftrScanOpenDevice();
-            
-            // FTRHANDLE nulo significa erro ou leitor não conectado
-            if (!handle || handle === 0n || handle === 0) {
-                console.error('[Scanner] Falha: Leitor não encontrado, sem permissão ou desconectado.');
-                return resolve({ success: false, error: 'Leitor Futronic não encontrado no USB.' });
-            }
-            
-            console.log('[Scanner] Leitor conectado e LIGADO (LED aceso)!');
+            console.log('[Scanner] Abrindo o leitor físico...');
+            handle = ftrScanOpenDevice();
 
-            // 1. Pegar o tamanho da imagem da digital
+            if (!handle || handle === 0n || handle === 0) {
+                console.error('[Scanner] Leitor não encontrado ou desconectado.');
+                return resolve({ success: false, error: 'Leitor Futronic não encontrado no USB. Verifique a conexão.' });
+            }
+
+            console.log('[Scanner] ✅ Leitor CONECTADO — LED aceso!');
+            console.log('[Scanner] Aguardando o funcionário posicionar o dedo no sensor...');
+
+            // PASSO 1: Aguarda detectar o dedo (até 30 segundos)
+            try {
+                await waitForFinger(handle, 30000);
+            } catch (timeoutError) {
+                ftrScanCloseDevice(handle);
+                console.error('[Scanner]', timeoutError.message);
+                return resolve({ success: false, error: timeoutError.message });
+            }
+
+            // PASSO 2: Obtém as dimensões do sensor
             let width = [0];
             let height = [0];
             ftrScanGetImageSize(handle, width, height);
-            
-            // O FS80H tem dimensões fixas de 320x480. Se o driver retornar 0, nós forçamos.
-            let w = width[0] || 320;
-            let h = height[0] || 480;
-            if (h === 0) h = 480;
-            
-            console.log(`[Scanner] Dimensões do sensor resolvidas: ${w}x${h} pixels.`);
-            
-            // 2. Alocar a memória segura no Node para receber a imagem
+            const w = width[0] || 320;
+            const h = height[0] || 480;
             const bufferSize = w * h;
             const imageBuffer = Buffer.alloc(bufferSize);
-            
-            console.log('[Scanner] Aguardando o usuário posicionar o dedo na luz verde...');
-            
-            // O parâmetro nDose=4 é a dosagem de iluminação recomendada pela Futronic.
-            // Usamos a versão .async() do Koffi para não travar a thread inteira do Node enquanto espera o dedo.
+
+            // PASSO 3: Captura a imagem da digital
             ftrScanGetImage.async(handle, 4, imageBuffer, (err, imageOk) => {
-                // 3. Fechar o dispositivo assim que a chamada terminar
                 ftrScanCloseDevice(handle);
-                console.log('[Scanner] Dispositivo fechado com segurança.');
+                console.log('[Scanner] Dispositivo fechado. LED desligado.');
 
                 if (err || !imageOk) {
-                    console.error('[Scanner] Falha no driver ao capturar:', err);
-                    return resolve({ success: false, error: 'O sensor falhou ao capturar a imagem do dedo.' });
+                    console.error('[Scanner] Falha ao capturar imagem:', err);
+                    return resolve({ success: false, error: 'Falha ao capturar imagem do sensor.' });
                 }
 
-                // Checar se a imagem não está em branco
-                let sum = 0;
-                for (let i = 0; i < Math.min(1000, bufferSize); i++) {
-                    sum += imageBuffer[i];
-                }
-                
-                if (sum < 1000) {
-                    console.error('[Scanner] Imagem capturada, mas parece estar vazia (dedo não pressionado).');
-                    return resolve({ success: false, error: 'Nenhum dedo detectado no sensor. Pressione com firmeza.' });
+                // PASSO 4: Valida estatisticamente se é uma digital real
+                if (!hasRealFingerprint(imageBuffer, bufferSize)) {
+                    console.error('[Scanner] Imagem sem contraste suficiente — dedo não pressionado corretamente.');
+                    return resolve({ success: false, error: 'Pressione o dedo com firmeza no centro do sensor.' });
                 }
 
-                console.log('[Scanner] SUCESSO! Dedo detectado e lido da porta USB.');
-                
-                // 4. Gerar o HASH final para ser enviado ao React
+                // PASSO 5: Gera o hash único da digital para armazenar no banco
                 const hash = crypto.createHash('sha256').update(imageBuffer).digest('hex').toUpperCase();
-                console.log(`[Scanner] Hash final: FUT-${hash.substring(0, 15)}...`);
-                
+                console.log(`[Scanner] ✅ DIGITAL VÁLIDA CAPTURADA! Hash: FUT-${hash.substring(0, 15)}...`);
+
                 resolve({ success: true, hash: `FUT-${hash}` });
             });
+
         } catch (e) {
-            console.error('[Scanner] Exceção C++ capturada pelo Node:', e);
-            resolve({ success: false, error: 'Falha de comunicação de memória com a DLL.' });
+            if (handle) try { ftrScanCloseDevice(handle); } catch (_) {}
+            console.error('[Scanner] Exceção capturada:', e);
+            resolve({ success: false, error: 'Erro interno na comunicação com o leitor.' });
         }
     });
 }
 
-module.exports = {
-    captureBiometrics
-};
+module.exports = { captureBiometrics };
