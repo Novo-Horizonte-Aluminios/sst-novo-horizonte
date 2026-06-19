@@ -207,6 +207,8 @@ export default function App() {
       const resPpes = await fetch('/api/ppes');
       const updatedPpes = await resPpes.json();
       setPpes(updatedPpes);
+      
+      alert('Entrega registrada com sucesso!');
       return data;
     } catch (e) {
       console.error(e);

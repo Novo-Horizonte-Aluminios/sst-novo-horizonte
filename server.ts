@@ -13,7 +13,11 @@ import http from 'http';
 // Dispara webhooks para o n8n de forma assíncrona (não bloqueia a resposta da API)
 async function notifyN8N(path: string, payload: object): Promise<void> {
   const baseUrl = process.env.N8N_WEBHOOK_URL || '';
-  if (!baseUrl) return; // Se não configurado, ignora silenciosamente
+  console.log(`[Webhook] Trying to notify ${path}. N8N_WEBHOOK_URL is: "${baseUrl}"`);
+  if (!baseUrl) {
+    console.log('[Webhook] IGNORADO: N8N_WEBHOOK_URL nao esta configurado no ambiente.');
+    return;
+  }
   try {
     const fullUrl = new URL(path, baseUrl);
     const data = JSON.stringify(payload);
