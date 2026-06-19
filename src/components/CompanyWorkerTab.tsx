@@ -32,6 +32,19 @@ export const getFingerLabel = (code?: string) => {
   return `${finger} (${hand})`;
 };
 
+export const getRegisteredFingers = (emp: Partial<Employee> | null): string[] => {
+  if (!emp || !emp.biometricTemplate) return [];
+  try {
+    const parsed = JSON.parse(emp.biometricTemplate);
+    if (Array.isArray(parsed)) {
+      return parsed.map((p: any) => p.finger);
+    }
+  } catch(e) {
+    if (emp.biometricFinger) return [emp.biometricFinger];
+  }
+  return [];
+};
+
 interface CompanyWorkerTabProps {
   companies: Company[];
   employees: Employee[];
@@ -76,19 +89,6 @@ export default function CompanyWorkerTab({
   // Biometrics states for enrollment
   const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
   const [biometricError, setBiometricError] = useState<string | null>(null);
-
-export const getRegisteredFingers = (emp: Partial<Employee> | null): string[] => {
-  if (!emp || !emp.biometricTemplate) return [];
-  try {
-    const parsed = JSON.parse(emp.biometricTemplate);
-    if (Array.isArray(parsed)) {
-      return parsed.map((p: any) => p.finger);
-    }
-  } catch(e) {
-    if (emp.biometricFinger) return [emp.biometricFinger];
-  }
-  return [];
-};
 
   const handleRegisterBiometrics = async (isEdit: boolean) => {
     const emp = isEdit ? editingEmp : newEmp;
