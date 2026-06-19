@@ -574,6 +574,22 @@ async function startServer() {
         if (empResult.rows.length > 0) employeeData = empResult.rows[0];
       } catch (_) {}
 
+      // Buscar o nome do técnico de segurança (SST) cadastrado no sistema
+      let designatedTechnician = 'SESMT';
+      try {
+        const techResult = await query("SELECT name FROM users WHERE role = 'SST' LIMIT 1");
+        if (techResult.rows.length > 0) {
+          designatedTechnician = techResult.rows[0].name;
+        } else {
+          const adminResult = await query("SELECT name FROM users WHERE role = 'Admin' LIMIT 1");
+          if (adminResult.rows.length > 0) {
+            designatedTechnician = adminResult.rows[0].name;
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching designated technician:', e);
+      }
+
       const deliveryPayload = {
         delivery: { id, deliveryDate, status: currentStatus, ppeId, employeeId, quantity: qty, employeeName, ppeName, caNumber, reason, signingMethod },
         employee: { name: employeeData.name || employeeName, phone: employeeData.phone || '', email: employeeData.email || '' },
@@ -583,7 +599,7 @@ async function startServer() {
         ppeName: ppeName,
         caNumber: caNumber,
         deliveryDate: deliveryDate,
-        technicianName: technicianName || 'SESMT'
+        technicianName: designatedTechnician
       };
 
       // Fluxo 1: Recibo de entrega (WhatsApp ao colaborador)
