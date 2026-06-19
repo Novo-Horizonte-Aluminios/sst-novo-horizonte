@@ -156,7 +156,7 @@ export default function DocumentsTab() {
 
       {/* Alerts */}
       {(expiring30.length > 0 || expired.length > 0) && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
           {expired.length > 0 && (
             <div className="bg-red-50 border border-red-200 rounded p-3 flex items-start gap-2">
               <FileWarning className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
@@ -179,7 +179,7 @@ export default function DocumentsTab() {
       )}
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Total de Documentos', value: docs.length, color: 'text-slate-800' },
           { label: 'Vigentes', value: docs.filter(d => d.status === 'Vigente').length, color: 'text-emerald-600' },
@@ -221,7 +221,7 @@ export default function DocumentsTab() {
             </h3>
             <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Título *</label>
               <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
@@ -407,3 +407,4 @@ export default function DocumentsTab() {
     </div>
   );
 }
+

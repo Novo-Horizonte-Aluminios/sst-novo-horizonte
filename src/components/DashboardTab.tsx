@@ -234,7 +234,7 @@ export default function DashboardTab({
           <Workflow className="w-3.5 h-3.5 text-slate-400" />
           Fluxos de Operação Rápidos
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
           <button 
             onClick={() => onNavigate('delivery')}
             className="p-3 bg-slate-50 hover:bg-safety-green/5 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
@@ -308,7 +308,7 @@ export default function DashboardTab({
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* KPI 1: Workers */}
         <div className="dense-card">
           <div className="flex justify-between items-start">
@@ -399,7 +399,7 @@ export default function DashboardTab({
             Carregando status dos módulos de integração...
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Evolution API Connection Card */}
             {integrations?.evolution && (
               <div className="bg-slate-50 border border-slate-200 rounded p-3.5 flex flex-col justify-between space-y-2.5 transition duration-150 hover:shadow-xs">
@@ -572,7 +572,7 @@ export default function DashboardTab({
       </div>
 
       {/* Indicadores Executivos de Desempenho (SST Recharts Section) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Card 1: Taxa de Entrega de EPI (Bar Chart) */}
         <div className="bg-white p-4 rounded border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
@@ -950,7 +950,7 @@ export default function DashboardTab({
                 </div>
 
                 {/* Grid metadata */}
-                <div className="grid grid-cols-2 gap-4 border-y border-slate-100 py-3 mb-6 text-[10px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-y border-slate-100 py-3 mb-6 text-[10px]">
                   <div className="space-y-1">
                     <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">Unidade Operativa:</span> Distrito Industrial, POA - RS</p>
                     <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">CNAE Principal:</span> 24.41-5-02 (Produção de alumínio)</p>
@@ -1056,7 +1056,7 @@ export default function DashboardTab({
                   As informações deste dossiê técnico de auditoria foram compiladas automaticamente das fichas de controle interno, ordens de serviço eletrônicas emitidas e dos registros de gerenciamento de riscos gerenciados pelo SESMT da Novo Horizonte Alumínios. Este documento serve para as finalidades legais da NR-01, NR-06, NR-12 e composição do PGR/PCMSO.
                 </div>
 
-                <div className="grid grid-cols-2 gap-12 pt-6 border-t border-slate-200 mt-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 pt-6 border-t border-slate-200 mt-12">
                   <div className="text-center">
                     <div className="border-t border-slate-405 pt-1.5 text-[9.5px]">
                       <p className="font-bold text-slate-800">Roberto Santos</p>
@@ -1091,3 +1091,4 @@ export default function DashboardTab({
     </div>
   );
 }
+

@@ -432,7 +432,7 @@ export default function BackupTab() {
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">Parâmetros do Armazenamento S3 Compatível</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
                 
                 {/* Endpoint URL field */}
                 <div>
@@ -679,3 +679,4 @@ export default function BackupTab() {
     </div>
   );
 }
+

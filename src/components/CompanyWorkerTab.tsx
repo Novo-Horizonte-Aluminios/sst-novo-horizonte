@@ -905,7 +905,7 @@ export default function CompanyWorkerTab({
                 employeeName={newEmp.name || 'Novo Colaborador'}
               />
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Nome Completo</label>
                   <input
@@ -930,7 +930,7 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">CPF</label>
                   <input
@@ -954,7 +954,7 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Data de Nascimento</label>
                   <input
@@ -977,7 +977,7 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 bg-emerald-50/40 p-3 rounded border border-emerald-100">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/40 p-3 rounded border border-emerald-100">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-emerald-800 tracking-wider flex items-center gap-1">
                     <Phone className="w-3 h-3 text-emerald-600" />
@@ -1116,7 +1116,7 @@ export default function CompanyWorkerTab({
                 employeeName={editingEmp.name || 'Colaborador'}
               />
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Nome Completo</label>
                   <input
@@ -1139,7 +1139,7 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">CPF</label>
                   <input
@@ -1161,7 +1161,7 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Data de Nascimento</label>
                   <input
@@ -1184,7 +1184,7 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 bg-emerald-50/40 p-3 rounded border border-emerald-100">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/40 p-3 rounded border border-emerald-100">
                 <div>
                   <label className="font-bold uppercase text-[9px] block mb-1 text-emerald-800 tracking-wider flex items-center gap-1">
                     <Phone className="w-3 h-3 text-emerald-600" />
@@ -1371,7 +1371,7 @@ export default function CompanyWorkerTab({
             </div>
 
             <form onSubmit={handleUpdateCompanySubmit} className="p-4 space-y-3.5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-[10px] uppercase font-bold text-slate-500">Razão Social</label>
                   <input
@@ -1477,3 +1477,5 @@ export default function CompanyWorkerTab({
     </div>
   );
 }
+
+

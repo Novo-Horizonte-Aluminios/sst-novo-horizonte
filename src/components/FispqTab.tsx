@@ -184,7 +184,7 @@ export default function FispqTab() {
             </h3>
             <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Nome do Produto Químico *</label>
               <input type="text" value={form.chemicalName} onChange={e => setForm(f => ({ ...f, chemicalName: e.target.value }))}
@@ -292,7 +292,7 @@ export default function FispqTab() {
           <p className="text-slate-400 text-xs">Nenhuma FISPQ cadastrada. Adicione a primeira ficha!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3">
           {filtered.map(doc => {
             const pictograms = detectPictograms(doc.ghsClassification || '');
             const isExpanded = expandedId === doc.id;
@@ -388,3 +388,4 @@ export default function FispqTab() {
     </div>
   );
 }
+

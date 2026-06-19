@@ -353,7 +353,7 @@ export default function DeliveryTab({
 
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 gap-4">
         
         {/* Left column: Create Hand-out registration */}
         <div className="bg-white p-4 rounded border border-slate-200 flex flex-col justify-between">
@@ -474,7 +474,7 @@ export default function DeliveryTab({
               {/* Reason for delivery */}
               <div>
                 <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Motivo do Fornecimento</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
                   {(['Entrega Inicial', 'Substituição', 'Extravio', 'Danificado'] as const).map(m => (
                     <button
                       key={m}
@@ -793,7 +793,7 @@ export default function DeliveryTab({
                 </div>
 
                 {/* ── DADOS DA EMPRESA E COLABORADOR ── */}
-                <div className="border-b border-slate-300 px-3 py-3 grid grid-cols-2 gap-x-6 gap-y-1 text-xs">
+                <div className="border-b border-slate-300 px-3 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs">
                   <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Empresa:</span><span>{currentCompany?.name}</span></div>
                   <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Admissão:</span><span>{activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—'}</span></div>
                   <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Colaborador:</span><span className="font-semibold">{activeReceiptEmployee.name}</span></div>
@@ -886,7 +886,7 @@ export default function DeliveryTab({
                   const colabName  = activeReceiptEmployee.name;
 
                   return (
-                    <div className="px-10 py-4 mt-6 border-t-2 border-slate-800 grid grid-cols-2 gap-16 text-xs">
+                    <div className="px-10 py-4 mt-6 border-t-2 border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-16 text-xs">
 
                       {/* SST */}
                       <div className="text-center">
@@ -1007,3 +1007,4 @@ export default function DeliveryTab({
     </div>
   );
 }
+

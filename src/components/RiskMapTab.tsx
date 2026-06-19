@@ -1032,7 +1032,7 @@ export default function RiskMapTab() {
                     Ferramenta Ativa Do Canva
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-1.5 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
                     <button
                       type="button"
                       onClick={() => setCanvaTool('risk')}
@@ -1192,7 +1192,7 @@ export default function RiskMapTab() {
                             className="w-full accent-emerald-400 h-1 bg-slate-800 rounded-lg cursor-pointer"
                           />
 
-                          <div className="grid grid-cols-2 gap-1.5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                             <button
                               type="button"
                               onClick={() => {
@@ -1246,7 +1246,7 @@ export default function RiskMapTab() {
                             className="w-full accent-sky-400 h-1 bg-slate-800 rounded-lg cursor-pointer"
                           />
 
-                          <div className="grid grid-cols-2 gap-1.5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                             <button
                               type="button"
                               onClick={() => {
@@ -1301,7 +1301,7 @@ export default function RiskMapTab() {
                           />
 
                           <div className="flex flex-col gap-1">
-                            <div className="grid grid-cols-2 gap-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1661,7 +1661,7 @@ export default function RiskMapTab() {
                           </div>
 
                           {/* Room: Sanitários Masc / Fem */}
-                          <div className="col-span-1 row-span-2 border-r-3 border-b-3 border-slate-950 grid grid-cols-2">
+                          <div className="col-span-1 row-span-2 border-r-3 border-b-3 border-slate-950 grid grid-cols-1 sm:grid-cols-2">
                             <div className="border-r border-slate-900 flex items-center justify-center p-1 bg-stone-50">
                               <span className="text-[9px] font-extrabold text-slate-700 font-mono text-center">Masc</span>
                             </div>
@@ -1955,7 +1955,7 @@ export default function RiskMapTab() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                       <div>
                         <label className="block text-slate-350 font-bold mb-1 uppercase text-[9px]">Descrição do Perigo Observado:</label>
                         <textarea
@@ -2012,7 +2012,7 @@ export default function RiskMapTab() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-sans">
                       <div>
                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                           Diagnóstico Factual de Risco:
@@ -2415,7 +2415,7 @@ export default function RiskMapTab() {
                           />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3.5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                           <div>
                             <label className="block text-slate-650 font-bold mb-1">Probabilidade</label>
                             <select
@@ -2675,3 +2675,4 @@ export default function RiskMapTab() {
     </div>
   );
 }
+

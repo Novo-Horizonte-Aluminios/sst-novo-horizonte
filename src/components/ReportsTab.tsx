@@ -235,7 +235,7 @@ export default function ReportsTab({
         </div>
 
         {/* Inputs and Checkboxes selection grids */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 gap-4">
           
           {/* Sector Selection (Col 1) */}
           <div className="space-y-2">
@@ -263,7 +263,7 @@ export default function ReportsTab({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 max-h-[85px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 sm:grid-cols-3 gap-1 max-h-[85px] overflow-y-auto pr-1">
               {companySectors.map(sec => {
                 const isSelected = selectedSectors.includes(sec);
                 return (
@@ -301,7 +301,7 @@ export default function ReportsTab({
               <CheckSquare className="w-3.5 h-3.5 text-slate-400" />
               2. Filtro Temporal (Data de Lançamento / Emissão)
             </span>
-            <div className="grid grid-cols-2 gap-2 pt-0.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
               <div>
                 <label className="block text-[8px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Data Inicial</label>
                 <input 
@@ -326,7 +326,7 @@ export default function ReportsTab({
         </div>
 
         {/* Third Row: Target Reports & Extension Formats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-800/60 pt-3">
+        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-800/60 pt-3">
           
           {/* Formats checklists */}
           <div className="space-y-2">
@@ -366,7 +366,7 @@ export default function ReportsTab({
               <CheckSquare className="w-3.5 h-3.5 text-slate-400" />
               4. Seleção dos Cadernos de Auditoria
             </span>
-            <div className="grid grid-cols-2 gap-1 pt-0.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 pt-0.5">
               {[
                 { id: 'dashboard', label: '1. Dossiê Estatísticas SST' },
                 { id: 'deliveries', label: '2. Histórico NR-06' },
@@ -463,7 +463,7 @@ export default function ReportsTab({
       </div>
 
       {/* Grid of Auditable Report Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
         
         {/* Module 1: Dashboard e Indicadores de Conformidade */}
         <div className="bg-white p-4 rounded border border-slate-200 flex flex-col justify-between hover:border-slate-300 transition shadow-sm">
@@ -762,3 +762,4 @@ export default function ReportsTab({
     </div>
   );
 }
+

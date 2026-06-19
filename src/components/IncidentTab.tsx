@@ -240,7 +240,7 @@ export default function IncidentTab({
                 </h3>
                 
                 {/* Visual bone simulation wrapper */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                   
                   <div className="p-2.5 bg-slate-50/50 border border-slate-200 rounded space-y-0.5">
                     <strong className="text-[9px] font-mono text-safety-green uppercase font-bold block">1. MÉTODO</strong>
@@ -499,7 +499,7 @@ export default function IncidentTab({
             </div>
 
             <form onSubmit={handleCreateIncident} className="p-4 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Trabalhador Informante</label>
                   <input
@@ -579,7 +579,7 @@ export default function IncidentTab({
               {/* Set Ishikawa inputs */}
               <div className="space-y-1.5 border-t border-slate-100 pt-2.5">
                 <span className="text-[9px] text-slate-450 font-mono font-bold uppercase tracking-wider block">Estudo das Causas (Ishikawa de Entrada)</span>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:grid-cols-3">
                   <div>
                     <label className="text-[8px] text-slate-500 font-bold uppercase block mb-0.5">Método</label>
                     <input
@@ -688,3 +688,4 @@ export default function IncidentTab({
     </div>
   );
 }
+

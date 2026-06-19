@@ -247,3 +247,4 @@ export default function StockTab({ ppes, onAdjustStock, onReplenishUnderstocked 
     </div>
   );
 }
+

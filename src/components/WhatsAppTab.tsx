@@ -611,7 +611,7 @@ export default function WhatsAppTab({
             <br />
             3. Configure as seguintes variáveis de ambiente no Painel de Configurações / Segredos (Secrets Manager) na barra de opções superior do AI Studio:
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mt-2 select-all font-mono text-[9px]">
+          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mt-2 select-all font-mono text-[9px]">
             <div className="bg-white p-1.5 rounded border border-slate-200">
               <strong className="text-slate-700 block text-[8px] uppercase">Chave de Ambiente</strong>
               <code>EVOLUTION_API_URL</code>
@@ -642,3 +642,4 @@ export default function WhatsAppTab({
     </div>
   );
 }
+

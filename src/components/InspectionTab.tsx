@@ -259,7 +259,7 @@ export default function InspectionTab() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Total de Inspeções', value: inspections.length, color: 'text-slate-800', sub: 'registradas' },
           { label: 'Concluídas', value: totalConcluidas, color: 'text-emerald-600', sub: 'finalizadas' },
@@ -295,7 +295,7 @@ export default function InspectionTab() {
             <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight">Nova Inspeção</h3>
             <button onClick={() => setShowNewForm(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Título da Inspeção *</label>
               <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
@@ -471,3 +471,4 @@ export default function InspectionTab() {
     </div>
   );
 }
+

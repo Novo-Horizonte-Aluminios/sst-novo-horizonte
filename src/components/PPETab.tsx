@@ -179,7 +179,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-sans">
+          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-sans">
             {filteredPpes.map((ppe) => (
               <div key={ppe.id} className="bg-white p-3.5 rounded border border-slate-200 hover:shadow-sm transition flex flex-col justify-between">
                 <div>
@@ -195,7 +195,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                   <h4 className="font-extrabold text-[12.5px] text-slate-800 leading-snug">{ppe.name}</h4>
                   <p className="text-slate-400 font-mono text-[9px] mt-0.5">Cód: {ppe.internalCode} • EAN: {ppe.barCode}</p>
 
-                  <div className="mt-3 grid grid-cols-2 gap-1.5 text-[10.5px] bg-[#f8fafc] p-2 rounded border border-slate-100 mb-3 text-slate-600 font-sans">
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10.5px] bg-[#f8fafc] p-2 rounded border border-slate-100 mb-3 text-slate-600 font-sans">
                     <p><strong>CA MTE:</strong> {ppe.caNumber}</p>
                     <p><strong>Vencimento:</strong> {ppe.caExpiryDate}</p>
                     <p><strong>Marca:</strong> {ppe.brand}</p>
@@ -237,7 +237,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
             </div>
 
             <form onSubmit={handleCreatePPE} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="col-span-2">
                   <label className="font-semibold block mb-1 text-slate-600">Descrição Comercial / Nome Comercial</label>
                   <input
@@ -251,7 +251,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600">Categoria de Proteção</label>
                   <select
@@ -280,7 +280,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600">Marca Comercial</label>
                   <input
@@ -339,7 +339,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600">Quantidade de Entrada</label>
                   <input
@@ -384,3 +384,4 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
     </div>
   );
 }
+
