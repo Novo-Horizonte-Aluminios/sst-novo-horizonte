@@ -195,10 +195,14 @@ export default function App() {
 
   const handleAddDelivery = async (newDel: Omit<PPEDelivery, 'id' | 'deliveryDate' | 'status'>) => {
     try {
+      const payloadWithTechnician = {
+        ...newDel,
+        technicianName: currentUser?.name || 'SESMT'
+      };
       const res = await fetch('/api/deliveries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newDel)
+        body: JSON.stringify(payloadWithTechnician)
       });
       const data = await res.json();
       setDeliveries(prev => [...prev, data]);

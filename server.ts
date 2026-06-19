@@ -551,7 +551,7 @@ async function startServer() {
     try {
       const id = 'd_' + Date.now();
       const deliveryDate = new Date().toISOString().split('T')[0];
-      const { ppeId, employeeId, quantity, employeeName, ppeName, caNumber, reason, signingMethod, signatureData, selfieUrl, status } = req.body;
+      const { ppeId, employeeId, quantity, employeeName, ppeName, caNumber, reason, signingMethod, signatureData, selfieUrl, status, technicianName } = req.body;
       const qty = quantity || 1;
       const currentStatus = status || 'Entregue';
 
@@ -582,7 +582,8 @@ async function startServer() {
         employeeName: employeeData.name || employeeName,
         ppeName: ppeName,
         caNumber: caNumber,
-        deliveryDate: deliveryDate
+        deliveryDate: deliveryDate,
+        technicianName: technicianName || 'SESMT'
       };
 
       // Fluxo 1: Recibo de entrega (WhatsApp ao colaborador)
