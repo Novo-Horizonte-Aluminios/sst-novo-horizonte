@@ -16,7 +16,14 @@ import {
   RefreshCw,
   Bell,
   HelpCircle,
-  FileText
+  FileText,
+  CheckCircle,
+  Activity,
+  Package,
+  Users,
+  GraduationCap,
+  ClipboardCheck,
+  AlertCircle
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, EmployeeTraining } from '../types';
 
@@ -56,6 +63,8 @@ export default function WhatsAppTab({
   // Interactive testing: enable phone number overrides
   const [phoneOverrides, setPhoneOverrides] = useState<Record<string, string>>({});
   const [sendingId, setSendingId] = useState<string | null>(null);
+  const [isTesting, setIsTesting] = useState(false);
+  const [testResult, setTestResult] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{
     show: boolean;
     employeeName: string;
@@ -66,6 +75,29 @@ export default function WhatsAppTab({
     messageText: string;
     detailText?: string;
   } | null>(null);
+
+  const handleTestN8n = async (webhookName: string, payload: any) => {
+    setIsTesting(true);
+    setTestResult('Enviando teste...');
+    try {
+      const res = await fetch('/api/test-n8n', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webhookName, payload })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setTestResult(`✅ Sucesso! O webhook ${webhookName} recebeu o teste.`);
+      } else {
+        setTestResult(`❌ Erro n8n: ${data.error}`);
+      }
+    } catch (e: any) {
+      setTestResult(`❌ Falha de rede: ${e.message}`);
+    } finally {
+      setIsTesting(false);
+      setTimeout(() => setTestResult(null), 8000);
+    }
+  };
 
   // Tab selections inside this module: 'dashboard' or 'history'
   const [subTab, setSubTab] = useState<'alerts' | 'history'>('alerts');
@@ -239,33 +271,6 @@ export default function WhatsAppTab({
     }
   };
 
-  // Helper labels for statuses
-  const getStatusBadge = (status: 'Entregue' | 'Simulado' | 'Erro') => {
-    switch (status) {
-      case 'Entregue':
-        return (
-          <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
-            ENTREGUE (API)
-          </span>
-        );
-      case 'Simulado':
-        return (
-          <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
-            <Info className="w-2.5 h-2.5 text-blue-600" />
-            SIMULADO
-          </span>
-        );
-      case 'Erro':
-        return (
-          <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
-            <XCircle className="w-2.5 h-2.5 text-red-600" />
-            ERRO
-          </span>
-        );
-    }
-  };
-
   return (
     <div className="space-y-4">
       {/* Title Header with Connection Stats */}
@@ -326,6 +331,72 @@ export default function WhatsAppTab({
             <span className="text-emerald-400 text-[9px] font-bold">Conectado (Ti-NH)</span>
           </div>
         </div>
+      </div>
+
+      {/* FERRAMENTAS DE TESTE (N8N) */}
+      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm mt-6">
+        <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <Activity className="w-4 h-4 text-emerald-500" />
+          FERRAMENTAS DE TESTE (N8N)
+        </h3>
+        <p className="text-[11px] text-slate-500 mb-4">
+          Utilize estes botões para disparar eventos de teste diretamente para os Webhooks do n8n (modo <strong>Listen for test event</strong>).
+          Você não precisa cadastrar nada real no sistema para validar a conexão.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <button
+            onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
+            disabled={isTesting}
+            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Package className="w-5 h-5 text-emerald-600 mb-2" />
+            <span className="text-[10px] font-bold text-slate-700 text-center">Recibo EPI</span>
+          </button>
+
+          <button
+            onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
+            disabled={isTesting}
+            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Users className="w-5 h-5 text-indigo-600 mb-2" />
+            <span className="text-[10px] font-bold text-slate-700 text-center">Boas Vindas</span>
+          </button>
+
+          <button
+            onClick={() => handleTestN8n('sst-training-new', { training: { employeeName: 'Colaborador Teste', trainingTitle: 'NR-35 Trabalho em Altura', issueDate: new Date().toISOString(), score: 10 } })}
+            disabled={isTesting}
+            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <GraduationCap className="w-5 h-5 text-amber-600 mb-2" />
+            <span className="text-[10px] font-bold text-slate-700 text-center">Treinamento</span>
+          </button>
+
+          <button
+            onClick={() => handleTestN8n('sst-inspection-new', { inspection: { title: 'Inspeção de Rotina (Teste)', type: 'Rotina', scheduledDate: new Date().toISOString(), responsible: 'Técnico Teste' } })}
+            disabled={isTesting}
+            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ClipboardCheck className="w-5 h-5 text-blue-600 mb-2" />
+            <span className="text-[10px] font-bold text-slate-700 text-center">Inspeção</span>
+          </button>
+
+          <button
+            onClick={() => handleTestN8n('sst-accident', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
+            disabled={isTesting}
+            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <AlertTriangle className="w-5 h-5 text-rose-600 mb-2" />
+            <span className="text-[10px] font-bold text-slate-700 text-center">Acidente</span>
+          </button>
+        </div>
+        
+        {testResult && (
+          <div className={"mt-3 p-2 rounded text-[11px] font-medium flex items-center gap-2 " + (testResult.includes('Erro') ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200')}>
+            {testResult.includes('Erro') ? <AlertCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
+            {testResult}
+          </div>
+        )}
       </div>
 
       {/* Primary Tab Bar */}

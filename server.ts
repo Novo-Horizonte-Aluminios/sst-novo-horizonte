@@ -2024,6 +2024,42 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       server: { middlewareMode: true },
       appType: 'spa',
     });
+    // Test Route for n8n Webhooks (triggered by frontend UI)
+    app.post('/api/test-n8n', async (req, res) => {
+      try {
+        const { webhookName, payload } = req.body;
+        const baseUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.novohorizonte.com';
+        // Append -test for explicit testing in UI
+        const testPath = `/webhook-test/${webhookName}`;
+        const fullUrl = new URL(testPath, baseUrl);
+        const data = JSON.stringify(payload);
+        
+        const mod = fullUrl.protocol === 'https:' ? https : http;
+        await new Promise<void>((resolve, reject) => {
+          const reqPost = mod.request(fullUrl.toString(), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) },
+          }, (resN8n) => {
+            let body = '';
+            resN8n.on('data', d => body += d);
+            resN8n.on('end', () => {
+              if (resN8n.statusCode === 200 || resN8n.statusCode === 201) {
+                resolve();
+              } else {
+                reject(new Error(`n8n returned status ${resN8n.statusCode}: ${body}`));
+              }
+            });
+          });
+          reqPost.on('error', (e) => reject(e));
+          reqPost.write(data);
+          reqPost.end();
+        });
+        res.json({ success: true, message: `Teste enviado para ${testPath} com sucesso.` });
+      } catch (error: any) {
+        console.error('[n8n test error]', error.message);
+        res.status(500).json({ error: error.message });
+      }
+    });
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');

@@ -57,6 +57,8 @@ export default function DeliveryTab({
   const [pinNumber, setPinNumber] = useState('');
   const [selfieOptionSelected, setSelfieOptionSelected] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150');
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successModalData, setSuccessModalData] = useState<{empName: string, ppeName: string} | null>(null);
 
   // Biometric states
   const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
@@ -293,10 +295,8 @@ export default function DeliveryTab({
       selfieUrl: signingMethod === 'selfie' ? selfieOptionSelected : undefined
     });
 
-    setSuccessMsg(`EPI "${ppe.name}" fornecido com sucesso para ${employee.name}!`);
-    setTimeout(() => {
-      setSuccessMsg(null);
-    }, 4000);
+    setSuccessModalData({ empName: employee.name, ppeName: ppe.name });
+    setShowSuccessModal(true);
 
     // Reset fields
     setSelectedPpeId('');
@@ -959,6 +959,42 @@ export default function DeliveryTab({
         </div>
 
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && successModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm border border-safety-green/20 overflow-hidden transform animate-scale-in">
+            <div className="bg-safety-green/10 border-b border-safety-green/20 p-5 flex flex-col items-center justify-center relative">
+              <button 
+                onClick={() => setShowSuccessModal(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <div className="bg-white p-3 rounded-full shadow-sm text-safety-green mb-3 ring-4 ring-safety-green/20">
+                <CheckCircle className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 tracking-tight text-center">Entrega Registrada!</h3>
+            </div>
+            
+            <div className="p-6 bg-white text-center">
+              <p className="text-slate-600 text-sm mb-4">
+                O EPI <strong className="text-slate-800">{successModalData.ppeName}</strong> foi entregue com sucesso para <strong className="text-slate-800">{successModalData.empName}</strong>.
+              </p>
+              <p className="text-slate-500 text-[11px] mb-6 italic leading-relaxed">
+                O recibo eletrônico será processado pelo sistema e enviado em breve no WhatsApp do colaborador.
+              </p>
+              
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full bg-safety-green hover:bg-[#0ea85a] text-white font-bold py-3 rounded-lg text-sm transition shadow-md"
+              >
+                FECHAR
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Biometric Mismatch Modal */}
       {showMismatchModal && (
