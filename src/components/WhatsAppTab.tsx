@@ -300,31 +300,30 @@ export default function WhatsAppTab({
         </div>
       </div>
 
-      {/* Integration Setup Assistance Alert Banner */}
+      {/* Active Integration Banner */}
       <div className="bg-slate-900 text-white p-3.5 rounded border border-slate-800 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-sans">
         <div className="flex items-start gap-2.5 text-xs">
-          <div className="bg-safety-green/20 text-safety-green p-1.5 rounded shrink-0">
-            <Sparkles className="w-4 h-4" />
+          <div className="bg-emerald-500/20 text-emerald-400 p-1.5 rounded shrink-0">
+            <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
             <p className="font-bold text-white text-[11px] uppercase tracking-wider flex items-center gap-1">
-              Modo de Simulação Ativo &amp; Disponível para Testes
+              Motor n8n & Evolution API Ativos e Operacionais
             </p>
             <p className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">
-              O sistema não exige credenciais associadas para testes locais! Se você não definir chaves para Evolution API / Go e n8n no Painel de Segredos, o sistema gerará 
-              <strong> simulações em tela</strong> exibindo o texto do checklist que os funcionários receberiam. 
-              Para testar com seu próprio WhatsApp de verdade, insira o telefone no campo abaixo e dispare!
+              Os disparos de WhatsApp e e-mail estão sendo gerenciados com segurança pelos fluxos do servidor <strong>n8n.novohorizonte.com</strong>.
+              Você pode disparar alertas manualmente abaixo ou acompanhar os envios automáticos que acontecem em segundo plano.
             </p>
           </div>
         </div>
         <div className="bg-slate-800 border border-slate-700/60 p-2 rounded text-[10px] shrink-0 font-mono space-y-1 text-slate-300 w-full sm:w-auto">
           <div className="flex justify-between gap-4">
-            <span>EVOLUTION_API_URL:</span>
-            <span className="text-amber-500 text-[9px] font-bold">Opcional (Simulado)</span>
+            <span>MOTOR DE FLUXOS:</span>
+            <span className="text-emerald-400 text-[9px] font-bold">n8n Online</span>
           </div>
           <div className="flex justify-between gap-4 border-t border-white/5 pt-1">
-            <span>N8N_WEBHOOK_URL:</span>
-            <span className="text-amber-500 text-[9px] font-bold">Opcional (Simulado)</span>
+            <span>EVOLUTION API:</span>
+            <span className="text-emerald-400 text-[9px] font-bold">Conectado (Ti-NH)</span>
           </div>
         </div>
       </div>
@@ -598,42 +597,20 @@ export default function WhatsAppTab({
       )}
 
       {/* INTEGRATION DEVELOPMENT FOOTER (eSocial NR-01 GRO context notes) */}
-      <div className="bg-slate-100 p-3.5 rounded border border-slate-200 text-[10px] text-slate-500 flex items-start gap-2 max-w-4xl leading-relaxed">
+      <div className="bg-slate-100 p-3.5 rounded border border-slate-200 text-[10px] text-slate-500 flex items-start gap-2 max-w-4xl leading-relaxed mt-4">
         <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
         <div className="space-y-1">
           <p className="font-bold text-slate-700 uppercase tracking-wider text-[9px]">
-            Como configurar disparos reais para Produção (eSocial S-2240 Compliance via WhatsApp)
+            Gestão Centralizada de Automação (eSocial S-2240 Compliance via WhatsApp)
           </p>
           <p>
-            1. Acesse o seu servidor ou gateway da <strong className="text-slate-800">Evolution API (ou Evolution Go)</strong> e crie uma Instância ativa dedicada para alertas de SST.
+            1. As credenciais de envio (Evolution API) e e-mail (SMTP) não precisam ser informadas no painel web.
             <br />
-            2. Se desejar estender os disparos para fluxos n8n, configure seu gatilho de Webhook JSON no <strong className="text-slate-850 text-[#ff6c37]">n8n Workflow Engine</strong>.
+            2. Toda a orquestração e gerenciamento de chaves é feita diretamente dentro da interface gráfica do <a href="https://n8n.novohorizonte.com" target="_blank" className="text-safety-green font-bold underline">n8n Workflow Engine</a>.
             <br />
-            3. Configure as seguintes variáveis de ambiente no Painel de Configurações / Segredos (Secrets Manager) na barra de opções superior do AI Studio:
+            3. Caso você perca a conexão do WhatsApp, basta abrir o painel da Evolution e ler o QR Code da instância <strong>Ti-NH</strong> novamente.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mt-2 select-all font-mono text-[9px]">
-            <div className="bg-white p-1.5 rounded border border-slate-200">
-              <strong className="text-slate-700 block text-[8px] uppercase">Chave de Ambiente</strong>
-              <code>EVOLUTION_API_URL</code>
-              <span className="text-[8px] text-slate-400 block mt-0.5">Ex: https://api.sua-evo.com.br</span>
-            </div>
-            <div className="bg-white p-1.5 rounded border border-slate-200">
-              <strong className="text-slate-700 block text-[8px] uppercase">Chave de Ambiente</strong>
-              <code>EVOLUTION_API_KEY</code>
-              <span className="text-[8px] text-slate-400 block mt-0.5">Sua Chave apikey de segurança</span>
-            </div>
-            <div className="bg-white p-1.5 rounded border border-slate-200">
-              <strong className="text-slate-700 block text-[8px] uppercase">Chave de Ambiente</strong>
-              <code>EVOLUTION_INSTANCE</code>
-              <span className="text-[8px] text-slate-400 block mt-0.5">Ex: SST_Whats_Alerts</span>
-            </div>
-            <div className="bg-white p-1.5 rounded border border-slate-200">
-              <strong className="text-slate-700 block text-[8px] uppercase">Chave de Ambiente</strong>
-              <code>N8N_WEBHOOK_URL</code>
-              <span className="text-[8px] text-slate-400 block mt-0.5">Webhook para trigger de fluxos</span>
-            </div>
-          </div>
-          <p className="mt-2 text-slate-400">
+          <p className="mt-2 text-slate-400 border-t border-slate-200 pt-2">
             A conformidade automatizada garante que cada trabalhador seja intimado sobre vencimentos críticos e exames, reduzindo passivos PGR (NR-01) e PCMSO (NR-07).
           </p>
         </div>
