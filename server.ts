@@ -6,6 +6,32 @@ import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import { query, initDb } from './src/db.js';
+import https from 'https';
+import http from 'http';
+
+// ─── n8n Webhook Helper ───────────────────────────────────────────────────────
+// Dispara webhooks para o n8n de forma assíncrona (não bloqueia a resposta da API)
+async function notifyN8N(path: string, payload: object): Promise<void> {
+  const baseUrl = process.env.N8N_WEBHOOK_URL || '';
+  if (!baseUrl) return; // Se não configurado, ignora silenciosamente
+  try {
+    const fullUrl = new URL(path, baseUrl);
+    const data = JSON.stringify(payload);
+    const mod = fullUrl.protocol === 'https:' ? https : http;
+    await new Promise<void>((resolve) => {
+      const req = mod.request(fullUrl.toString(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) },
+      }, (res) => { res.resume(); resolve(); });
+      req.on('error', (e) => { console.warn('[n8n webhook] Erro ao notificar:', e.message); resolve(); });
+      req.write(data);
+      req.end();
+    });
+  } catch (e: any) {
+    console.warn('[n8n webhook] Falha silenciosa:', e.message);
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 dotenv.config();
 import { 
@@ -482,6 +508,30 @@ async function startServer() {
         'INSERT INTO deliveries (id, delivery_date, status, ppe_id, employee_id, quantity, employee_name, ppe_name, ca_number, reason, signing_method, signature_data, selfie_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)',
         [id, deliveryDate, currentStatus, ppeId, employeeId, qty, employeeName || null, ppeName || null, caNumber || null, reason || null, signingMethod || null, signatureData || null, selfieUrl || null]
       );
+
+      // Buscar dados do colaborador para enriquecer o payload do n8n
+      let employeeData: any = {};
+      try {
+        const empResult = await query('SELECT name, phone, email FROM employees WHERE id = $1', [employeeId]);
+        if (empResult.rows.length > 0) employeeData = empResult.rows[0];
+      } catch (_) {}
+
+      const deliveryPayload = {
+        delivery: { id, deliveryDate, status: currentStatus, ppeId, employeeId, quantity: qty, employeeName, ppeName, caNumber, reason, signingMethod },
+        employee: { name: employeeData.name || employeeName, phone: employeeData.phone || '', email: employeeData.email || '' }
+      };
+
+      // Fluxo 1: Recibo de entrega (WhatsApp ao colaborador)
+      notifyN8N('/webhook/sst-epi-delivery', deliveryPayload);
+
+      // Fluxo 5: Link de assinatura digital (se método for 'link')
+      if (signingMethod === 'link') {
+        notifyN8N('/webhook/sst-signature-link', {
+          ...deliveryPayload,
+          delivery: { ...deliveryPayload.delivery, signatureLink: `${process.env.APP_URL || 'https://sst.novohorizonte.com'}/assinar/${id}` }
+        });
+      }
+
       res.status(201).json({ id, deliveryDate, status: currentStatus, ppeId, employeeId, quantity: qty, employeeName, ppeName, caNumber, reason, signingMethod, signatureData, selfieUrl });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
@@ -545,6 +595,11 @@ async function startServer() {
         [id, currentStatus, description, date || null, type || null, reporterName || null, sector || null, severity || null, rootCausesStr, ishikawaStr]
       );
       res.status(201).json({ id, status: currentStatus, description, date, type, reporterName, sector, severity, rootCauses5Whys, ishikawa });
+
+      // Fluxo 7: Alerta imediato de acidente ao técnico de segurança
+      notifyN8N('/webhook/sst-accident', {
+        accident: { id, type, reporterName, sector, description, date, severity, status: currentStatus }
+      });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
