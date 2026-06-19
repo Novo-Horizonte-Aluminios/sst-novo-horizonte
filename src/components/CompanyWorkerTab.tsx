@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Company, Employee } from '../types';
 import PhotoSelector from './PhotoSelector';
+import { maskCPF, maskCNPJ, maskPhone, maskRG } from '../utils/masks';
 
 export const getFingerLabel = (code?: string) => {
   if (!code) return 'Nenhum dedo selecionado';
@@ -898,7 +899,7 @@ export default function CompanyWorkerTab({
                     type="text"
                     required
                     value={newEmp.cpf}
-                    onChange={(e) => setNewEmp({...newEmp, cpf: e.target.value})}
+                    onChange={(e) => setNewEmp({...newEmp, cpf: maskCPF(e.target.value)})}
                     placeholder="000.000.000-00"
                     className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
                   />
@@ -908,7 +909,7 @@ export default function CompanyWorkerTab({
                   <input
                     type="text"
                     value={newEmp.rg}
-                    onChange={(e) => setNewEmp({...newEmp, rg: e.target.value})}
+                    onChange={(e) => setNewEmp({...newEmp, rg: maskRG(e.target.value)})}
                     placeholder="0.000.000"
                     className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
                   />
@@ -947,8 +948,8 @@ export default function CompanyWorkerTab({
                   <input
                     type="text"
                     value={newEmp.phone}
-                    onChange={(e) => setNewEmp({...newEmp, phone: e.target.value})}
-                    placeholder="5551988887766 (com DDI)"
+                    onChange={(e) => setNewEmp({...newEmp, phone: maskPhone(e.target.value)})}
+                    placeholder="(00) 00000-0000"
                     className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs"
                   />
                 </div>
@@ -1013,12 +1014,11 @@ export default function CompanyWorkerTab({
                     <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
                       Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
                     </p>
-                    {biometricError && (
+                    {biometricError ? (
                       <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                    )}
-                    {newEmp.biometricTemplate && (
+                    ) : newEmp.biometricTemplate ? (
                       <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
-                    )}
+                    ) : null}
                   </div>
                   <button
                     type="button"
@@ -1108,7 +1108,7 @@ export default function CompanyWorkerTab({
                     type="text"
                     required
                     value={editingEmp.cpf}
-                    onChange={(e) => setEditingEmp({...editingEmp, cpf: e.target.value})}
+                    onChange={(e) => setEditingEmp({...editingEmp, cpf: maskCPF(e.target.value)})}
                     className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
                   />
                 </div>
@@ -1117,7 +1117,7 @@ export default function CompanyWorkerTab({
                   <input
                     type="text"
                     value={editingEmp.rg || ''}
-                    onChange={(e) => setEditingEmp({...editingEmp, rg: e.target.value})}
+                    onChange={(e) => setEditingEmp({...editingEmp, rg: maskRG(e.target.value)})}
                     className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
                   />
                 </div>
@@ -1155,8 +1155,8 @@ export default function CompanyWorkerTab({
                   <input
                     type="text"
                     value={editingEmp.phone || ''}
-                    onChange={(e) => setEditingEmp({...editingEmp, phone: e.target.value})}
-                    placeholder="5551988887766 (com DDI)"
+                    onChange={(e) => setEditingEmp({...editingEmp, phone: maskPhone(e.target.value)})}
+                    placeholder="(00) 00000-0000"
                     className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs"
                   />
                 </div>
@@ -1235,10 +1235,9 @@ export default function CompanyWorkerTab({
                     <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
                       Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
                     </p>
-                    {biometricError && (
+                    {biometricError ? (
                       <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                    )}
-                    {editingEmp.biometricTemplate ? (
+                    ) : editingEmp.biometricTemplate ? (
                       <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
                     ) : (
                       <span className="text-amber-600 font-bold block text-[9.5px] mt-1">Nenhuma digital cadastrada para este funcionário.</span>
@@ -1361,7 +1360,7 @@ export default function CompanyWorkerTab({
                     type="text"
                     required
                     value={editingCompany.cnpj}
-                    onChange={(e) => setEditingCompany({ ...editingCompany, cnpj: e.target.value })}
+                    onChange={(e) => setEditingCompany({ ...editingCompany, cnpj: maskCNPJ(e.target.value) })}
                     className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green font-mono"
                   />
                 </div>
