@@ -47,7 +47,8 @@ export const initDb = async () => {
         email VARCHAR(255),
         signature TEXT,
         photo_url TEXT,
-        biometric_template TEXT
+        biometric_template TEXT,
+        biometric_finger VARCHAR(100)
       );
 
       CREATE TABLE IF NOT EXISTS ppes (
@@ -152,6 +153,7 @@ export const initDb = async () => {
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS signature TEXT;
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS photo_url TEXT;
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS biometric_template TEXT;
+      ALTER TABLE employees ADD COLUMN IF NOT EXISTS biometric_finger VARCHAR(100);
 
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS internal_code VARCHAR(50);
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS bar_code VARCHAR(50);

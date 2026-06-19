@@ -22,6 +22,14 @@ import {
 import { Company, Employee } from '../types';
 import PhotoSelector from './PhotoSelector';
 
+export const getFingerLabel = (code?: string) => {
+  if (!code) return 'Nenhum dedo selecionado';
+  const parts = code.split('-');
+  const hand = parts[0] === 'E' ? 'Mão Esquerda' : 'Mão Direita';
+  const finger = parts[1] || '';
+  return `${finger} (${hand})`;
+};
+
 interface CompanyWorkerTabProps {
   companies: Company[];
   employees: Employee[];
@@ -60,7 +68,7 @@ export default function CompanyWorkerTab({
     name: '', cpf: '', rg: '', birthDate: '', matricula: '',
     companyId: activeCompanyId, sector: 'Usinagem', role: 'Operador de Máquinas',
     manager: 'Luiz Gonzaga', admissionDate: new Date().toISOString().split('T')[0],
-    phone: '', email: '', photoUrl: '', biometricTemplate: ''
+    phone: '', email: '', photoUrl: '', biometricTemplate: '', biometricFinger: ''
   });
 
   // Biometrics states for enrollment
@@ -84,10 +92,79 @@ export default function CompanyWorkerTab({
         setBiometricError(data.error || 'Erro ao extrair biometria.');
       }
     } catch (err) {
-      setBiometricError('Agente Futronic Local não encontrado. Certifique-se de que o Bridge está rodando.');
+      setBiometricError('Agente do Leitor Biométrico Local não encontrado. Certifique-se de que o Bridge está rodando.');
     } finally {
       setIsScanningBiometrics(false);
     }
+  };
+
+  const renderHandSelector = (selectedFinger: string, onChange: (finger: string) => void) => {
+    const hands = [
+      {
+        side: 'E',
+        name: 'Mão Esquerda',
+        fingers: [
+          { code: 'E-Mínimo', name: 'Mínimo', abbrev: 'Mi', class: 'left-[10px] top-[45px]' },
+          { code: 'E-Anelar', name: 'Anelar', abbrev: 'A', class: 'left-[32px] top-[22px]' },
+          { code: 'E-Médio', name: 'Médio', abbrev: 'M', class: 'left-[54px] top-[14px]' },
+          { code: 'E-Indicador', name: 'Indicador', abbrev: 'I', class: 'left-[76px] top-[22px]' },
+          { code: 'E-Polegar', name: 'Polegar', abbrev: 'P', class: 'left-[96px] top-[50px]' },
+        ]
+      },
+      {
+        side: 'D',
+        name: 'Mão Direita',
+        fingers: [
+          { code: 'D-Polegar', name: 'Polegar', abbrev: 'P', class: 'left-[10px] top-[50px]' },
+          { code: 'D-Indicador', name: 'Indicador', abbrev: 'I', class: 'left-[30px] top-[22px]' },
+          { code: 'D-Médio', name: 'Médio', abbrev: 'M', class: 'left-[52px] top-[14px]' },
+          { code: 'D-Anelar', name: 'Anelar', abbrev: 'A', class: 'left-[74px] top-[22px]' },
+          { code: 'D-Mínimo', name: 'Mínimo', abbrev: 'Mi', class: 'left-[96px] top-[45px]' },
+        ]
+      }
+    ];
+
+    return (
+      <div className="flex flex-col items-center bg-white p-3 rounded-lg border border-slate-200 mt-2 shadow-inner w-full">
+        <span className="font-bold text-[9px] text-slate-500 uppercase tracking-wider mb-2">Selecione o dedo para cadastro</span>
+        <div className="flex justify-around w-full gap-4">
+          {hands.map(hand => (
+            <div key={hand.side} className="flex flex-col items-center">
+              <span className="text-[10px] font-semibold text-slate-600 mb-1">{hand.name}</span>
+              <div className="relative w-32 h-24 border border-slate-100 bg-slate-50 rounded-xl overflow-hidden flex items-end justify-center pb-2">
+                {/* stylized hand silhouette (palm) */}
+                <div className="w-16 h-10 bg-slate-200 rounded-t-3xl border-t border-slate-300 absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center">
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">{hand.side === 'E' ? 'Esq' : 'Dir'}</span>
+                </div>
+                {hand.fingers.map(finger => {
+                  const isSelected = selectedFinger === finger.code;
+                  return (
+                    <button
+                      key={finger.code}
+                      type="button"
+                      title={`${finger.name} - ${hand.name}`}
+                      onClick={() => onChange(finger.code)}
+                      className={`absolute w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold transition-all shadow-sm ${
+                        isSelected
+                          ? 'bg-safety-green text-white border-2 border-emerald-600 scale-110 z-10'
+                          : 'bg-white text-slate-600 border border-slate-250 hover:bg-slate-100 hover:scale-105'
+                      } ${finger.class}`}
+                    >
+                      {finger.abbrev}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+        {selectedFinger && (
+          <span className="text-[10px] font-bold text-slate-700 mt-2 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+            Dedo Selecionado: <span className="text-safety-green">{getFingerLabel(selectedFinger)}</span>
+          </span>
+        )}
+      </div>
+    );
   };
 
   // Real Bulk CSV Import States
@@ -115,6 +192,10 @@ export default function CompanyWorkerTab({
       const month = matchDmy[2].padStart(2, '0');
       const year = matchDmy[3];
       return `${year}-${month}-${day}`;
+    }
+    // Handle ISO strings or YYYY-MM-DD HH:mm:ss
+    if (cleaned.length >= 10 && cleaned.match(/^\d{4}-\d{2}-\d{2}/)) {
+      return cleaned.substring(0, 10);
     }
     return cleaned;
   };
@@ -317,7 +398,7 @@ export default function CompanyWorkerTab({
       name: '', cpf: '', rg: '', birthDate: '', matricula: '',
       companyId: activeCompanyId, sector: 'Usinagem', role: 'Operador de Máquinas',
       manager: 'Luiz Gonzaga', admissionDate: new Date().toISOString().split('T')[0],
-      phone: '', email: '', photoUrl: '', biometricTemplate: ''
+      phone: '', email: '', photoUrl: '', biometricTemplate: '', biometricFinger: ''
     });
     setShowEmpModal(false);
   };
@@ -723,7 +804,11 @@ export default function CompanyWorkerTab({
                       <td className="p-2.5 pr-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           <button
-                            onClick={() => setEditingEmp(emp)}
+                            onClick={() => setEditingEmp({
+                              ...emp,
+                              birthDate: normalizeDate(emp.birthDate),
+                              admissionDate: normalizeDate(emp.admissionDate)
+                            })}
                             title="Editar dados do colaborador"
                             className="bg-slate-50 hover:bg-slate-100 border border-slate-200 p-1.5 rounded text-slate-700 transition cursor-pointer"
                           >
@@ -916,28 +1001,31 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              {/* Biometria (Futronic) */}
-              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div className="space-y-0.5">
-                  <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital (Futronic)</span>
-                  <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
-                    Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
-                  </p>
-                  {biometricError && (
-                    <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                  )}
-                  {newEmp.biometricTemplate && (
-                    <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
-                  )}
+              {/* Biometria */}
+              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 space-y-3">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital</span>
+                    <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
+                      Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
+                    </p>
+                    {biometricError && (
+                      <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
+                    )}
+                    {newEmp.biometricTemplate && (
+                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRegisterBiometrics(false)}
+                    disabled={isScanningBiometrics}
+                    className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
+                  >
+                    {isScanningBiometrics ? "Aguardando leitor..." : newEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleRegisterBiometrics(false)}
-                  disabled={isScanningBiometrics}
-                  className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
-                >
-                  {isScanningBiometrics ? "Aguardando leitor..." : newEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
-                </button>
+                {renderHandSelector(newEmp.biometricFinger || '', (finger) => setNewEmp(prev => ({ ...prev, biometricFinger: finger })))}
               </div>
 
               <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
@@ -1135,30 +1223,33 @@ export default function CompanyWorkerTab({
                 </div>
               </div>
 
-              {/* Biometria (Futronic) */}
-              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div className="space-y-0.5">
-                  <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital (Futronic)</span>
-                  <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
-                    Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
-                  </p>
-                  {biometricError && (
-                    <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                  )}
-                  {editingEmp.biometricTemplate ? (
-                    <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
-                  ) : (
-                    <span className="text-amber-600 font-bold block text-[9.5px] mt-1">Nenhuma digital cadastrada para este funcionário.</span>
-                  )}
+              {/* Biometria */}
+              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 space-y-3">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital</span>
+                    <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
+                      Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
+                    </p>
+                    {biometricError && (
+                      <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
+                    )}
+                    {editingEmp.biometricTemplate ? (
+                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
+                    ) : (
+                      <span className="text-amber-600 font-bold block text-[9.5px] mt-1">Nenhuma digital cadastrada para este funcionário.</span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRegisterBiometrics(true)}
+                    disabled={isScanningBiometrics}
+                    className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
+                  >
+                    {isScanningBiometrics ? "Aguardando leitor..." : editingEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleRegisterBiometrics(true)}
-                  disabled={isScanningBiometrics}
-                  className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
-                >
-                  {isScanningBiometrics ? "Aguardando leitor..." : editingEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
-                </button>
+                {renderHandSelector(editingEmp.biometricFinger || '', (finger) => setEditingEmp({ ...editingEmp, biometricFinger: finger }))}
               </div>
 
               <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">

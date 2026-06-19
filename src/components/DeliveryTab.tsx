@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, Company } from '../types';
 import { exportDeliveriesToExcel, exportDeliveriesToPDF } from '../utils/exportUtils';
+import { getFingerLabel } from './CompanyWorkerTab';
 
 interface DeliveryTabProps {
   companies: Company[];
@@ -205,7 +206,7 @@ export default function DeliveryTab({
         setBiometricError(data.error || 'Erro ao extrair biometria.');
       }
     } catch (err) {
-      setBiometricError('Agente Futronic Local não encontrado. Certifique-se de que o Bridge está rodando. Na 1ª vez, acesse https://localhost:8443 no Chrome e aceite o certificado.');
+      setBiometricError('Agente do Leitor Biométrico Local não encontrado. Certifique-se de que o Bridge está rodando. Na 1ª vez, acesse https://localhost:8443 no Chrome e aceite o certificado.');
     } finally {
       setIsScanningBiometrics(false);
     }
@@ -238,7 +239,7 @@ export default function DeliveryTab({
         alert('Por favor, efetue a captura da biometria primeiro.');
         return;
       }
-      signatureValue = `Biometria Futronic: ${biometricHash}`;
+      signatureValue = `Biometria: ${biometricHash}`;
     } else {
       signatureValue = `Selfie Anexa: ${selfieOptionSelected}`;
     }
@@ -579,8 +580,14 @@ export default function DeliveryTab({
                   {signingMethod === 'biometria' && (
                     <div className="text-center py-3 space-y-1.5">
                       <Fingerprint className={`w-8 h-8 mx-auto ${isScanningBiometrics ? 'text-blue-500 animate-spin' : 'text-safety-green animate-pulse'}`} />
-                      <span className="font-bold text-slate-800 block text-[10px]">Sensor Futronic FS80H</span>
-                      <p className="text-[9px] text-slate-400 max-w-xs mx-auto">Posicione o polegar do funcionário no coletor associado ao terminal.</p>
+                      <span className="font-bold text-slate-800 block text-[10px]">Leitor Biométrico</span>
+                      <p className="text-[9px] text-slate-500 max-w-xs mx-auto font-medium">
+                        {selectedEmployeeObj?.biometricFinger ? (
+                          <>Posicione o dedo <span className="text-safety-green font-bold">{getFingerLabel(selectedEmployeeObj.biometricFinger)}</span> do funcionário no coletor para verificação.</>
+                        ) : (
+                          "Posicione o dedo cadastrado do funcionário no coletor para verificação."
+                        )}
+                      </p>
                       
                       {biometricError && (
                         <div className="text-red-500 text-[9px] font-bold mt-2 bg-red-50 p-1.5 rounded border border-red-200">
@@ -803,7 +810,7 @@ export default function DeliveryTab({
                               <Fingerprint className="w-5 h-5 text-green-700" />
                               <span className="text-[10px] font-bold text-green-700 uppercase">Biometria</span>
                               <span className="text-[9px] font-mono text-slate-500 break-all leading-tight max-w-[120px]">
-                                {del.signatureData?.replace('Biometria Futronic: FUT-', 'FUT-').substring(0, 20)}...
+                                {del.signatureData?.replace('Biometria Futronic: ', '').replace('Biometria: ', '').substring(0, 20)}...
                               </span>
                             </div>
                           ) : del.signingMethod === 'senha' ? (

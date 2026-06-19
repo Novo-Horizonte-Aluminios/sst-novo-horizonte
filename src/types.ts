@@ -28,6 +28,7 @@ export interface Employee {
   phone?: string;
   email?: string;
   biometricTemplate?: string;
+  biometricFinger?: string;
 }
 
 export interface RoleConfig {
