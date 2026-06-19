@@ -2072,8 +2072,8 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     try {
       const { webhookName, payload } = req.body;
       const baseUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.novohorizonte.com';
-      // Append -test for explicit testing in UI
-      const testPath = `/webhook-test/${webhookName}`;
+      // Append -test for explicit testing in UI (Changed to production /webhook/ for easier testing without n8n open)
+      const testPath = `/webhook/${webhookName}`;
       const fullUrl = new URL(testPath, baseUrl);
       const data = JSON.stringify(payload);
       
