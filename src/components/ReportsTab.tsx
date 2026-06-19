@@ -33,6 +33,7 @@ import {
 } from '../utils/exportUtils';
 import { generateBulkZip } from '../utils/bulkExportUtils';
 import { Archive, FolderDown, Check, Columns, Filter, CheckSquare } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface ReportsTabProps {
   companies: Company[];
@@ -137,11 +138,11 @@ export default function ReportsTab({
     const hasAnyFormatSelected = Object.values(selectedFormats).some(Boolean);
 
     if (!hasAnyReportSelected) {
-      alert("Por favor, selecione pelo menos um tipo de relatório na lista.");
+      Swal.fire('Atenção', "Por favor, selecione pelo menos um tipo de relatório na lista.", 'warning');
       return;
     }
     if (!hasAnyFormatSelected) {
-      alert("Por favor, selecione pelo menos um formato de arquivo (PDF ou CSV).");
+      Swal.fire('Atenção', "Por favor, selecione pelo menos um formato de arquivo (PDF ou CSV).", 'warning');
       return;
     }
 
@@ -185,7 +186,7 @@ export default function ReportsTab({
       handleFeedback("Lote compactado ZIP em Massa");
     } catch (e) {
       console.error(e);
-      alert("Houve um erro inesperado ao processar a compactação local.");
+      Swal.fire('Erro', "Houve um erro inesperado ao processar a compactação local.", 'error');
     } finally {
       setIsExporting(false);
       setExportMessage("");
@@ -579,7 +580,7 @@ export default function ReportsTab({
             <button
               onClick={() => {
                 if (companyDeliveries.length === 0) {
-                  alert("Nenhum lançamento de entrega registrado nesta unidade para exportar.");
+                  Swal.fire('Atenção', "Nenhum lançamento de entrega registrado nesta unidade para exportar.", 'info');
                   return;
                 }
                 exportDeliveriesToPDF(companyDeliveries, employees, activeCompanyName);
@@ -594,7 +595,7 @@ export default function ReportsTab({
             <button
               onClick={() => {
                 if (companyDeliveries.length === 0) {
-                  alert("Nenhum lançamento de entrega registrado nesta unidade para exportar.");
+                  Swal.fire('Atenção', "Nenhum lançamento de entrega registrado nesta unidade para exportar.", 'info');
                   return;
                 }
                 exportDeliveriesToExcel(companyDeliveries, employees, activeCompanyName);
@@ -648,7 +649,7 @@ export default function ReportsTab({
           <button
             onClick={() => {
               if (companyTrainings.length === 0) {
-                alert("Nenhum treinamento correspondente localizado para exportação.");
+                Swal.fire('Atenção', "Nenhum treinamento correspondente localizado para exportação.", 'info');
                 return;
               }
               const formatted = companyTrainings.map(t => {
@@ -720,7 +721,7 @@ export default function ReportsTab({
           <button
             onClick={() => {
               if (companyAccidents.length === 0) {
-                alert("Nenhuma ocorrência registrada no sistema local para exportar.");
+                Swal.fire('Atenção', "Nenhuma ocorrência registrada no sistema local para exportar.", 'info');
                 return;
               }
               const formatted = companyAccidents.map(a => ({

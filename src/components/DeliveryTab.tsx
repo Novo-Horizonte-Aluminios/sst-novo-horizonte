@@ -24,6 +24,7 @@ import {
 import { Employee, PPE, PPEDelivery, Company } from '../types';
 import { exportDeliveriesToExcel, exportDeliveriesToPDF } from '../utils/exportUtils';
 import { getFingerLabel, getRegisteredFingers } from './CompanyWorkerTab';
+import Swal from 'sweetalert2';
 
 interface DeliveryTabProps {
   companies: Company[];
@@ -177,7 +178,7 @@ export default function DeliveryTab({
 
   const handleCaptureBiometrics = async () => {
     if (!selectedEmpId) {
-      alert('Favor selecionar o Colaborador antes de efetuar a captura biométrica.');
+      Swal.fire('Atenção', 'Favor selecionar o Colaborador antes de efetuar a captura biométrica.', 'warning');
       return;
     }
     const employee = employees.find(emp => emp.id === selectedEmpId);
@@ -234,7 +235,7 @@ export default function DeliveryTab({
   const handleSubmitDelivery = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEmpId || !selectedPpeId) {
-      alert('Favor preencher o Colaborador e o EPI antes de registrar.');
+      Swal.fire('Atenção', 'Favor preencher o Colaborador e o EPI antes de registrar.', 'warning');
       return;
     }
 
@@ -243,7 +244,15 @@ export default function DeliveryTab({
     if (!employee || !ppe) return;
 
     if (ppe.stockCount < quantity) {
-      if (!confirm('Quantidade solicitada é maior que o estoque em mãos do EPI. Prosseguir mesmo assim?')) {
+      const confirmResult = await Swal.fire({
+        title: 'Estoque Insuficiente',
+        text: 'Quantidade solicitada é maior que o estoque em mãos do EPI. Prosseguir mesmo assim?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, prosseguir',
+        cancelButtonText: 'Cancelar'
+      });
+      if (!confirmResult.isConfirmed) {
         return;
       }
     }
@@ -255,7 +264,7 @@ export default function DeliveryTab({
       signatureValue = `PIN Assinado: ${pinNumber || 'MTE-9932'}`;
     } else if (signingMethod === 'biometria') {
       if (!biometricHash) {
-        alert('Por favor, efetue a captura da biometria primeiro.');
+        Swal.fire('Atenção', 'Por favor, efetue a captura da biometria primeiro.', 'warning');
         return;
       }
       signatureValue = `Biometria: ${biometricHash}`;

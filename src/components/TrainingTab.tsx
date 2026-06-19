@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Employee, Training, EmployeeTraining } from '../types';
 import { LMS_QUIZZES } from '../utils/mockData.js';
+import Swal from 'sweetalert2';
 
 interface TrainingTabProps {
   employees: Employee[];
@@ -51,7 +52,7 @@ export default function TrainingTab({
 
   const handleStartQuiz = () => {
     if (!activeEmpId || !activeTrainingId) {
-      alert('Favor selecionar o Colaborador e a qualificação NR primeiro.');
+      Swal.fire('Atenção', 'Favor selecionar o Colaborador e a qualificação NR primeiro.', 'warning');
       return;
     }
     setQuizStarted(true);
@@ -274,7 +275,7 @@ export default function TrainingTab({
                         <span className="text-slate-400 font-mono text-[9px]">Aproveitamento: <strong className="text-slate-800 font-bold">{cert.score}%</strong></span>
                         
                         <button
-                          onClick={() => alert(`Certificação de ${cert.employeeName} referente à norma ${cert.nr} gerada com validade nacional em formato ABNT!`)}
+                          onClick={() => Swal.fire('Sucesso', `Certificação de ${cert.employeeName} referente à norma ${cert.nr} gerada com validade nacional em formato ABNT!`, 'success')}
                           className="text-safety-green font-bold hover:underline flex items-center gap-0.5 text-[10px] uppercase font-mono cursor-pointer"
                         >
                           <FileText className="w-3 h-3" />

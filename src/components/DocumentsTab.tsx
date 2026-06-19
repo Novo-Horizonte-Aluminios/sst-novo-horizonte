@@ -4,6 +4,7 @@ import {
   Clock, Download, Trash2, Edit3, Save, X, RefreshCw, Eye, Shield,
   BookOpen, FileWarning
 } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface SSTDocument {
   id: string;
@@ -74,7 +75,10 @@ export default function DocumentsTab() {
   const openEdit = (doc: SSTDocument) => { setEditingDoc(doc); setForm({ ...doc }); setShowForm(true); };
 
   const handleSave = async () => {
-    if (!form.title || !form.type || !form.responsible) return alert('Preencha título, tipo e responsável.');
+    if (!form.title || !form.type || !form.responsible) {
+      Swal.fire('Atenção', 'Preencha título, tipo e responsável.', 'warning');
+      return;
+    }
     try {
       let res: Response;
       if (editingDoc) {
@@ -99,7 +103,15 @@ export default function DocumentsTab() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Excluir este documento?')) return;
+    const confirmResult = await Swal.fire({
+      title: 'Atenção',
+      text: 'Excluir este documento?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!confirmResult.isConfirmed) return;
     try {
       await fetch(`/api/documents-sst/${id}`, { method: 'DELETE' });
       setDocs(prev => prev.filter(d => d.id !== id));

@@ -4,6 +4,7 @@ import {
   Trash2, Edit3, Save, X, ChevronDown, ChevronRight, FlaskConical,
   AlertTriangle, PackageCheck
 } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface FISPQDocument {
   id: string;
@@ -80,7 +81,10 @@ export default function FispqTab() {
   };
 
   const handleSave = async () => {
-    if (!form.chemicalName || !form.manufacturer) return alert('Preencha o nome do produto e fabricante.');
+    if (!form.chemicalName || !form.manufacturer) {
+      Swal.fire('Atenção', 'Preencha o nome do produto e fabricante.', 'warning');
+      return;
+    }
     try {
       let res: Response;
       if (editingDoc) {
@@ -105,7 +109,15 @@ export default function FispqTab() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Excluir esta FISPQ?')) return;
+    const confirmResult = await Swal.fire({
+      title: 'Atenção',
+      text: 'Excluir esta FISPQ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!confirmResult.isConfirmed) return;
     await fetch(`/api/fispq/${id}`, { method: 'DELETE' });
     setFispqDocs(prev => prev.filter(d => d.id !== id));
   };

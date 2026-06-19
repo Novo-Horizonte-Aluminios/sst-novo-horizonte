@@ -4,6 +4,7 @@ import {
   XCircle, AlertCircle, Clock, ChevronDown, ChevronRight, Trash2, Edit3,
   Save, X, FileCheck, BarChart2, Eye, CheckSquare, Square
 } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface Inspection {
   id: string;
@@ -130,7 +131,10 @@ export default function InspectionTab() {
   };
 
   const handleCreate = async () => {
-    if (!form.title || !form.sector || !form.responsible) return alert('Preencha título, setor e responsável.');
+    if (!form.title || !form.sector || !form.responsible) {
+      Swal.fire('Atenção', 'Preencha título, setor e responsável.', 'warning');
+      return;
+    }
     try {
       const res = await fetch('/api/inspections', {
         method: 'POST',
@@ -188,7 +192,15 @@ export default function InspectionTab() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta inspeção e todos os seus itens?')) return;
+    const confirmResult = await Swal.fire({
+      title: 'Atenção',
+      text: 'Tem certeza que deseja excluir esta inspeção e todos os seus itens?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!confirmResult.isConfirmed) return;
     try {
       await fetch(`/api/inspections/${id}`, { method: 'DELETE' });
       setInspections(prev => prev.filter(i => i.id !== id));

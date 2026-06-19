@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, Trash2, X, RefreshCw, AlertCircle } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface PhotoSelectorProps {
   photoUrl?: string;
@@ -115,7 +116,7 @@ export default function PhotoSelector({
 
   const processFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
-      alert("Por favor, envie um arquivo de imagem válido (JPG, PNG, WEBP).");
+      Swal.fire('Formato Inválido', "Por favor, envie um arquivo de imagem válido (JPG, PNG, WEBP).", 'warning');
       return;
     }
     const reader = new FileReader();

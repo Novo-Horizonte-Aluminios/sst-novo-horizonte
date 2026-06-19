@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, Trash2, Shield, User, Key, Users, AlertCircle, CheckCircle, Pencil, X, Phone, Mail, Lock } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface SystemUser {
   id: string;
@@ -101,7 +102,15 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
   const handleDeleteUser = async (id: string, userName: string) => {
     if (id === currentUser.id) return notify('Não é possível excluir a sua própria conta ativa.', true);
     if (id === 'u_admin')      return notify('Não é possível excluir o Administrador Principal.', true);
-    if (!window.confirm(`Remover o usuário "${userName}"?`)) return;
+    const confirmResult = await Swal.fire({
+      title: 'Remover usuário?',
+      text: `Remover o usuário "${userName}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, remover',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!confirmResult.isConfirmed) return;
 
     try {
       const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });

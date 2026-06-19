@@ -12,6 +12,7 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 import { PPE } from '../types';
+import Swal from 'sweetalert2';
 
 interface StockTabProps {
   ppes: PPE[];
@@ -44,11 +45,11 @@ export default function StockTab({ ppes, onAdjustStock, onReplenishUnderstocked 
     try {
       const data = await onReplenishUnderstocked();
       if (data && data.success) {
-        alert(`Sucesso! Foram emitidas as requisições de compra e o estoque físico foi reabastecido para os ${data.updated.length} EPIs críticos.`);
+        Swal.fire('Sucesso', `Foram emitidas as requisições de compra e o estoque físico foi reabastecido para os ${data.updated.length} EPIs críticos.`, 'success');
       }
     } catch (e) {
       console.error(e);
-      alert('Houve um erro técnico ao reabastecer os equipamentos de segurança.');
+      Swal.fire('Erro', 'Houve um erro técnico ao reabastecer os equipamentos de segurança.', 'error');
     } finally {
       setReplenishing(false);
     }
