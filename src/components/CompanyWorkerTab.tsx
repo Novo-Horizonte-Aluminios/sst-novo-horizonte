@@ -17,7 +17,8 @@ import {
   UploadCloud,
   AlertCircle,
   Loader2,
-  Info
+  Info,
+  Hand
 } from 'lucide-react';
 import { Company, Employee } from '../types';
 import PhotoSelector from './PhotoSelector';
@@ -132,9 +133,12 @@ export default function CompanyWorkerTab({
             <div key={hand.side} className="flex flex-col items-center">
               <span className="text-[10px] font-semibold text-slate-600 mb-1">{hand.name}</span>
               <div className="relative w-32 h-24 border border-slate-100 bg-slate-50 rounded-xl overflow-hidden flex items-end justify-center pb-2">
-                {/* stylized hand silhouette (palm) */}
-                <div className="w-16 h-10 bg-slate-200 rounded-t-3xl border-t border-slate-300 absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">{hand.side === 'E' ? 'Esq' : 'Dir'}</span>
+                {/* Stylized hand illustration */}
+                <div className="absolute inset-0 flex items-center justify-center translate-y-6 opacity-20 pointer-events-none">
+                  <Hand 
+                    className={`w-28 h-28 text-slate-800 ${hand.side === 'E' ? '-scale-x-100' : ''}`} 
+                    strokeWidth={1.5}
+                  />
                 </div>
                 {hand.fingers.map(finger => {
                   const isSelected = selectedFinger === finger.code;
@@ -842,8 +846,8 @@ export default function CompanyWorkerTab({
       {/* --- ADD EMPLOYEE MODAL DIALOG --- */}
       {showEmpModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-xl rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205">
-            <div className="bg-slate-950 p-4 text-white flex justify-between items-center">
+          <div className="bg-white w-full max-w-xl rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205 flex flex-col max-h-[95vh]">
+            <div className="bg-slate-950 p-4 text-white flex justify-between items-center shrink-0">
               <div>
                 <h3 className="font-bold text-xs uppercase tracking-wider">Adicionar Novo Colaborador</h3>
                 <p className="text-[9.5px] text-slate-400 mt-0.5">Garante conformidade estrita aos programas PGR e GRO integrados</p>
@@ -853,7 +857,7 @@ export default function CompanyWorkerTab({
               </button>
             </div>
 
-            <form onSubmit={handleCreateEmployee} className="p-4 space-y-3.5">
+            <form onSubmit={handleCreateEmployee} className="p-4 space-y-3.5 overflow-y-auto">
               {/* Photo Selector (Webcam or File Upload) */}
               <PhotoSelector
                 photoUrl={newEmp.photoUrl}
@@ -1051,8 +1055,8 @@ export default function CompanyWorkerTab({
       {/* --- EDIT EMPLOYEE MODAL DIALOG --- */}
       {editingEmp && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-xl rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205">
-            <div className="bg-slate-900 p-4 text-white flex justify-between items-center">
+          <div className="bg-white w-full max-w-xl rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205 flex flex-col max-h-[95vh]">
+            <div className="bg-slate-900 p-4 text-white flex justify-between items-center shrink-0">
               <div>
                 <h3 className="font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <UserCheck className="w-4 h-4 text-sky-400" />
@@ -1065,7 +1069,7 @@ export default function CompanyWorkerTab({
               </button>
             </div>
 
-            <form onSubmit={handleUpdateEmployeeSubmit} className="p-4 space-y-3.5">
+            <form onSubmit={handleUpdateEmployeeSubmit} className="p-4 space-y-3.5 overflow-y-auto">
               {/* Photo Selector (Webcam or File Upload) */}
               <PhotoSelector
                 photoUrl={editingEmp.photoUrl}
