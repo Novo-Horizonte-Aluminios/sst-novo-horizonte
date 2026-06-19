@@ -77,7 +77,26 @@ export default function CompanyWorkerTab({
   const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
   const [biometricError, setBiometricError] = useState<string | null>(null);
 
+  const getRegisteredFingers = (emp: Partial<Employee> | null): string[] => {
+    if (!emp || !emp.biometricTemplate) return [];
+    try {
+      const parsed = JSON.parse(emp.biometricTemplate);
+      if (Array.isArray(parsed)) {
+        return parsed.map((p: any) => p.finger);
+      }
+    } catch(e) {
+      if (emp.biometricFinger) return [emp.biometricFinger];
+    }
+    return [];
+  };
+
   const handleRegisterBiometrics = async (isEdit: boolean) => {
+    const emp = isEdit ? editingEmp : newEmp;
+    if (!emp || !emp.biometricFinger) {
+      setBiometricError('Selecione um dedo primeiro.');
+      return;
+    }
+
     setIsScanningBiometrics(true);
     setBiometricError(null);
     try {
@@ -85,10 +104,27 @@ export default function CompanyWorkerTab({
       if (!response.ok) throw new Error('Falha na comunicação com o leitor.');
       const data = await response.json();
       if (data.success && data.hash) {
+        let updatedTemplates: any[] = [];
+        try {
+          if (emp.biometricTemplate) {
+            const parsed = JSON.parse(emp.biometricTemplate);
+            if (Array.isArray(parsed)) updatedTemplates = parsed;
+          }
+        } catch(e) {
+          if (emp.biometricTemplate && emp.biometricFinger) {
+            updatedTemplates.push({ finger: emp.biometricFinger, template: emp.biometricTemplate });
+          }
+        }
+        
+        updatedTemplates = updatedTemplates.filter((t:any) => t.finger !== emp.biometricFinger);
+        updatedTemplates.push({ finger: emp.biometricFinger, template: data.hash });
+        
+        const newTemplateStr = JSON.stringify(updatedTemplates);
+
         if (isEdit && editingEmp) {
-          setEditingEmp({ ...editingEmp, biometricTemplate: data.hash });
+          setEditingEmp({ ...editingEmp, biometricTemplate: newTemplateStr });
         } else {
-          setNewEmp(prev => ({ ...prev, biometricTemplate: data.hash }));
+          setNewEmp(prev => ({ ...prev, biometricTemplate: newTemplateStr }));
         }
       } else {
         setBiometricError(data.error || 'Erro ao extrair biometria.');
@@ -100,7 +136,7 @@ export default function CompanyWorkerTab({
     }
   };
 
-  const renderHandSelector = (selectedFinger: string, onChange: (finger: string) => void) => {
+  const renderHandSelector = (selectedFinger: string, registeredFingers: string[], onChange: (finger: string) => void) => {
     const hands = [
       {
         side: 'E',
@@ -152,7 +188,9 @@ export default function CompanyWorkerTab({
                       className={`absolute w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold transition-all shadow-sm ${
                         isSelected
                           ? 'bg-safety-green text-white border-2 border-emerald-600 scale-110 z-10'
-                          : 'bg-white text-slate-600 border border-slate-250 hover:bg-slate-100 hover:scale-105'
+                          : registeredFingers.includes(finger.code)
+                            ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500 scale-105 z-10'
+                            : 'bg-white text-slate-600 border border-slate-250 hover:bg-slate-100 hover:scale-105'
                       } ${finger.class}`}
                     >
                       {finger.abbrev}
@@ -1012,12 +1050,12 @@ export default function CompanyWorkerTab({
                   <div className="space-y-0.5">
                     <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital</span>
                     <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
-                      Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
+                      Garante conformidade legal total.
                     </p>
                     {biometricError ? (
                       <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                    ) : newEmp.biometricTemplate ? (
-                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
+                    ) : getRegisteredFingers(newEmp).length > 0 ? (
+                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ {getRegisteredFingers(newEmp).length} Digital(is) Cadastrada(s)!</span>
                     ) : null}
                   </div>
                   <button
@@ -1029,7 +1067,7 @@ export default function CompanyWorkerTab({
                     {isScanningBiometrics ? "Aguardando leitor..." : newEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
                   </button>
                 </div>
-                {renderHandSelector(newEmp.biometricFinger || '', (finger) => setNewEmp(prev => ({ ...prev, biometricFinger: finger })))}
+                {renderHandSelector(newEmp.biometricFinger || '', getRegisteredFingers(newEmp), (finger) => setNewEmp(prev => ({ ...prev, biometricFinger: finger })))}
               </div>
 
               <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
@@ -1233,12 +1271,12 @@ export default function CompanyWorkerTab({
                   <div className="space-y-0.5">
                     <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital</span>
                     <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
-                      Garante conformidade legal total e impede que terceiros retirem o EPI em nome de outro.
+                      Garante conformidade legal total.
                     </p>
                     {biometricError ? (
                       <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                    ) : editingEmp.biometricTemplate ? (
-                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ Digital Cadastrada com Sucesso!</span>
+                    ) : getRegisteredFingers(editingEmp).length > 0 ? (
+                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ {getRegisteredFingers(editingEmp).length} Digital(is) Cadastrada(s)!</span>
                     ) : (
                       <span className="text-amber-600 font-bold block text-[9.5px] mt-1">Nenhuma digital cadastrada para este funcionário.</span>
                     )}
@@ -1252,7 +1290,7 @@ export default function CompanyWorkerTab({
                     {isScanningBiometrics ? "Aguardando leitor..." : editingEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
                   </button>
                 </div>
-                {renderHandSelector(editingEmp.biometricFinger || '', (finger) => setEditingEmp({ ...editingEmp, biometricFinger: finger }))}
+                {renderHandSelector(editingEmp.biometricFinger || '', getRegisteredFingers(editingEmp), (finger) => setEditingEmp({ ...editingEmp, biometricFinger: finger }))}
               </div>
 
               <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">

@@ -195,7 +195,20 @@ export default function DeliveryTab({
       }
       const data = await response.json();
       if (data.success && data.hash) {
-        if (data.hash.trim().toLowerCase() === employee.biometricTemplate.trim().toLowerCase()) {
+        let isMatch = false;
+        
+        try {
+          const parsed = JSON.parse(employee.biometricTemplate);
+          if (Array.isArray(parsed)) {
+            isMatch = parsed.some((t: any) => t.template.trim().toLowerCase() === data.hash.trim().toLowerCase());
+          } else {
+            isMatch = data.hash.trim().toLowerCase() === employee.biometricTemplate.trim().toLowerCase();
+          }
+        } catch(e) {
+          isMatch = data.hash.trim().toLowerCase() === employee.biometricTemplate.trim().toLowerCase();
+        }
+
+        if (isMatch) {
           setBiometricHash(data.hash);
           setBiometricError(null);
         } else {
