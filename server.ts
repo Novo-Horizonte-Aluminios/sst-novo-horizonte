@@ -523,7 +523,13 @@ async function startServer() {
 
       const deliveryPayload = {
         delivery: { id, deliveryDate, status: currentStatus, ppeId, employeeId, quantity: qty, employeeName, ppeName, caNumber, reason, signingMethod },
-        employee: { name: employeeData.name || employeeName, phone: employeeData.phone || '', email: employeeData.email || '' }
+        employee: { name: employeeData.name || employeeName, phone: employeeData.phone || '', email: employeeData.email || '' },
+        // Flat properties para compatibilidade com o Fluxo 1 do n8n:
+        employeePhone: employeeData.phone || '',
+        employeeName: employeeData.name || employeeName,
+        ppeName: ppeName,
+        caNumber: caNumber,
+        deliveryDate: deliveryDate
       };
 
       // Fluxo 1: Recibo de entrega (WhatsApp ao colaborador)
