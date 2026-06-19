@@ -303,6 +303,11 @@ export const initDb = async () => {
         message TEXT,
         error_detail TEXT
       );
+
+      CREATE TABLE IF NOT EXISTS system_settings (
+        key VARCHAR(255) PRIMARY KEY,
+        value TEXT NOT NULL
+      );
     `);
 
     // Verificar e criar usuários iniciais se não existirem

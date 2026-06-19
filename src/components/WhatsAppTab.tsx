@@ -23,7 +23,8 @@ import {
   Users,
   GraduationCap,
   ClipboardCheck,
-  AlertCircle
+  AlertCircle,
+  Settings
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, EmployeeTraining } from '../types';
 
@@ -65,6 +66,9 @@ export default function WhatsAppTab({
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
+  const [n8nWebhookUrl, setN8nWebhookUrl] = useState('');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [saveSettingsResult, setSaveSettingsResult] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{
     show: boolean;
     employeeName: string;
@@ -75,6 +79,45 @@ export default function WhatsAppTab({
     messageText: string;
     detailText?: string;
   } | null>(null);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      if (res.ok) {
+        const data = await res.json();
+        setN8nWebhookUrl(data.n8n_webhook_url || '');
+      }
+    } catch (e) {
+      console.error('Erro ao carregar configurações:', e);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    setIsSavingSettings(true);
+    setSaveSettingsResult(null);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ n8n_webhook_url: n8nWebhookUrl })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSaveSettingsResult('✅ Configurações salvas!');
+      } else {
+        setSaveSettingsResult(`❌ Erro: ${data.error}`);
+      }
+    } catch (e: any) {
+      setSaveSettingsResult(`❌ Falha de rede: ${e.message}`);
+    } finally {
+      setIsSavingSettings(false);
+      setTimeout(() => setSaveSettingsResult(null), 5000);
+    }
+  };
 
   const handleTestN8n = async (webhookName: string, payload: any) => {
     setIsTesting(true);
@@ -331,6 +374,40 @@ export default function WhatsAppTab({
             <span className="text-emerald-400 text-[9px] font-bold">Conectado (Ti-NH)</span>
           </div>
         </div>
+      </div>
+
+      {/* CONFIGURAÇÃO DE INTEGRAÇÃO */}
+      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm mt-4">
+        <h3 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
+          <Settings className="w-4 h-4 text-slate-500" />
+          Configurações de Integração (n8n)
+        </h3>
+        <p className="text-[11px] text-slate-500 mb-4">
+          Defina o endereço base do seu servidor n8n. Por padrão, o sistema utiliza a URL de ambiente configurada no servidor.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={n8nWebhookUrl}
+              onChange={(e) => setN8nWebhookUrl(e.target.value)}
+              placeholder="https://n8n.novohorizonte.com"
+              className="w-full text-xs px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono text-slate-700"
+            />
+          </div>
+          <button
+            onClick={handleSaveSettings}
+            disabled={isSavingSettings}
+            className="bg-slate-800 hover:bg-slate-900 text-white text-xs px-4 py-2 rounded font-bold transition-colors disabled:opacity-50"
+          >
+            {isSavingSettings ? 'Salvando...' : 'Salvar URL'}
+          </button>
+        </div>
+        {saveSettingsResult && (
+          <div className="mt-2 text-[10px] font-medium">
+            {saveSettingsResult}
+          </div>
+        )}
       </div>
 
       {/* FERRAMENTAS DE TESTE (N8N) */}

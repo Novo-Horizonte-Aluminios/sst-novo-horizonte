@@ -9,13 +9,26 @@ import { query, initDb } from './src/db.js';
 import https from 'https';
 import http from 'http';
 
+// Helper to get webhook URL from database or env fallback
+async function getN8NWebhookUrl(): Promise<string> {
+  try {
+    const result = await query("SELECT value FROM system_settings WHERE key = 'n8n_webhook_url'");
+    if (result && result.rows && result.rows.length > 0) {
+      return result.rows[0].value;
+    }
+  } catch (e: any) {
+    // Fallback if DB is not ready or settings table doesn't exist
+  }
+  return process.env.N8N_WEBHOOK_URL || 'https://n8n.novohorizonte.com';
+}
+
 // ─── n8n Webhook Helper ───────────────────────────────────────────────────────
 // Dispara webhooks para o n8n de forma assíncrona (não bloqueia a resposta da API)
 async function notifyN8N(path: string, payload: object): Promise<void> {
-  const baseUrl = process.env.N8N_WEBHOOK_URL || '';
+  const baseUrl = await getN8NWebhookUrl();
   console.log(`[Webhook] Trying to notify ${path}. N8N_WEBHOOK_URL is: "${baseUrl}"`);
   if (!baseUrl) {
-    console.log('[Webhook] IGNORADO: N8N_WEBHOOK_URL nao esta configurado no ambiente.');
+    console.log('[Webhook] IGNORADO: N8N_WEBHOOK_URL nao esta configurado.');
     return;
   }
   try {
@@ -180,6 +193,42 @@ async function startServer() {
     } catch (e: any) {
       console.error(e);
       res.status(500).json({ error: 'Erro no servidor: ' + e.message });
+    }
+  });
+
+  // Integration Settings API
+  app.get('/api/settings', async (req, res) => {
+    try {
+      const webhookUrl = await getN8NWebhookUrl();
+      res.json({ n8n_webhook_url: webhookUrl });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro ao buscar configurações.' });
+    }
+  });
+
+  app.post('/api/settings', async (req, res) => {
+    try {
+      const { n8n_webhook_url } = req.body;
+      if (!n8n_webhook_url) {
+        return res.status(400).json({ error: 'URL do Webhook é obrigatória.' });
+      }
+      
+      // Ensure the URL is valid
+      try {
+        new URL(n8n_webhook_url);
+      } catch (err) {
+        return res.status(400).json({ error: 'URL inválida.' });
+      }
+
+      await query(
+        "INSERT INTO system_settings (key, value) VALUES ('n8n_webhook_url', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
+        [n8n_webhook_url.trim()]
+      );
+      res.json({ success: true, message: 'Configurações salvas com sucesso.' });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro ao salvar configurações.' });
     }
   });
 
