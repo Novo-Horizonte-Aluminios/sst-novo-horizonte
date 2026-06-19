@@ -377,6 +377,11 @@ async function startServer() {
         [id, name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null, biometricTemplate || null, biometricFinger || null]
       );
       res.status(201).json({ id, name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, status, phone, email, signature, photoUrl, biometricTemplate, biometricFinger });
+
+        // Fluxo n8n: Bem-vindo novo funcionário
+        notifyN8N('/webhook/sst-welcome', {
+          employee: { id, name, cpf, matricula, sector, role, manager, phone, email }
+        });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -567,6 +572,11 @@ async function startServer() {
         [id, employeeId, trainingId, currentStatus, employeeName || null, trainingTitle || null, nr || null, issueDate || null, expiryDate || null, score || null]
       );
       res.status(201).json({ id, employeeId, trainingId, status: currentStatus, employeeName, trainingTitle, nr, issueDate, expiryDate, score });
+
+        // Fluxo n8n: Novo Treinamento / Certificado
+        notifyN8N('/webhook/sst-training-new', {
+          training: { id, employeeId, trainingId, employeeName, trainingTitle, nr, issueDate, expiryDate, score, status: currentStatus }
+        });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -804,6 +814,11 @@ async function startServer() {
         [id, title, type||null, sector||null, responsible||null, scheduledDate||null, completedDate||null, currentStatus, observations||null, score||null, ncCount||0, companyId||'c1']
       );
       res.status(201).json({ id, title, type, sector, responsible, scheduledDate, completedDate, status: currentStatus, observations, score, ncCount, companyId });
+
+      // Fluxo n8n: Nova Inspeção Agendada
+      notifyN8N('/webhook/sst-inspection-new', {
+        inspection: { id, title, type, sector, responsible, scheduledDate, completedDate, status: currentStatus, companyId }
+      });
     } catch (e) { res.status(500).json({ error: 'DB Error' }); }
   });
 
