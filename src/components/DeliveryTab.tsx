@@ -18,11 +18,12 @@ import {
   Smartphone,
   Send,
   Search,
-  ChevronDown
+  ChevronDown,
+  X
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, Company } from '../types';
 import { exportDeliveriesToExcel, exportDeliveriesToPDF } from '../utils/exportUtils';
-import { getFingerLabel } from './CompanyWorkerTab';
+import { getFingerLabel, getRegisteredFingers } from './CompanyWorkerTab';
 
 interface DeliveryTabProps {
   companies: Company[];
@@ -65,8 +66,10 @@ export default function DeliveryTab({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignaturePoints, setHasSignaturePoints] = useState(false);
+  const [showMismatchModal, setShowMismatchModal] = useState(false);
+  const [mismatchFingers, setMismatchFingers] = useState<string[]>([]);
 
-  // Printable selected employee receipt
+  // Derived Values selected employee receipt
   const [selectedReceiptEmpId, setSelectedReceiptEmpId] = useState('');
 
   // Filter states for receipt deliveries (defaults to current month and year)
@@ -212,7 +215,10 @@ export default function DeliveryTab({
           setBiometricHash(data.hash);
           setBiometricError(null);
         } else {
-          setBiometricError('Divergência Biométrica: Esta digital não pertence ao colaborador selecionado!');
+          const registered = getRegisteredFingers(employee);
+          setMismatchFingers(registered);
+          setShowMismatchModal(true);
+          setBiometricError(null);
           setBiometricHash(null);
         }
       } else {
@@ -936,6 +942,59 @@ export default function DeliveryTab({
         </div>
 
       </div>
+
+      {/* Biometric Mismatch Modal */}
+      {showMismatchModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm border border-slate-200 overflow-hidden transform animate-scale-in">
+            <div className="bg-rose-50 border-b border-rose-100 p-4 flex justify-between items-start">
+              <div className="flex gap-3 items-start">
+                <div className="bg-rose-100 p-2 rounded-full mt-1 text-rose-600">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-800 uppercase tracking-tight">Divergência Biométrica</h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Esta digital não pertence ao colaborador selecionado.</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowMismatchModal(false)}
+                className="text-slate-400 hover:text-slate-600 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="text-center">
+                <p className="text-[11px] text-slate-600 mb-3">Tente novamente utilizando uma das seguintes digitais cadastradas para <span className="font-bold text-slate-800">{selectedEmployeeObj?.name?.split(' ')[0]}</span>:</p>
+                
+                {mismatchFingers.length > 0 ? (
+                  <div className="flex flex-col gap-2 max-w-[200px] mx-auto">
+                    {mismatchFingers.map((f, i) => (
+                      <div key={i} className="bg-slate-50 border border-slate-200 py-2 px-3 rounded-md flex items-center justify-center gap-2">
+                        <Fingerprint className="w-3.5 h-3.5 text-slate-400" />
+                        <span className="text-xs font-bold text-slate-700">{getFingerLabel(f)}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded border border-rose-200">
+                    Não encontramos as digitais salvas no formato atual. Recadastre o funcionário.
+                  </p>
+                )}
+              </div>
+              
+              <button
+                onClick={() => setShowMismatchModal(false)}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs transition shadow-md"
+              >
+                ENTENDI
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

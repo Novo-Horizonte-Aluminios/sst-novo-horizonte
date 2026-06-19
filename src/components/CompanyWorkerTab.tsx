@@ -77,18 +77,18 @@ export default function CompanyWorkerTab({
   const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
   const [biometricError, setBiometricError] = useState<string | null>(null);
 
-  const getRegisteredFingers = (emp: Partial<Employee> | null): string[] => {
-    if (!emp || !emp.biometricTemplate) return [];
-    try {
-      const parsed = JSON.parse(emp.biometricTemplate);
-      if (Array.isArray(parsed)) {
-        return parsed.map((p: any) => p.finger);
-      }
-    } catch(e) {
-      if (emp.biometricFinger) return [emp.biometricFinger];
+export const getRegisteredFingers = (emp: Partial<Employee> | null): string[] => {
+  if (!emp || !emp.biometricTemplate) return [];
+  try {
+    const parsed = JSON.parse(emp.biometricTemplate);
+    if (Array.isArray(parsed)) {
+      return parsed.map((p: any) => p.finger);
     }
-    return [];
-  };
+  } catch(e) {
+    if (emp.biometricFinger) return [emp.biometricFinger];
+  }
+  return [];
+};
 
   const handleRegisterBiometrics = async (isEdit: boolean) => {
     const emp = isEdit ? editingEmp : newEmp;
