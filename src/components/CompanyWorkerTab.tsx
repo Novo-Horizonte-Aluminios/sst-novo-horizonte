@@ -136,6 +136,15 @@ export default function CompanyWorkerTab({
     }
   };
 
+  const handleClearBiometrics = (isEdit: boolean) => {
+    if (isEdit && editingEmp) {
+      setEditingEmp({ ...editingEmp, biometricTemplate: '', biometricFinger: '' });
+    } else {
+      setNewEmp(prev => ({ ...prev, biometricTemplate: '', biometricFinger: '' }));
+    }
+    setBiometricError(null);
+  };
+
   const renderHandSelector = (selectedFinger: string, registeredFingers: string[], onChange: (finger: string) => void) => {
     const hands = [
       {
@@ -1058,14 +1067,27 @@ export default function CompanyWorkerTab({
                       <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ {getRegisteredFingers(newEmp).length} Digital(is) Cadastrada(s)!</span>
                     ) : null}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRegisterBiometrics(false)}
-                    disabled={isScanningBiometrics}
-                    className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
-                  >
-                    {isScanningBiometrics ? "Aguardando leitor..." : newEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {getRegisteredFingers(newEmp).length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => handleClearBiometrics(false)}
+                        title="Limpar Digitais Cadastradas"
+                        className="px-2 py-1.5 bg-rose-50 text-rose-600 font-bold rounded hover:bg-rose-100 transition uppercase text-[9px] tracking-wider shrink-0 border border-rose-200 cursor-pointer flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Limpar
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRegisterBiometrics(false)}
+                      disabled={isScanningBiometrics}
+                      className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
+                    >
+                      {isScanningBiometrics ? "Aguardando leitor..." : newEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
+                    </button>
+                  </div>
                 </div>
                 {renderHandSelector(newEmp.biometricFinger || '', getRegisteredFingers(newEmp), (finger) => setNewEmp(prev => ({ ...prev, biometricFinger: finger })))}
               </div>
@@ -1281,14 +1303,27 @@ export default function CompanyWorkerTab({
                       <span className="text-amber-600 font-bold block text-[9.5px] mt-1">Nenhuma digital cadastrada para este funcionário.</span>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRegisterBiometrics(true)}
-                    disabled={isScanningBiometrics}
-                    className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
-                  >
-                    {isScanningBiometrics ? "Aguardando leitor..." : editingEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {getRegisteredFingers(editingEmp).length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => handleClearBiometrics(true)}
+                        title="Limpar Digitais Cadastradas"
+                        className="px-2 py-1.5 bg-rose-50 text-rose-600 font-bold rounded hover:bg-rose-100 transition uppercase text-[9px] tracking-wider shrink-0 border border-rose-200 cursor-pointer flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Limpar
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRegisterBiometrics(true)}
+                      disabled={isScanningBiometrics}
+                      className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
+                    >
+                      {isScanningBiometrics ? "Aguardando leitor..." : editingEmp.biometricTemplate ? "Recapturar Digital" : "Capturar Digital"}
+                    </button>
+                  </div>
                 </div>
                 {renderHandSelector(editingEmp.biometricFinger || '', getRegisteredFingers(editingEmp), (finger) => setEditingEmp({ ...editingEmp, biometricFinger: finger }))}
               </div>
