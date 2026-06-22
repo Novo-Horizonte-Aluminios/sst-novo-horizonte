@@ -339,7 +339,19 @@ function calculateSimilarity(sigA: string, sigB: string): number {
     if (signingMethod === 'assinatura_digital' && canvasRef.current) {
       signatureValue = canvasRef.current.toDataURL(); // base64 SVG/PNG data
     } else if (signingMethod === 'senha') {
-      signatureValue = `PIN Assinado: ${pinNumber || 'MTE-9932'}`;
+      if (!pinNumber) {
+        Swal.fire('Atenção', 'Por favor, digite o PIN numérico do colaborador.', 'warning');
+        return;
+      }
+      if (!employee.pin) {
+        Swal.fire('Não Cadastrado', 'Este colaborador não possui PIN cadastrado em sua ficha. Peça para o RH registrar no cadastro.', 'error');
+        return;
+      }
+      if (employee.pin !== pinNumber) {
+        Swal.fire('PIN Incorreto', 'O PIN digitado não confere com o registrado para o colaborador.', 'error');
+        return;
+      }
+      signatureValue = `PIN Assinado validado`;
     } else if (signingMethod === 'biometria') {
       if (!biometricHash) {
         Swal.fire('Atenção', 'Por favor, efetue a captura da biometria primeiro.', 'warning');
