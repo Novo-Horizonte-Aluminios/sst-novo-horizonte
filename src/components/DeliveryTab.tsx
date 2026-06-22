@@ -405,7 +405,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
             bestScore = 1.0;
           }
         }
-        const threshold = 0.85; // 85% similarity threshold - calibrado para evitar falsos positivos mas permitir variação no posicionamento do dedo
+        const threshold = 0.89; // 89% similarity threshold - calibrado para evitar falsos positivos mas permitir variação no posicionamento do dedo
         if (bestScore >= threshold) {
           isMatch = true;
           const pct = (bestScore * 100).toFixed(1);
