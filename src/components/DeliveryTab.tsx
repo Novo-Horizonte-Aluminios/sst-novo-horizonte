@@ -61,6 +61,7 @@ export default function DeliveryTab({
   const [selfieOptionSelected, setSelfieOptionSelected] = useState('');
   const [isAnalyzingFace, setIsAnalyzingFace] = useState(false);
   const [faceMatchScore, setFaceMatchScore] = useState<number | null>(null);
+  const [baseFaceDescriptor, setBaseFaceDescriptor] = useState<Float32Array | null>(null);
 
   // Webcam states
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -135,7 +136,7 @@ export default function DeliveryTab({
     }
   };
 
-  const capturePhoto = async () => {
+  const capturePhoto = async (autoMatched: boolean = false, autoScore: number = 0) => {
     if (videoRef.current) {
       const canvas = document.createElement('canvas');
       canvas.width = videoRef.current.videoWidth;
@@ -147,7 +148,19 @@ export default function DeliveryTab({
         setSelfieOptionSelected(dataUrl);
         stopWebcam();
 
-        // RUN FACE RECOGNITION
+        if (autoMatched) {
+           setFaceMatchScore(autoScore);
+           Swal.fire({
+             title: 'Identidade Confirmada',
+             text: `Rosto validado com sucesso pelo Auto-Scan! (Precisão: ${(autoScore * 100).toFixed(1)}%)`,
+             icon: 'success',
+             timer: 2000,
+             showConfirmButton: false
+           });
+           return;
+        }
+
+        // RUN MANUAL FACE RECOGNITION IF CLICKED
         const selectedEmployeeObj = companyEmployees.find(e => e.id === selectedEmpId);
         if (selectedEmployeeObj && selectedEmployeeObj.photoUrl) {
           setIsAnalyzingFace(true);
@@ -183,6 +196,48 @@ export default function DeliveryTab({
       }
     }
   };
+
+  // Pre-load base face descriptor
+  useEffect(() => {
+    if (signingMethod === 'selfie' && selectedEmpId) {
+      const emp = companyEmployees.find(e => e.id === selectedEmpId);
+      if (emp && emp.photoUrl) {
+        import('../utils/faceRecognition').then(m => {
+          m.getBaseDescriptor(emp.photoUrl).then(desc => {
+            setBaseFaceDescriptor(desc);
+          });
+        });
+      } else {
+        setBaseFaceDescriptor(null);
+      }
+    } else {
+      setBaseFaceDescriptor(null);
+    }
+  }, [signingMethod, selectedEmpId, companyEmployees]);
+
+  // Auto-scan video feed
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isWebcamActive && !selfieOptionSelected && baseFaceDescriptor && videoRef.current) {
+      interval = setInterval(async () => {
+        if (!videoRef.current || !isWebcamActive || selfieOptionSelected || isAnalyzingFace) return;
+        
+        try {
+          const { compareVideoFace } = await import('../utils/faceRecognition');
+          const result = await compareVideoFace(videoRef.current, baseFaceDescriptor);
+          if (result && result.match && result.score) {
+            clearInterval(interval);
+            capturePhoto(true, result.score);
+          }
+        } catch (e) {
+          // Silent fail on interval
+        }
+      }, 1000); // Check every 1 second
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isWebcamActive, selfieOptionSelected, baseFaceDescriptor, isAnalyzingFace]);
 
   useEffect(() => {
     if (signingMethod !== 'selfie') {
@@ -850,13 +905,21 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         )}
                         
                         {isWebcamActive && !selfieOptionSelected && (
-                          <button
-                            type="button"
-                            onClick={capturePhoto}
-                            className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs transition shadow flex justify-center items-center gap-2"
-                          >
-                            <Camera className="w-4 h-4" /> Capturar Foto
-                          </button>
+                          <div className="flex flex-col gap-2">
+                            {baseFaceDescriptor ? (
+                              <div className="w-full py-2 bg-blue-50 text-blue-700 rounded font-bold text-xs border border-blue-200 flex justify-center items-center gap-2 animate-pulse">
+                                <Scan className="w-4 h-4" /> Escaneando Rosto...
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => capturePhoto(false)}
+                                className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs transition shadow flex justify-center items-center gap-2"
+                              >
+                                <Camera className="w-4 h-4" /> Capturar Foto (Manual)
+                              </button>
+                            )}
+                          </div>
                         )}
 
                         {selfieOptionSelected && !isAnalyzingFace && (

@@ -52,3 +52,33 @@ export const compareFaces = async (baseImgSrc: string, captureImgSrc: string): P
     throw e;
   }
 };
+
+export const getBaseDescriptor = async (baseImgSrc: string): Promise<Float32Array | null> => {
+  await loadModels();
+  try {
+    const baseImg = await faceapi.fetchImage(baseImgSrc);
+    const detection = await faceapi.detectSingleFace(baseImg).withFaceLandmarks().withFaceDescriptor();
+    return detection ? detection.descriptor : null;
+  } catch (e) {
+    console.error("Failed to extract base face descriptor:", e);
+    return null;
+  }
+};
+
+export const compareVideoFace = async (videoEl: HTMLVideoElement, baseDescriptor: Float32Array): Promise<{ match: boolean; score: number; box?: any } | null> => {
+  try {
+    const detection = await faceapi.detectSingleFace(videoEl).withFaceLandmarks().withFaceDescriptor();
+    if (!detection) return null;
+
+    const distance = faceapi.euclideanDistance(baseDescriptor, detection.descriptor);
+    const threshold = 0.55; 
+    
+    return {
+      match: distance < threshold,
+      score: 1 - distance,
+      box: detection.detection.box
+    };
+  } catch(e) {
+    return null;
+  }
+};
