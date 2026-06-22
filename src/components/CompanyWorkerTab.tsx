@@ -200,7 +200,7 @@ export default function CompanyWorkerTab({
                           ? 'bg-safety-green text-white border-2 border-emerald-600 scale-110 z-10'
                           : registeredFingers.includes(finger.code)
                             ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500 scale-105 z-10'
-                            : 'bg-white text-slate-600 border border-slate-250 hover:bg-slate-100 hover:scale-105'
+                            : 'bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 hover:scale-105'
                       } ${finger.class}`}
                     >
                       {finger.abbrev}
@@ -570,7 +570,7 @@ export default function CompanyWorkerTab({
               className={`flex items-center gap-2 text-[11px] font-bold px-4 py-2.5 border-2 rounded-xl transition-all cursor-pointer shadow-sm hover:-translate-y-0.5 ${
                 showBulkImport 
                   ? 'bg-slate-900 text-white border-slate-900' 
-                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
+                  : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800 hover:border-slate-400'
               }`}
             >
               <FileSpreadsheet className={`w-4 h-4 ${showBulkImport ? 'text-amber-400' : 'text-emerald-600'}`} />
@@ -580,7 +580,7 @@ export default function CompanyWorkerTab({
             <button
               onClick={handleSimulateCSVImport}
               disabled={importStatus !== null}
-              className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-200 shadow-sm text-slate-600 rounded-xl transition-all hover:border-slate-300 cursor-pointer disabled:opacity-50 disabled:pointer-events-none hover:-translate-y-0.5"
+              className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-2.5 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 shadow-sm text-slate-700 rounded-xl transition-all hover:border-slate-400 cursor-pointer disabled:opacity-50 disabled:pointer-events-none hover:-translate-y-0.5"
               title="Simular uma importação rápida com dados de demonstração"
             >
               <span>Demo Import</span>
@@ -619,7 +619,7 @@ export default function CompanyWorkerTab({
                   setParsedRows([]);
                   setParseError(null);
                 }}
-                className="text-slate-400 hover:text-slate-600 p-1 bg-white hover:bg-slate-100 border border-slate-200 rounded transition cursor-pointer font-bold"
+                className="text-slate-500 hover:text-slate-700 p-1 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded transition cursor-pointer font-bold"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -640,7 +640,7 @@ export default function CompanyWorkerTab({
                 <button
                   type="button"
                   onClick={handleDownloadTemplate}
-                  className="w-full flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 hover:text-slate-900 rounded transition shadow-sm cursor-pointer"
+                  className="w-full flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 hover:text-slate-900 rounded transition shadow-sm cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-emerald-600" />
                   <span>Baixar Modelo CSV</span>
@@ -865,7 +865,7 @@ export default function CompanyWorkerTab({
                               admissionDate: normalizeDate(emp.admissionDate)
                             })}
                             title="Editar dados do colaborador"
-                            className="bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-350 p-2 rounded-xl text-slate-700 transition cursor-pointer hover:scale-105 shadow-sm"
+                            className="bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 hover:border-slate-400 p-2 rounded-xl text-slate-700 transition cursor-pointer hover:scale-105 shadow-sm"
                           >
                             <Edit2 className="w-3.5 h-3.5 text-blue-650 font-black" />
                           </button>
@@ -873,7 +873,7 @@ export default function CompanyWorkerTab({
                           <button
                             onClick={() => setDeletingEmp(emp)}
                             title="Excluir colaborador"
-                            className="bg-white hover:bg-rose-50 border-2 border-slate-200 hover:border-rose-300 p-2 rounded-xl text-slate-755 transition cursor-pointer hover:scale-105 shadow-sm"
+                            className="bg-slate-100 hover:bg-rose-100 border-2 border-slate-300 hover:border-rose-300 p-2 rounded-xl text-slate-700 transition cursor-pointer hover:scale-105 shadow-sm"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-rose-600 font-black" />
                           </button>

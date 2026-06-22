@@ -219,7 +219,7 @@ export default function AIChatTab() {
             key={idx}
             type="button"
             onClick={() => handleSendMessage(q)}
-            className="text-[9.5px] bg-white hover:bg-slate-150 hover:text-slate-800 border border-slate-200 rounded px-2.5 py-1 font-bold transition cursor-pointer"
+            className="text-[9.5px] bg-slate-100 hover:bg-slate-200 hover:text-slate-800 border border-slate-300 rounded px-2.5 py-1 font-bold transition cursor-pointer"
           >
             {q}
           </button>

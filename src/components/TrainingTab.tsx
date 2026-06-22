@@ -176,7 +176,7 @@ export default function TrainingTab({
                           className={`w-full text-left p-2 rounded border text-[11px] transition-all leading-tight ${
                             selectedAnswer === i 
                               ? 'border-safety-green bg-safety-green/10 text-safety-green font-bold' 
-                              : 'border-slate-200 hover:bg-slate-50 text-slate-600 bg-white'
+                              : 'border-slate-300 hover:bg-slate-100 text-slate-700 bg-slate-50'
                           }`}
                         >
                           {opt}

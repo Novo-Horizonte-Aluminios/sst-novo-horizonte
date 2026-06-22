@@ -524,9 +524,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     required
                     value={selectedPpeId}
                     onChange={(e) => setSelectedPpeId(e.target.value)}
-                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[15px] font-black tracking-tight text-slate-900 transition-all hover:border-slate-300 cursor-pointer"
+                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[15px] tracking-tight text-slate-900 transition-all hover:border-slate-300 cursor-pointer"
                   >
-                    <option value="" className="text-[15px] font-bold text-slate-500">Selecione o EPI...</option>
+                    <option value="" className="text-[15px] text-slate-500">Selecione o EPI...</option>
                     {ppes.map((p) => (
                       <option key={p.id} value={p.id} disabled={p.caStatus !== 'Válido'}>
                         {p.name} (CA: {p.caNumber} {p.caStatus !== 'Válido' ? '⚠️ EXPIRED' : ''})
@@ -802,7 +802,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         
                         <button
                           type="button"
-                          className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded font-bold text-[9px] uppercase transition shadow-sm"
+                          className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 rounded font-bold text-[9px] uppercase transition shadow-sm"
                         >
                           <QrCode className="w-3.5 h-3.5" />
                           Gerar QR Code

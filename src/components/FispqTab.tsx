@@ -276,7 +276,7 @@ export default function FispqTab() {
               <Save className="w-3.5 h-3.5" /> {editingDoc ? 'Salvar Alterações' : 'Cadastrar FISPQ'}
             </button>
             <button onClick={() => setShowForm(false)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-white border border-slate-200 text-slate-600 rounded hover:bg-slate-50 cursor-pointer">
+              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 border border-slate-300 text-slate-700 rounded hover:bg-slate-200 cursor-pointer">
               Cancelar
             </button>
           </div>

@@ -598,7 +598,7 @@ export default function BackupTab() {
                 </div>
                 <button
                   onClick={fetchData}
-                  className="p-1 px-2.5 bg-white hover:bg-slate-50 border border-slate-205 rounded text-[10px] font-bold text-slate-600 flex items-center gap-1 shadow-sm transition shrink-0 cursor-pointer"
+                  className="p-1 px-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded text-[10px] font-bold text-slate-700 flex items-center gap-1 shadow-sm transition shrink-0 cursor-pointer"
                 >
                   <RefreshCw className="w-3 h-3 text-slate-500" />
                   Atualizar logs

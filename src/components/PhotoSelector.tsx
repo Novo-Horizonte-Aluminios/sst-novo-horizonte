@@ -201,7 +201,7 @@ export default function PhotoSelector({
               <button
                 type="button"
                 onClick={() => setActiveTab('upload')}
-                className="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-750 font-bold border border-slate-250 hover:border-slate-350 rounded text-[10px] uppercase flex items-center gap-1.5 cursor-pointer shadow-sm transition active:scale-[0.98]"
+                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300 hover:border-slate-400 rounded text-[10px] uppercase flex items-center gap-1.5 cursor-pointer shadow-sm transition active:scale-[0.98]"
               >
                 <Upload className="w-3.5 h-3.5 text-slate-650" />
                 Upload do Computador

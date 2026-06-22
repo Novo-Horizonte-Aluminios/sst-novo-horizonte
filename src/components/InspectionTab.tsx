@@ -335,7 +335,7 @@ export default function InspectionTab() {
               <Save className="w-3.5 h-3.5" /> Criar e Auto-preencher Checklist
             </button>
             <button onClick={() => setShowNewForm(false)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-white border border-slate-200 text-slate-600 rounded hover:bg-slate-50 cursor-pointer">
+              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 border border-slate-300 text-slate-700 rounded hover:bg-slate-200 cursor-pointer">
               Cancelar
             </button>
           </div>
@@ -441,7 +441,7 @@ export default function InspectionTab() {
                                       ? r === 'Conforme' ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
                                         : r === 'Não Conforme' ? 'bg-red-100 text-red-700 border-red-300'
                                           : 'bg-slate-200 text-slate-700 border-slate-300'
-                                      : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
+                                      : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'}`}>
                                     {r === 'Conforme' ? '✓ C' : r === 'Não Conforme' ? '✗ NC' : r === 'Não Aplicável' ? 'N/A' : '⏳'}
                                   </button>
                                 ))}

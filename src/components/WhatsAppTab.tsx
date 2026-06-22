@@ -341,7 +341,7 @@ export default function WhatsAppTab({
           <button 
             onClick={fetchLogs} 
             disabled={loadingLogs}
-            className="p-2 px-3.5 border-2 border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-800 rounded-xl flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all hover:border-slate-350"
+            className="p-2 px-3.5 border-2 border-slate-300 hover:bg-slate-200 text-slate-700 hover:text-slate-800 rounded-xl flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all hover:border-slate-400 bg-slate-100"
             title="Atualizar Logs"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loadingLogs ? 'animate-spin' : ''}`} />
@@ -427,7 +427,7 @@ export default function WhatsAppTab({
           <button
             onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
           >
             <Package className="w-6 h-6 text-emerald-600 mb-2" />
             <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Recibo EPI</span>
@@ -436,7 +436,7 @@ export default function WhatsAppTab({
           <button
             onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
           >
             <Users className="w-6 h-6 text-indigo-600 mb-2" />
             <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Boas Vindas</span>
@@ -445,7 +445,7 @@ export default function WhatsAppTab({
           <button
             onClick={() => handleTestN8n('sst-training-new', { training: { employeeName: 'Colaborador Teste', trainingTitle: 'NR-35 Trabalho em Altura', issueDate: new Date().toISOString(), score: 10 } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
           >
             <GraduationCap className="w-6 h-6 text-amber-600 mb-2" />
             <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Treinamento</span>
@@ -454,7 +454,7 @@ export default function WhatsAppTab({
           <button
             onClick={() => handleTestN8n('sst-inspection-new', { inspection: { title: 'Inspeção de Rotina (Teste)', type: 'Rotina', scheduledDate: new Date().toISOString(), responsible: 'Técnico Teste' } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
           >
             <ClipboardCheck className="w-6 h-6 text-blue-600 mb-2" />
             <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Inspeção</span>
@@ -463,7 +463,7 @@ export default function WhatsAppTab({
           <button
             onClick={() => handleTestN8n('sst-accident', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
           >
             <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
             <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Acidente</span>
