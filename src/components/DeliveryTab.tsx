@@ -461,7 +461,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   onClick={() => setIsOpenDelivery(!isOpenDelivery)}
                   className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[13px] text-left flex justify-between items-center cursor-pointer transition-all hover:border-slate-300"
                 >
-                  <span className={selectedEmployeeObj ? "text-slate-800 font-black tracking-tight" : "text-slate-400 font-medium"}>
+                  <span className={selectedEmployeeObj ? "text-[15px] text-slate-900 font-black tracking-tight" : "text-[15px] text-slate-500 font-bold"}>
                     {selectedEmployeeObj 
                       ? `${selectedEmployeeObj.name} (${selectedEmployeeObj.role} - ${selectedEmployeeObj.matricula})`
                       : "Selecione o Colaborador..."}
@@ -478,7 +478,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         placeholder="Buscar por nome, setor, matrícula, CPF..."
                         value={searchTermDelivery}
                         onChange={(e) => setSearchTermDelivery(e.target.value)}
-                        className="w-full bg-transparent border-none focus:outline-none text-[11px] text-slate-700 py-0.5"
+                        className="w-full bg-transparent border-none focus:outline-none text-[14px] text-slate-700 py-1"
                         autoFocus
                       />
                     </div>
@@ -500,8 +500,8 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                             }`}
                           >
                             <div>
-                              <span className="block font-medium">{emp.name}</span>
-                              <span className="block text-[9px] text-slate-400 font-normal">
+                              <span className="block text-[14px] font-bold text-slate-800">{emp.name}</span>
+                              <span className="block text-[12px] text-slate-500 font-medium mt-0.5">
                                 {emp.role} {emp.sector ? `• ${emp.sector}` : ''}
                               </span>
                             </div>
@@ -524,9 +524,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     required
                     value={selectedPpeId}
                     onChange={(e) => setSelectedPpeId(e.target.value)}
-                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[13px] font-black tracking-tight text-slate-800 transition-all hover:border-slate-300 cursor-pointer"
+                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[15px] font-black tracking-tight text-slate-900 transition-all hover:border-slate-300 cursor-pointer"
                   >
-                    <option value="" className="font-medium text-slate-400">Selecione o EPI...</option>
+                    <option value="" className="text-[15px] font-bold text-slate-500">Selecione o EPI...</option>
                     {ppes.map((p) => (
                       <option key={p.id} value={p.id} disabled={p.caStatus !== 'Válido'}>
                         {p.name} (CA: {p.caNumber} {p.caStatus !== 'Válido' ? '⚠️ EXPIRED' : ''})
@@ -543,7 +543,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value))}
-                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white font-mono text-[14px] font-black text-slate-800 transition-all hover:border-slate-300"
+                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white font-mono text-[16px] font-black text-slate-900 transition-all hover:border-slate-300"
                   />
                 </div>
               </div>
