@@ -315,9 +315,8 @@ export default function App() {
   const activeCompany = companies.find(c => c.id === selectedCompanyId) || companies[0];
 
   return (
-    <div className="flex h-screen bg-[#f4f7f9] overflow-hidden font-sans antialiased text-slate-800">
+    <div className="flex h-screen bg-surface-page overflow-hidden font-sans antialiased text-slate-800">
       
-      {/* Sidebar Navigation Drawer */}
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab}
@@ -327,42 +326,43 @@ export default function App() {
         companies={companies}
       />
 
-      {/* Main Workspace Frame */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         
-        {/* Top Navbar Header */}
-        <header className="h-20 bg-transparent px-8 pt-6 pb-2 flex justify-between items-start shrink-0 z-10">
-          <div>
-            <h2 className="text-[10px] font-bold tracking-widest text-safety-green uppercase mb-1">
-              Painel de Gestão SST
-            </h2>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              Olá, {currentUser.name.split(' ')[0]}
-            </h1>
-            <p className="text-xs text-slate-500 font-medium">{currentUser.username}</p>
+        <header className="h-[72px] bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-8 flex justify-between items-center shrink-0 z-10">
+          <div className="flex items-center gap-4">
+            <div>
+              <h2 className="text-[9px] font-bold tracking-[0.15em] text-brand-primary uppercase leading-relaxed">
+                Painel de Gestão SST
+              </h2>
+              <h1 className="text-xl font-black text-slate-900 tracking-tight">
+                Olá, {currentUser.name.split(' ')[0]}
+              </h1>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs mt-2">
-            <div className="flex items-center gap-3">
-              <span className="px-3 py-1 bg-safety-green/10 text-safety-green border border-safety-green/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                {currentUser.role} Ativo
-              </span>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-1.5 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 hover:text-rose-600 rounded-full text-[11px] font-bold text-slate-600 transition-all shadow-sm cursor-pointer"
-              >
-                Sair
-              </button>
-            </div>
+          <div className="flex items-center gap-3">
+            <span className="px-3 py-1.5 bg-brand-primary/10 text-brand-primary border border-brand-primary/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              {currentUser.role}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-1.5 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 hover:text-rose-600 rounded-full text-[11px] font-bold text-slate-600 transition-all shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+            >
+              Sair
+            </button>
           </div>
         </header>
 
-        {/* Dynamic Inner Tab Router */}
-        <main className="flex-1 overflow-y-auto p-5 min-h-0">
+        <main className="flex-1 overflow-y-auto p-6 min-h-0">
           {loading ? (
-            <div className="h-full flex flex-col items-center justify-center gap-2">
-              <div className="w-8 h-8 border-3 border-safety-green border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-[11px] text-slate-400 font-semibold animate-pulse">Sincronizando Módulos SST...</span>
+            <div className="h-full flex flex-col items-center justify-center gap-4">
+              <div className="relative">
+                <div className="w-10 h-10 border-[3px] border-brand-primary/20 border-t-brand-primary rounded-full animate-spin"></div>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-slate-600">Carregando Sistema SST</p>
+                <p className="text-[11px] text-slate-400 mt-1">Sincronizando módulos operacionais...</p>
+              </div>
             </div>
           ) : (
             <>

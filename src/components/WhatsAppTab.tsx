@@ -310,7 +310,11 @@ export default function WhatsAppTab({
         detailText: e.message
       });
     } finally {
-      setSendi  return (
+      setSendingId(null);
+    }
+  };
+
+  return (
     <div className="space-y-6">
       {/* Title Header with Connection Stats */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-md">
@@ -497,8 +501,6 @@ export default function WhatsAppTab({
         >
           <History className="w-4 h-4" />
           Hist√≥rico de Envios ({logs.length})
-        </button>
-      </div>≥rico de Envios ({logs.length})
         </button>
       </div>
 

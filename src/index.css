@@ -1,16 +1,62 @@
 @import "tailwindcss";
 
 @theme {
-  /* Using safety-green classes as primary brand colors (Modern Blue reskin) */
-  --color-safety-green: #2563eb; /* blue-600 */
-  --color-safety-green-dark: #1d4ed8; /* blue-700 */
-  --color-safety-green-light: #eff6ff; /* blue-50 */
-  --color-safety-green-text: #1d4ed8;
-  
+  --color-brand-primary: #2563eb;
+  --color-brand-primary-dark: #1d4ed8;
+  --color-brand-primary-light: #eff6ff;
+  --color-brand-primary-text: #1d4ed8;
+
+  --color-semantic-success: #16a34a;
+  --color-semantic-success-bg: #dcfce7;
+  --color-semantic-success-border: rgba(22, 163, 74, 0.15);
+  --color-semantic-danger: #dc2626;
+  --color-semantic-danger-bg: #fee2e2;
+  --color-semantic-danger-border: rgba(220, 38, 38, 0.15);
+  --color-semantic-warning: #ca8a04;
+  --color-semantic-warning-bg: #fef9c3;
+  --color-semantic-warning-border: rgba(202, 138, 4, 0.15);
+  --color-semantic-info: #0369a1;
+  --color-semantic-info-bg: #e0f2fe;
+  --color-semantic-info-border: rgba(3, 105, 161, 0.15);
+
+  --color-surface-card: #ffffff;
+  --color-surface-page: #f4f7f9;
+  --color-surface-sidebar: #f0f4f8;
+  --color-surface-elevated: #ffffff;
+
+  --color-border-default: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Custom compact table styling from High-Density specification */
+:root {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+::selection {
+  background-color: #2563eb;
+  color: white;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Compact table */
 .compact-table {
   width: 100%;
   border-collapse: collapse;
@@ -21,94 +67,115 @@
   text-align: left;
   background-color: #f1f5f9;
   color: #475569;
-  padding: 6px 10px;
-  font-weight: 600;
+  padding: 8px 12px;
+  font-weight: 700;
   text-transform: uppercase;
   border-bottom: 2px solid #e2e8f0;
-  font-size: 10px;
-  letter-spacing: 0.05em;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
 }
 
 .compact-table td {
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-bottom: 1px solid #f1f5f9;
   color: #334155;
+  font-size: 11.5px;
 }
 
-/* Crisp and compact layout adjustments for high density */
+.compact-table tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Cards */
 .dense-card {
   background: white;
-  border-radius: 6px;
+  border-radius: 16px;
   border: 1px solid #e2e8f0;
-  padding: 12px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
 }
 
+.dense-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Inputs */
 .dense-input {
-  font-size: 11px;
-  padding: 5px 8px;
-  border-radius: 4px;
-  border-width: 1px;
-  border-color: #cbd5e1;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border-width: 2px;
+  border-color: #e2e8f0;
   background-color: #ffffff;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .dense-input:focus {
   outline: none;
-  border-color: #15803d;
-  box-shadow: 0 0 0 1px #15803d;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
+/* Buttons */
 .dense-button {
   font-size: 11px;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-/* High Density Custom Badges */
+.dense-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Badges */
 .badge-l {
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
   font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  letter-spacing: 0.03em;
 }
 
 .badge-l-success {
-  background-color: #dcfce7;
-  color: #16a34a;
-  border: 1px solid rgba(22, 163, 74, 0.15);
+  background-color: var(--color-semantic-success-bg);
+  color: var(--color-semantic-success);
+  border: 1px solid var(--color-semantic-success-border);
 }
 
 .badge-l-alert {
-  background-color: #fee2e2;
-  color: #dc2626;
-  border: 1px solid rgba(220, 38, 38, 0.15);
+  background-color: var(--color-semantic-danger-bg);
+  color: var(--color-semantic-danger);
+  border: 1px solid var(--color-semantic-danger-border);
 }
 
 .badge-l-warning {
-  background-color: #fef9c3;
-  color: #ca8a04;
-  border: 1px solid rgba(202, 138, 4, 0.15);
+  background-color: var(--color-semantic-warning-bg);
+  color: var(--color-semantic-warning);
+  border: 1px solid var(--color-semantic-warning-border);
 }
 
 .badge-l-info {
-  background-color: #e0f2fe;
-  color: #0369a1;
-  border: 1px solid rgba(3, 105, 161, 0.15);
+  background-color: var(--color-semantic-info-bg);
+  color: var(--color-semantic-info);
+  border: 1px solid var(--color-semantic-info-border);
 }
 
-/* Modern clean AI chat box for SST Specialist */
+/* AI Chat Box */
 .ai-box {
   background: linear-gradient(135deg, #1e293b, #0f172a);
   color: white;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 12px;
+  padding: 16px;
   position: relative;
   overflow: hidden;
 }
@@ -120,10 +187,18 @@
   right: -20px;
   width: 80px;
   height: 80px;
-  background: rgba(21, 128, 61, 0.15);
+  background: rgba(37, 99, 235, 0.15);
   border-radius: 50%;
   filter: blur(20px);
   pointer-events: none;
+}
+
+/* Backward compatibility aliases */
+:root {
+  --color-safety-green: #2563eb;
+  --color-safety-green-dark: #1d4ed8;
+  --color-safety-green-light: #eff6ff;
+  --color-safety-green-text: #1d4ed8;
 }
 
 /* =============================================

@@ -23,6 +23,8 @@ import {
   RefreshCw,
   Power
 } from 'lucide-react';
+import StatCard from './ui/StatCard';
+import PageHeader from './ui/PageHeader';
 import { 
   ResponsiveContainer, 
   BarChart, 
@@ -325,83 +327,41 @@ export default function DashboardTab({
             </div>
           </div>
 
-          <div className="flex bg-safety-green/10 text-safety-green text-[10px] font-bold px-3 py-1.5 rounded-xl items-center gap-1.5 border border-safety-green/20">
-            <Activity className="w-3.5 h-3.5 animate-pulse text-safety-green" />
+          <div className="flex bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-3 py-1.5 rounded-xl items-center gap-1.5 border border-brand-primary/20">
+            <Activity className="w-3.5 h-3.5 animate-pulse text-brand-primary" />
             <span className="tracking-wide">MONITORAMENTO ATIVO</span>
           </div>
         </div>
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* KPI 1: Workers */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-          <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider block">Equipe Ativa</span>
-            <div className="bg-slate-100 text-slate-600 p-2 rounded-xl">
-              <Users className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className="text-2xl font-black text-slate-900 tracking-tight">{activeCount}</span>
-            <span className="text-[10px] text-slate-450 font-bold">Trabalhadores</span>
-          </div>
-        </div>
-
-        {/* KPI 2: CA Status */}
-        <div 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          label="Equipe Ativa"
+          value={activeCount}
+          icon={<Users className="w-4 h-4" />}
+        />
+        <StatCard
+          label="CAs Irregulares"
+          value={expiredCAs.length}
+          icon={<Shield className="w-4 h-4" />}
+          variant={expiredCAs.length > 0 ? 'danger' : 'success'}
           onClick={() => onNavigate('ppes')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-safety-green/50 cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider block">CAs Irregulares</span>
-            <div className={`p-2 rounded-xl ${expiredCAs.length > 0 ? 'bg-rose-50 text-rose-700' : 'bg-safety-green/15 text-safety-green'}`}>
-              <Shield className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className={`text-2xl font-black tracking-tight ${expiredCAs.length > 0 ? 'text-rose-600' : 'text-slate-900'}`}>{expiredCAs.length}</span>
-            <span className={`text-[10px] font-bold ${expiredCAs.length > 0 ? 'text-rose-600' : 'text-slate-450'}`}>
-              {expiredCAs.length > 0 ? 'Ação requerida' : '0 intercorrências'}
-            </span>
-          </div>
-        </div>
-
-        {/* KPI 3: Stock Alert */}
-        <div 
+        />
+        <StatCard
+          label="Estoque Baixo"
+          value={criticalStockItems.length}
+          icon={<Package className="w-4 h-4" />}
+          variant={criticalStockItems.length > 0 ? 'warning' : 'success'}
           onClick={() => onNavigate('stock')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-safety-green/50 cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-455 uppercase tracking-wider block">Estoque Baixo</span>
-            <div className={`p-2 rounded-xl ${criticalStockItems.length > 0 ? 'bg-amber-50 text-amber-600' : 'bg-safety-green/15 text-safety-green'}`}>
-              <Package className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className={`text-2xl font-black tracking-tight ${criticalStockItems.length > 0 ? 'text-amber-600' : 'text-slate-900'}`}>{criticalStockItems.length}</span>
-            <span className="text-[10px] text-amber-600 font-bold">
-              {criticalStockItems.length > 0 ? 'Mínimo rompido' : 'Segurança total'}
-            </span>
-          </div>
-        </div>
-
-        {/* KPI 4: LMS Trainings */}
-        <div 
+        />
+        <StatCard
+          label="Treinamentos Expirados"
+          value={expiredTrainings.length}
+          icon={<CalendarCheck className="w-4 h-4" />}
+          variant={expiredTrainings.length > 0 ? 'warning' : 'default'}
           onClick={() => onNavigate('trainings')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-safety-green/50 cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider block">Expirados (NR)</span>
-            <div className={`p-2 rounded-xl ${expiredTrainings.length > 0 ? 'bg-rose-50 text-rose-700' : 'bg-safety-green/15 text-safety-green'}`}>
-              <CalendarCheck className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-1.5">
-            <span className="text-2xl font-black tracking-tight text-slate-900">{expiredTrainings.length}</span>
-            <span className="text-[10px] text-slate-450 font-bold">Treinamentos</span>
-          </div>
-        </div>
+        />
       </div>
 
 
