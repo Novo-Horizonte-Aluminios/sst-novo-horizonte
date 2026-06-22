@@ -30,7 +30,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
   const [newPpe, setNewPpe] = useState({
     name: '', internalCode: '', barCode: '', brand: '', manufacturer: '',
     category: 'Proteção Ocular', caNumber: '', caIssueDate: '', caExpiryDate: '',
-    fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10
+    fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90
   });
 
   const handleScrapeCA = (e: React.FormEvent) => {
@@ -73,7 +73,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
     setNewPpe({
       name: '', internalCode: '', barCode: '', brand: '', manufacturer: '',
       category: 'Proteção Ocular', caNumber: '', caIssueDate: '', caExpiryDate: '',
-      fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10
+      fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90
     });
     setShowAddModal(false);
   };
@@ -200,6 +200,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                     <p><strong>Vencimento:</strong> {ppe.caExpiryDate}</p>
                     <p><strong>Marca:</strong> {ppe.brand}</p>
                     <p className="truncate"><strong>Fáb:</strong> {ppe.manufacturer}</p>
+                    <p><strong>Durabilidade:</strong> {ppe.durabilityDays} dias</p>
                   </div>
                 </div>
 
@@ -339,7 +340,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600">Quantidade de Entrada</label>
                   <input
@@ -357,6 +358,16 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                     required
                     value={newPpe.minStock}
                     onChange={(e) => setNewPpe({...newPpe, minStock: parseInt(e.target.value)})}
+                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600">Durabilidade (Dias)</label>
+                  <input
+                    type="number"
+                    required
+                    value={newPpe.durabilityDays}
+                    onChange={(e) => setNewPpe({...newPpe, durabilityDays: parseInt(e.target.value)})}
                     className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>

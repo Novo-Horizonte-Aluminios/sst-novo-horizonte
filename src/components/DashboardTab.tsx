@@ -181,6 +181,24 @@ export default function DashboardTab({
   // Expiry alerts for trainings
   const expiredTrainings = trainings.filter(t => t.status === 'Vencido');
 
+  const today = new Date();
+  const ppesWithDurability = ppes.filter(p => p.durabilityDays && p.durabilityDays > 0);
+  const ppeExpirations = deliveries
+    .filter(d => d.status === 'Entregue')
+    .map(d => {
+      const ppe = ppesWithDurability.find(p => p.id === d.ppeId);
+      if (!ppe) return null;
+      
+      const deliveryDate = new Date(d.deliveryDate);
+      const expiryDate = new Date(deliveryDate.getTime() + (ppe.durabilityDays! * 24 * 60 * 60 * 1000));
+      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      
+      return { ...d, expiryDate, daysUntilExpiry, ppe };
+    })
+    .filter(Boolean)
+    .filter((item: any) => item.daysUntilExpiry <= 15)
+    .sort((a: any, b: any) => a.daysUntilExpiry - b.daysUntilExpiry);
+
   // Dados históricos de Entrega de EPI para a Novo Horizonte Alumínios (Gráfico de Barras)
   const deliveryData = [
     { name: 'Jan/26', 'Entregas Concluídas': 82, 'Meta de Segurança': 95 },
@@ -833,7 +851,38 @@ export default function DashboardTab({
               </div>
             ))}
 
-            {expiredCAs.length === 0 && criticalStockItems.length === 0 && expiredTrainings.length === 0 && (
+            {ppeExpirations.map((exp: any) => (
+              <div key={`exp-${exp.id}`} className="p-2.5 bg-orange-50/50 rounded border border-orange-100 text-[11px] flex gap-2 items-center justify-between">
+                <div className="flex gap-2">
+                  <span className="text-orange-600 p-1 bg-orange-100 rounded h-6 w-6 flex items-center justify-center font-bold text-[9px] shrink-0 font-mono">EPI</span>
+                  <div>
+                    <h4 className="font-semibold text-slate-850 leading-tight">{exp.employeeName}</h4>
+                    <p className="text-orange-700 font-bold mt-0.5">Vencimento de {exp.ppeName} ({exp.daysUntilExpiry < 0 ? 'Vencido' : `em ${exp.daysUntilExpiry} dias`})</p>
+                    <p className="text-slate-400 text-[9px] leading-tight mt-0.5">Durabilidade: {exp.ppe.durabilityDays} dias.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    try {
+                      await fetch('/api/alerts/webhook', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'epi_vencimento', employeeName: exp.employeeName, ppeName: exp.ppeName, employeeId: exp.employeeId })
+                      });
+                      alert('Alerta enviado via WhatsApp com sucesso!');
+                    } catch(e) {
+                      alert('Erro ao enviar alerta');
+                    }
+                  }}
+                  className="px-2 py-1 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded font-bold uppercase tracking-wider text-[8px] border border-emerald-200 transition"
+                  title="Avisar colaborador"
+                >
+                  Alertar Zap
+                </button>
+              </div>
+            ))}
+
+            {expiredCAs.length === 0 && criticalStockItems.length === 0 && expiredTrainings.length === 0 && ppeExpirations.length === 0 && (
               <div className="flex flex-col items-center justify-center text-center py-10 text-slate-400 gap-1.5">
                 <CheckCircle2 className="w-8 h-8 text-safety-green" />
                 <span className="text-[11px] font-bold text-slate-700">SESMT 100% REGULADO</span>
