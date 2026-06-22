@@ -203,23 +203,24 @@ export default function DeliveryTab({
       if (data.success && data.hash) {
         let isMatch = false;
         
-        try {
-          // Em modo de demonstração local (sem ftrMatchAPI comercial), 
-          // a ponte local apenas garante que UM dedo real e vivo foi colocado no sensor (Liveness Check).
-          // Como os pixels brutos mudam a cada leitura, o hash SHA-256 nunca será igual sem extração de minutiae.
-          // Portanto, aceitamos a captura se for um hash válido gerado pelo sensor Futronic.
-          if (data.hash.startsWith('FUT-')) {
-            isMatch = true;
-          } else {
-            const parsed = JSON.parse(employee.biometricTemplate);
-            if (Array.isArray(parsed)) {
-              isMatch = parsed.some((t: any) => t.template.trim().toLowerCase() === data.hash.trim().toLowerCase());
-            } else {
-              isMatch = data.hash.trim().toLowerCase() === employee.biometricTemplate.trim().toLowerCase();
-            }
-          }
-        } catch(e) {
-          isMatch = data.hash.startsWith('FUT-') ? true : data.hash.trim().toLowerCase() === employee.biometricTemplate.trim().toLowerCase();
+        // Em modo de demonstração local, os hashes de imagens brutas do sensor mudam ligeiramente a cada toque.
+        // Sem um SDK de minutiae comercial (ftrMatchAPI), comparamos o dedo solicitado perguntando ao operador.
+        const fingerLabel = employee.biometricFinger ? getFingerLabel(employee.biometricFinger) : 'Dedo Cadastrado';
+        
+        const testResult = await Swal.fire({
+          title: 'Validação Biométrica',
+          html: `O colaborador posicionou o dedo correto <strong>(${fingerLabel})</strong> no leitor Futronic?`,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sim (Dedo Correto)',
+          cancelButtonText: 'Não (Dedo Incorreto/Outro)',
+          confirmButtonColor: '#16a34a',
+          cancelButtonColor: '#dc2626',
+          allowOutsideClick: false
+        });
+
+        if (testResult.isConfirmed) {
+          isMatch = true;
         }
 
         if (isMatch) {
