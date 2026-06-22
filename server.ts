@@ -368,6 +368,29 @@ async function startServer() {
   };
 
 
+  app.post('/api/admin/clean-test-deliveries', async (req, res) => {
+    try {
+      console.log('Cleaning test deliveries for Emerson...');
+      const result = await query("SELECT id, name FROM employees WHERE name ILIKE '%Emerson%'");
+      
+      if (result.rows.length === 0) {
+        return res.json({ message: 'Nenhum colaborador com nome Emerson encontrado.' });
+      }
+
+      let deletedCount = 0;
+      const details = [];
+      for (const emp of result.rows) {
+        const delResult = await query("DELETE FROM deliveries WHERE employee_id = $1 RETURNING id", [emp.id]);
+        deletedCount += delResult.rows.length;
+        details.push({ employee: emp.name, deleted: delResult.rows.length });
+      }
+      res.json({ success: true, deletedCount, details });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   // Enterprise Tenants
   app.get('/api/companies', async (req, res) => {
     try {
