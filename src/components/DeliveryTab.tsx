@@ -568,9 +568,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                       key={m.label}
                       type="button"
                       onClick={() => setReason(m.label as any)}
-                      className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center justify-center font-bold text-[10px] uppercase tracking-tighter cursor-pointer ${
+                      className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center justify-center font-bold text-[11px] uppercase cursor-pointer ${
                         reason === m.label 
-                          ? 'border-safety-green bg-safety-green text-white shadow-md -translate-y-0.5' 
+                          ? 'border-brand-primary-dark bg-brand-primary-dark text-white shadow-md -translate-y-0.5' 
                           : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
                       }`}
                     >
@@ -815,7 +815,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
               <button
                 type="submit"
-                className="w-full bg-safety-green hover:bg-safety-green-dark text-white font-black p-4 rounded-xl transition-all hover:shadow-lg hover:shadow-safety-green/20 hover:-translate-y-0.5 flex items-center justify-center gap-2 uppercase text-[11px] tracking-widest cursor-pointer mt-6"
+                className="w-full bg-brand-primary-dark hover:bg-brand-primary-dark text-white font-black p-4 rounded-xl transition-all hover:shadow-lg hover:shadow-brand-primary-dark/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 uppercase text-[12px] tracking-wider cursor-pointer mt-6"
               >
                 <Plus className="w-4 h-4" />
                 Registrar Entrega e Gerar Ficha Legal
