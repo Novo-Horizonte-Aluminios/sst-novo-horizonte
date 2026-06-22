@@ -88,134 +88,136 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
     <div className="space-y-6">
       
       {/* Top action grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Automatic MTE CA Checking tool */}
-        <div className="lg:col-span-1 bg-[#0f172a] text-slate-100 p-4 rounded border border-slate-700/60 flex flex-col justify-between text-[11px]">
+        <div className="lg:col-span-1 bg-[#0f172a] text-slate-100 p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between text-[11px] shadow-lg">
           <div>
-            <div className="flex items-center gap-2 mb-2 pr-2">
-              <ShieldCheck className="w-4 h-4 text-safety-green" />
-              <h3 className="text-xs font-bold tracking-tight text-white uppercase">Consulta e Scraping MTE (CA)</h3>
+            <div className="flex items-center gap-2 mb-3 pr-2">
+              <div className="bg-safety-green/20 text-safety-green p-1.5 rounded-lg">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <h3 className="text-xs font-black tracking-tight text-white uppercase">Consulta e Scraping MTE (CA)</h3>
             </div>
-            <p className="text-slate-400 text-[10px] leading-snug mb-3">
-              Varredura com a base nacional do Ministério do Trabalho e Emprego para validação de faturamento e vencimentos.
+            <p className="text-slate-400 text-[10.5px] leading-relaxed mb-4">
+              Varredura em tempo real com a base nacional do Ministério do Trabalho e Emprego para validação de faturamento e vencimentos.
             </p>
 
-            <form onSubmit={handleScrapeCA} className="space-y-1.5">
-              <label className="text-[9px] text-slate-400 font-mono block font-bold">Certificado de Aprovação (CA)</label>
-              <div className="flex gap-1.5">
+            <form onSubmit={handleScrapeCA} className="space-y-2">
+              <label className="text-[9px] text-slate-400 font-mono block font-bold uppercase tracking-wider">Certificado de Aprovação (CA)</label>
+              <div className="flex gap-2">
                 <input
                   type="number"
                   required
                   placeholder="Ex: 39712 ou 32145"
                   value={caSearchNumber}
                   onChange={(e) => setCaSearchNumber(e.target.value)}
-                  className="bg-slate-950 border border-slate-700 text-white p-1.5 px-2 rounded text-[11px] font-mono flex-1 focus:outline-none focus:border-safety-green"
+                  className="bg-slate-950 border-2 border-slate-800 text-white p-3 px-3.5 rounded-xl text-[12px] font-mono flex-1 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 transition-all font-bold"
                 />
                 <button
                   type="submit"
                   disabled={scraping}
-                  className="px-3 py-1 bg-safety-green hover:bg-safety-green-dark text-white font-bold rounded text-[11px]"
+                  className="px-4 py-2.5 bg-safety-green hover:bg-safety-green-dark text-white font-black rounded-xl text-[11px] uppercase tracking-wider transition-all hover:-translate-y-0.5 shadow-md cursor-pointer flex items-center justify-center min-w-[85px] disabled:opacity-50"
                 >
-                  {scraping ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : 'Scrapar'}
+                  {scraping ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Scrapar'}
                 </button>
               </div>
             </form>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-800 flex-1 flex flex-col justify-center">
+          <div className="mt-5 pt-4 border-t border-slate-800 flex-1 flex flex-col justify-center">
             {caScrapeResult ? (
-              <div className="bg-slate-950/60 p-3 rounded space-y-2 border border-slate-800 font-sans leading-normal text-[10.5px]">
-                <div className="flex justify-between items-center">
-                  <span className="font-bold text-white text-[11px]">CA Nº {caScrapeResult.number}</span>
-                  <span className={`badge-l ${
-                    caScrapeResult.status === 'Válido' ? 'badge-l-success' : 'badge-l-alert'
+              <div className="bg-slate-950/60 p-4 rounded-xl space-y-3 border border-slate-800/80 font-sans leading-relaxed text-[11px]">
+                <div className="flex justify-between items-center border-b border-slate-900 pb-2">
+                  <span className="font-black text-white text-[12px]">CA Nº {caScrapeResult.number}</span>
+                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                    caScrapeResult.status === 'Válido' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                   }`}>
                     {caScrapeResult.status}
                   </span>
                 </div>
 
-                <div className="space-y-1 text-slate-300">
-                  <p><span className="text-slate-500 font-bold uppercase text-[8px] block">Equipamento</span> {caScrapeResult.equipment}</p>
-                  <p><span className="text-slate-500 font-bold uppercase text-[8px] block">Fabricante</span> {caScrapeResult.manufacturer}</p>
-                  <p className="text-slate-400 font-mono text-[9px]">Validade: <strong className={caScrapeResult.status === 'Vencido' ? 'text-red-400' : 'text-safety-green'}>{caScrapeResult.expiryDate}</strong></p>
+                <div className="space-y-2 text-slate-300">
+                  <p><span className="text-slate-500 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Equipamento</span> {caScrapeResult.equipment}</p>
+                  <p><span className="text-slate-500 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Fabricante</span> {caScrapeResult.manufacturer}</p>
+                  <p className="text-slate-400 font-mono text-[10px]">Validade: <strong className={caScrapeResult.status === 'Vencido' ? 'text-rose-400' : 'text-safety-green'}>{caScrapeResult.expiryDate}</strong></p>
                 </div>
               </div>
             ) : scraping ? (
-              <div className="text-center py-4 text-slate-400 flex flex-col items-center justify-center gap-1">
-                <RefreshCw className="w-5 h-5 animate-spin text-safety-green" />
-                <p className="animate-pulse text-[9px]">Consultando MTE Federal...</p>
+              <div className="text-center py-6 text-slate-400 flex flex-col items-center justify-center gap-2">
+                <RefreshCw className="w-6 h-6 animate-spin text-safety-green" />
+                <p className="animate-pulse text-[10px] font-bold">Consultando base do MTE Federal...</p>
               </div>
             ) : (
-              <div className="text-center py-4 text-slate-500 flex flex-col items-center justify-center gap-1.5 border border-dashed border-slate-800 rounded">
-                <HelpCircle className="w-6 h-6 text-slate-600" />
-                <p className="max-w-[180px] mx-auto text-[9px] text-slate-500">Digite um CA acima e execute para validar na base oficial.</p>
+              <div className="text-center py-6 text-slate-500 flex flex-col items-center justify-center gap-2.5 border-2 border-dashed border-slate-800 rounded-xl">
+                <HelpCircle className="w-7 h-7 text-slate-700 animate-pulse" />
+                <p className="max-w-[200px] mx-auto text-[10px] text-slate-500 font-bold leading-normal">Digite um CA acima e execute para validar na base oficial.</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Master PPE Register List */}
-        <div className="lg:col-span-2 space-y-3">
-          <div className="flex flex-col md:flex-row gap-2 justify-between items-start md:items-center">
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
             {/* Search Box */}
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Buscar EPI cadastrado (CA, Tipo, Marca)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-[11px] bg-white border border-slate-200 rounded focus:outline-none focus:border-safety-green shadow-sm"
+                className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 transition-all hover:border-slate-300 shadow-sm font-bold text-slate-800"
               />
             </div>
 
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 bg-safety-green text-white rounded hover:bg-safety-green-dark transition shadow-sm"
+              className="flex items-center gap-2 text-[11px] font-black px-4 py-2.5 bg-safety-green text-white rounded-xl hover:bg-safety-green-dark transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-4 h-4" />
               <span>Novo Registro de EPI</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-sans">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-sans">
             {filteredPpes.map((ppe) => (
-              <div key={ppe.id} className="bg-white p-3.5 rounded border border-slate-200 hover:shadow-sm transition flex flex-col justify-between">
+              <div key={ppe.id} className="bg-white p-5 rounded-2xl border border-slate-200 hover:shadow-md transition-all hover:-translate-y-0.5 flex flex-col justify-between shadow-sm">
                 <div>
-                  <div className="flex justify-between items-start mb-1.5 leading-none gap-2">
-                    <span className="text-[9px] text-slate-400 uppercase font-mono font-bold tracking-wider">{ppe.category}</span>
-                    <span className={`badge-l ${
-                      ppe.caStatus === 'Válido' ? 'badge-l-success' : 'badge-l-alert'
+                  <div className="flex justify-between items-start mb-2 leading-none gap-2">
+                    <span className="text-[9px] text-slate-400 uppercase font-mono font-black tracking-wider">{ppe.category}</span>
+                    <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-mono font-bold uppercase ${
+                      ppe.caStatus === 'Válido' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'
                     }`}>
                       CA {ppe.caStatus}
                     </span>
                   </div>
 
-                  <h4 className="font-extrabold text-[12.5px] text-slate-800 leading-snug">{ppe.name}</h4>
-                  <p className="text-slate-400 font-mono text-[9px] mt-0.5">Cód: {ppe.internalCode} • EAN: {ppe.barCode}</p>
+                  <h4 className="font-black text-[14px] text-slate-800 leading-snug tracking-tight">{ppe.name}</h4>
+                  <p className="text-slate-400 font-mono text-[9.5px] mt-1">Cód: {ppe.internalCode} • EAN: {ppe.barCode}</p>
 
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10.5px] bg-[#f8fafc] p-2 rounded border border-slate-100 mb-3 text-slate-600 font-sans">
-                    <p><strong>CA MTE:</strong> {ppe.caNumber}</p>
-                    <p><strong>Vencimento:</strong> {ppe.caExpiryDate}</p>
-                    <p><strong>Marca:</strong> {ppe.brand}</p>
-                    <p className="truncate"><strong>Fáb:</strong> {ppe.manufacturer}</p>
-                    <p><strong>Durabilidade:</strong> {ppe.durabilityDays} dias</p>
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 text-slate-650 font-sans font-bold">
+                    <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">CA MTE</span> {ppe.caNumber}</p>
+                    <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Vencimento</span> {ppe.caExpiryDate}</p>
+                    <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Marca</span> {ppe.brand}</p>
+                    <p className="truncate"><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Fabricante</span> {ppe.manufacturer}</p>
+                    <p className="col-span-2"><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Durabilidade Sugerida</span> {ppe.durabilityDays} dias</p>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center text-[10.5px] pt-2.5 border-t border-slate-100">
+                <div className="flex justify-between items-center text-[11px] pt-3.5 border-t border-slate-100">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400">Estoque:</span>
-                    <strong className={`font-mono text-xs ${ppe.stockCount <= ppe.minStock ? 'text-red-600 font-bold' : 'text-slate-700'}`}>
+                    <span className="text-slate-450 font-bold">Estoque:</span>
+                    <strong className={`font-mono text-[13px] ${ppe.stockCount <= ppe.minStock ? 'text-rose-650 font-black' : 'text-slate-800 font-extrabold'}`}>
                       {ppe.stockCount} un
                     </strong>
                     {ppe.stockCount <= ppe.minStock && (
-                      <span className="badge-l badge-l-alert font-mono">Crítico</span>
+                      <span className="inline-block px-1.5 py-0.5 rounded text-[8.5px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">Crítico</span>
                     )}
                   </div>
-                  <a href={ppe.manualUrl} className="text-safety-green font-bold hover:underline flex items-center gap-1">
-                    <BookOpen className="w-3 h-3" />
+                  <a href={ppe.manualUrl} className="text-safety-green font-black hover:underline flex items-center gap-1 text-[11px]">
+                    <BookOpen className="w-3.5 h-3.5" />
                     Ficha / FISPQ
                   </a>
                 </div>

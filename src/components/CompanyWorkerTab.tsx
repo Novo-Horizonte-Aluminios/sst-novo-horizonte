@@ -510,20 +510,22 @@ export default function CompanyWorkerTab({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header Info Card */}
-      <div className="bg-white p-4 rounded border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 shadow-sm">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm transition-all hover:shadow-md">
         <div>
-          <h2 className="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-            <Building2 className="w-3.5 h-3.5 text-safety-green" />
+          <h2 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+            <div className="bg-safety-green/10 text-safety-green p-1.5 rounded-lg">
+              <Building2 className="w-4 h-4" />
+            </div>
             Controle de Colaboradores — {activeCompany?.tradingName || 'Novo Horizonte Alumínios'}
           </h2>
-          <p className="text-[10px] text-slate-400 mt-1">
+          <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
             Diretório oficial de colaboradores da empresa. Alinhado com as diretrizes da NR-01 (GRO) e NR-06 (EPI).
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded font-mono text-[9px] font-bold">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="px-3 py-1.5 bg-slate-50 text-slate-700 border border-slate-200 rounded-xl font-mono text-[10px] font-bold">
             CNPJ: {activeCompany?.cnpj || '34.892.455/0001-38'}
           </div>
           {onUpdateCompany && (
@@ -532,10 +534,10 @@ export default function CompanyWorkerTab({
                 setEditingCompany({ ...activeCompany });
                 setShowCompanyModal(true);
               }}
-              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded text-[9px] uppercase tracking-wider transition cursor-pointer flex items-center gap-1"
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider transition-all hover:-translate-y-0.5 shadow-sm cursor-pointer flex items-center gap-1.5"
               title="Editar dados cadastrais da empresa"
             >
-              <Edit2 className="w-3 h-3 text-amber-400" />
+              <Edit2 className="w-3.5 h-3.5 text-amber-400" />
               Editar Empresa
             </button>
           )}
@@ -544,16 +546,16 @@ export default function CompanyWorkerTab({
 
       <div className="space-y-4">
         {/* Controls Bar */}
-        <div className="flex flex-col md:flex-row gap-2 justify-between items-start md:items-center">
+        <div className="flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
           {/* Search Box */}
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Buscar por Nome, CPF ou Matrícula..."
               value={employeeSearch}
               onChange={(e) => setEmployeeSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1 text-[11px] bg-white border border-slate-200 rounded focus:outline-none focus:border-safety-green shadow-sm"
+              className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 transition-all hover:border-slate-300 shadow-sm font-bold text-slate-800"
             />
           </div>
 
@@ -565,20 +567,20 @@ export default function CompanyWorkerTab({
                 setParsedRows([]);
                 setParseError(null);
               }}
-              className={`flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 border rounded transition cursor-pointer shadow-sm ${
+              className={`flex items-center gap-2 text-[11px] font-bold px-4 py-2.5 border-2 rounded-xl transition-all cursor-pointer shadow-sm hover:-translate-y-0.5 ${
                 showBulkImport 
                   ? 'bg-slate-900 text-white border-slate-900' 
-                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
               }`}
             >
-              <FileSpreadsheet className={`w-3.5 h-3.5 ${showBulkImport ? 'text-amber-400' : 'text-emerald-600'}`} />
+              <FileSpreadsheet className={`w-4 h-4 ${showBulkImport ? 'text-amber-400' : 'text-emerald-600'}`} />
               <span>Importar Lote (CSV)</span>
             </button>
 
             <button
               onClick={handleSimulateCSVImport}
               disabled={importStatus !== null}
-              className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm text-slate-600 rounded transition cursor-pointer"
+              className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-200 shadow-sm text-slate-600 rounded-xl transition-all hover:border-slate-300 cursor-pointer disabled:opacity-50 disabled:pointer-events-none hover:-translate-y-0.5"
               title="Simular uma importação rápida com dados de demonstração"
             >
               <span>Demo Import</span>
@@ -589,9 +591,9 @@ export default function CompanyWorkerTab({
                 setNewEmp(prev => ({ ...prev, companyId: activeCompanyId }));
                 setShowEmpModal(true);
               }}
-              className="flex items-center gap-1 text-[11px] font-bold px-3 py-1 bg-safety-green text-white rounded hover:bg-safety-green-dark transition shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 text-[11px] font-black px-4 py-2.5 bg-safety-green text-white rounded-xl hover:bg-safety-green-dark transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-4 h-4" />
               <span>Adicionar Colaborador</span>
             </button>
           </div>
@@ -779,74 +781,74 @@ export default function CompanyWorkerTab({
         )}
 
         {importStatus && (
-          <div className="p-2 bg-safety-green/10 text-safety-green rounded flex items-center gap-2 border border-safety-green/20 text-[11px] font-medium animate-fade-in">
+          <div className="p-2 bg-safety-green/10 text-safety-green rounded flex items-center gap-2 border border-safety-green/20 text-[11px] font-medium animate-fade-in mb-3">
             <CheckCircle2 className="w-3.5 h-3.5 text-safety-green animate-bounce" />
             <span>{importStatus}</span>
           </div>
         )}
 
         {/* Directory Listings Grid */}
-        <div className="bg-white rounded border border-slate-200 shadow-sm overflow-hidden text-[11px]">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden text-[12px]">
           {filteredEmployees.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="compact-table w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-600 border-b border-slate-200 text-[10px] uppercase font-bold tracking-wider">
-                    <th className="p-2.5 pl-4">Colaborador</th>
-                    <th className="p-2.5">Matrícula</th>
-                    <th className="p-2.5">CPF / RG</th>
-                    <th className="p-2.5">Setor / Cargo</th>
-                    <th className="p-2.5 font-semibold">Contato (SST/Mensageria)</th>
-                    <th className="p-2.5">Responsável Direto</th>
-                    <th className="p-2.5">Admissão</th>
-                    <th className="p-2.5">Status</th>
-                    <th className="p-2.5 pr-4 text-center">Ações</th>
+                  <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 text-[10px] uppercase font-bold tracking-wider">
+                    <th className="p-4 pl-6">Colaborador</th>
+                    <th className="p-4">Matrícula</th>
+                    <th className="p-4">CPF / RG</th>
+                    <th className="p-4">Setor / Cargo</th>
+                    <th className="p-4 font-semibold">Contato (SST/Mensageria)</th>
+                    <th className="p-4">Responsável Direto</th>
+                    <th className="p-4">Admissão</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4 pr-6 text-center">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredEmployees.map((emp) => (
                     <tr key={emp.id} className="hover:bg-slate-50/50 transition">
-                      <td className="p-2.5 pl-4 flex items-center gap-2.5">
+                      <td className="p-4 pl-6 flex items-center gap-3">
                         <img 
                           src={emp.photoUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} 
                           alt={emp.name}
                           onError={(e) => {
                             e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(emp.name)}`;
                           }}
-                          className="w-6 h-6 rounded-full border border-slate-200 block" 
+                          className="w-8 h-8 rounded-full border-2 border-slate-150 block shadow-sm" 
                         />
                         <div>
-                          <p className="font-bold text-slate-800 text-[11px] leading-tight">{emp.name}</p>
-                          <p className="text-slate-400 text-[9px]">D.N: {emp.birthDate}</p>
+                          <p className="font-bold text-slate-800 text-[13px] leading-tight">{emp.name}</p>
+                          <p className="text-slate-400 text-[10px] mt-0.5">D.N: {emp.birthDate}</p>
                         </div>
                       </td>
-                      <td className="p-2.5 font-mono font-medium text-slate-600">{emp.matricula}</td>
-                      <td className="p-2.5">
-                        <p className="font-mono">{emp.cpf}</p>
-                        <p className="text-slate-450 text-[9px] font-mono">{emp.rg}</p>
+                      <td className="p-4 font-mono font-bold text-slate-700">{emp.matricula}</td>
+                      <td className="p-4">
+                        <p className="font-mono font-medium text-slate-800">{emp.cpf}</p>
+                        <p className="text-slate-400 text-[10px] font-mono mt-0.5">{emp.rg}</p>
                       </td>
-                      <td className="p-2.5">
-                        <p className="font-semibold text-slate-800">{emp.sector}</p>
-                        <p className="text-slate-400 text-[9px]">{emp.role}</p>
+                      <td className="p-4">
+                        <p className="font-bold text-slate-850">{emp.sector}</p>
+                        <p className="text-slate-555 text-[10.5px] mt-0.5">{emp.role}</p>
                       </td>
-                      <td className="p-2.5">
-                        <div className="space-y-0.5">
-                          <p className="flex items-center gap-1 text-[10.5px] text-slate-700 font-medium">
-                            <Phone className="w-3 h-3 text-emerald-600 shrink-0" />
-                            <span>{emp.phone || <em className="text-slate-400 text-[9px]">Não Cadastrado</em>}</span>
+                      <td className="p-4">
+                        <div className="space-y-1">
+                          <p className="flex items-center gap-1.5 text-[11px] text-slate-700 font-bold">
+                            <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            <span>{emp.phone || <em className="text-slate-450 text-[10px] font-normal">Não Cadastrado</em>}</span>
                           </p>
-                          <p className="flex items-center gap-1 text-[10px] text-slate-500">
-                            <Mail className="w-3 h-3 text-indigo-500 shrink-0" />
-                            <span>{emp.email || <em className="text-slate-400 text-[9px]">Não Cadastrado</em>}</span>
+                          <p className="flex items-center gap-1.5 text-[10.5px] text-slate-500">
+                            <Mail className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                            <span className="truncate max-w-[150px]">{emp.email || <em className="text-slate-450 text-[10px]">Não Cadastrado</em>}</span>
                           </p>
                         </div>
                       </td>
-                      <td className="p-2.5 text-slate-500">{emp.manager}</td>
-                      <td className="p-2.5 font-mono text-slate-500">{emp.admissionDate}</td>
-                      <td className="p-2.5">
-                        <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase ${
+                      <td className="p-4 text-slate-600 font-medium">{emp.manager}</td>
+                      <td className="p-4 font-mono text-slate-600">{emp.admissionDate}</td>
+                      <td className="p-4">
+                        <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase ${
                           emp.status === 'Ativo' 
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm' 
                             : emp.status === 'Inativo'
                             ? 'bg-rose-50 text-rose-700 border border-rose-200'
                             : 'bg-amber-50 text-amber-700 border border-amber-200'
@@ -854,8 +856,8 @@ export default function CompanyWorkerTab({
                           {emp.status}
                         </span>
                       </td>
-                      <td className="p-2.5 pr-4 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
+                      <td className="p-4 pr-6 text-center">
+                        <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => setEditingEmp({
                               ...emp,
@@ -863,17 +865,17 @@ export default function CompanyWorkerTab({
                               admissionDate: normalizeDate(emp.admissionDate)
                             })}
                             title="Editar dados do colaborador"
-                            className="bg-slate-50 hover:bg-slate-100 border border-slate-200 p-1.5 rounded text-slate-700 transition cursor-pointer"
+                            className="bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-350 p-2 rounded-xl text-slate-700 transition cursor-pointer hover:scale-105 shadow-sm"
                           >
-                            <Edit2 className="w-3 h-3 text-blue-600" />
+                            <Edit2 className="w-3.5 h-3.5 text-blue-650 font-black" />
                           </button>
                           
                           <button
                             onClick={() => setDeletingEmp(emp)}
                             title="Excluir colaborador"
-                            className="bg-slate-50 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 p-1.5 rounded text-slate-700 transition cursor-pointer"
+                            className="bg-white hover:bg-rose-50 border-2 border-slate-200 hover:border-rose-300 p-2 rounded-xl text-slate-755 transition cursor-pointer hover:scale-105 shadow-sm"
                           >
-                            <Trash2 className="w-3 h-3 text-rose-600" />
+                            <Trash2 className="w-3.5 h-3.5 text-rose-600 font-black" />
                           </button>
                         </div>
                       </td>
@@ -883,10 +885,10 @@ export default function CompanyWorkerTab({
               </table>
             </div>
           ) : (
-            <div className="text-center py-16 text-slate-400">
-              <Users className="w-10 h-10 mx-auto text-slate-300 mb-2 animate-pulse" />
-              <p className="font-semibold text-slate-600">Nenhum colaborador encontrado</p>
-              <p className="text-[10px] text-slate-400 max-w-sm mx-auto mt-1">Insira um novo registro acima ou use a importação de planilha de pessoal.</p>
+            <div className="text-center py-20 text-slate-400">
+              <Users className="w-12 h-12 mx-auto text-slate-300 mb-3 animate-pulse" />
+              <p className="font-black text-slate-650 text-sm">Nenhum colaborador encontrado</p>
+              <p className="text-[11px] text-slate-450 max-w-sm mx-auto mt-1">Insira um novo registro acima ou use a importação de planilha de pessoal.</p>
             </div>
           )}
         </div>

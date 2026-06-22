@@ -243,64 +243,71 @@ export default function DashboardTab({
     );
   };
 
-  // Mini Chart components built in raw Tailwind CSS (guarantees lightweight zero-dependency visual beauty)
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Fluxos de Operação Rápidos */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-          <Workflow className="w-3.5 h-3.5 text-slate-400" />
-          Fluxos de Operação Rápidos
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+        <h3 className="text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+          <Workflow className="w-3.5 h-3.5 text-slate-450" />
+          Ações e Atalhos Rápidos
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <button 
             onClick={() => onNavigate('delivery')}
-            className="p-4 bg-white hover:bg-slate-50 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-white hover:bg-slate-50 hover:text-safety-green border-2 border-slate-150 hover:border-safety-green/50 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-750 flex flex-col items-center gap-2 cursor-pointer"
           >
-            <CheckCircle2 className="w-4 h-4 text-safety-green" />
-            Entrega de EPI
+            <div className="bg-safety-green/10 p-2 rounded-lg">
+              <CheckCircle2 className="w-5 h-5 text-safety-green animate-pulse" />
+            </div>
+            Registrar Entrega de EPI
           </button>
           <button 
             onClick={() => onNavigate('ppes')}
-            className="p-4 bg-white hover:bg-slate-50 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-white hover:bg-slate-50 hover:text-blue-600 border-2 border-slate-150 hover:border-blue-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-755 flex flex-col items-center gap-2 cursor-pointer"
           >
-            <Shield className="w-4 h-4 text-[#0369a1]" />
-            Auditar CAs
+            <div className="bg-blue-50 p-2 rounded-lg">
+              <Shield className="w-5 h-5 text-[#0369a1]" />
+            </div>
+            Auditar Certificados CA
           </button>
           <button 
             onClick={() => onNavigate('incidents')}
-            className="p-4 bg-white hover:bg-rose-50 hover:text-rose-700 border border-slate-200 hover:border-rose-300 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-white hover:bg-rose-50 hover:text-rose-700 border-2 border-slate-150 hover:border-rose-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-755 flex flex-col items-center gap-2 cursor-pointer"
           >
-            <AlertTriangle className="w-4 h-4 text-red-500" />
-            Comunicar Risco
+            <div className="bg-rose-50 p-2 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-rose-600" />
+            </div>
+            Comunicar Risco / Incidente
           </button>
           <button 
             onClick={() => onNavigate('ai')}
-            className="p-4 bg-white hover:bg-slate-50 hover:text-amber-600 border border-slate-200 hover:border-amber-400 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-white hover:bg-slate-50 hover:text-amber-600 border-2 border-slate-150 hover:border-amber-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-755 flex flex-col items-center gap-2 cursor-pointer"
           >
-            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-            SST Especialista
+            <div className="bg-amber-50 p-2 rounded-lg">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+            </div>
+            Assistente IA Especialista
           </button>
         </div>
       </div>
 
       {/* Tab Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-4 rounded border border-slate-200 gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md gap-4">
         <div>
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-tight">Painel Operacional (SST & legal compliance)</h2>
-          <p className="text-[11px] text-slate-500 mt-0.5">
-            Métricas de conformidade NR-01, NR-06, NR-12, NR-35 e controle estratégico em modo de alta densidade.
+          <h2 className="text-sm font-black text-slate-800 uppercase tracking-tight">Painel Operacional (SST & Legal Compliance)</h2>
+          <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+            Métricas de conformidade NR-01, NR-06, NR-12, NR-35 e controle estratégico.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Pequeno painel de status das integrações reais */}
-          <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-[10px] select-none font-medium text-slate-600">
-            <span className="text-[9px] uppercase font-bold text-slate-400 font-mono tracking-wider">Integrações:</span>
+          <div className="flex items-center gap-3 bg-slate-50 border-2 border-slate-200/60 rounded-xl px-3 py-1.5 text-[10px] select-none font-bold text-slate-650">
+            <span className="text-[9px] uppercase font-black text-slate-400 font-mono tracking-wider">Integrações:</span>
             
             {/* Evolution API Gateway */}
             <div className="flex items-center gap-1.5" title="WhatsApp Gateway (Evolution API)">
-              <Cpu className={`w-3.5 h-3.5 ${integrations?.evolution?.status === 'online' ? 'text-emerald-600' : 'text-red-500'}`} />
-              <span className="font-semibold text-slate-700">Evolution API</span>
+              <Cpu className={`w-4 h-4 ${integrations?.evolution?.status === 'online' ? 'text-emerald-600' : 'text-red-500'}`} />
+              <span className="text-slate-800">WhatsApp</span>
               <span className={`h-2.5 w-2.5 rounded-full border border-white ${
                 integrations?.evolution?.status === 'online' ? 'bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]' : 'bg-red-500 animate-pulse'
               }`} />
@@ -310,51 +317,51 @@ export default function DashboardTab({
 
             {/* n8n Engine */}
             <div className="flex items-center gap-1.5" title="SST Webhook Automation (n8n)">
-              <Workflow className={`w-3.5 h-3.5 ${integrations?.n8n?.status === 'online' ? 'text-indigo-600' : 'text-red-500'}`} />
-              <span className="font-semibold text-slate-700">n8n</span>
+              <Workflow className={`w-4 h-4 ${integrations?.n8n?.status === 'online' ? 'text-indigo-600' : 'text-red-500'}`} />
+              <span className="text-slate-800">n8n Engine</span>
               <span className={`h-2.5 w-2.5 rounded-full border border-white ${
                 integrations?.n8n?.status === 'online' ? 'bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]' : 'bg-red-500 animate-pulse'
               }`} />
             </div>
           </div>
 
-          <div className="flex bg-safety-green/10 text-safety-green text-[10px] font-bold px-3 py-1 rounded items-center gap-1.5 border border-safety-green/20 h-[26px]">
+          <div className="flex bg-safety-green/10 text-safety-green text-[10px] font-bold px-3 py-1.5 rounded-xl items-center gap-1.5 border border-safety-green/20">
             <Activity className="w-3.5 h-3.5 animate-pulse text-safety-green" />
-            <span>MONITORAMENTO ATIVO</span>
+            <span className="tracking-wide">MONITORAMENTO ATIVO</span>
           </div>
         </div>
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Workers */}
-        <div className="dense-card">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Equipe Ativa</span>
-            <div className="bg-slate-100 text-slate-600 p-1.5 rounded">
+            <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider block">Equipe Ativa</span>
+            <div className="bg-slate-100 text-slate-600 p-2 rounded-xl">
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="text-xl font-extrabold text-slate-800">{activeCount}</span>
-            <span className="text-[9px] text-slate-400 font-medium">Trabalhadores</span>
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className="text-2xl font-black text-slate-900 tracking-tight">{activeCount}</span>
+            <span className="text-[10px] text-slate-450 font-bold">Trabalhadores</span>
           </div>
         </div>
 
         {/* KPI 2: CA Status */}
         <div 
           onClick={() => onNavigate('ppes')}
-          className="dense-card hover:border-safety-green transition cursor-pointer"
+          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-safety-green/50 cursor-pointer"
         >
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">CAs Irregulares</span>
-            <div className={`p-1.5 rounded ${expiredCAs.length > 0 ? 'bg-red-50 text-red-650' : 'bg-safety-green/10 text-safety-green'}`}>
+            <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider block">CAs Irregulares</span>
+            <div className={`p-2 rounded-xl ${expiredCAs.length > 0 ? 'bg-rose-50 text-rose-700' : 'bg-safety-green/15 text-safety-green'}`}>
               <Shield className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className={`text-xl font-extrabold ${expiredCAs.length > 0 ? 'text-red-600' : 'text-slate-800'}`}>{expiredCAs.length}</span>
-            <span className="text-[9px] text-[#dc2626] font-semibold">
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className={`text-2xl font-black tracking-tight ${expiredCAs.length > 0 ? 'text-rose-600' : 'text-slate-900'}`}>{expiredCAs.length}</span>
+            <span className={`text-[10px] font-bold ${expiredCAs.length > 0 ? 'text-rose-600' : 'text-slate-450'}`}>
               {expiredCAs.length > 0 ? 'Ação requerida' : '0 intercorrências'}
             </span>
           </div>
@@ -363,36 +370,36 @@ export default function DashboardTab({
         {/* KPI 3: Stock Alert */}
         <div 
           onClick={() => onNavigate('stock')}
-          className="dense-card hover:border-safety-green transition cursor-pointer"
+          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-safety-green/50 cursor-pointer"
         >
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Estoque Baixo</span>
-            <div className={`p-1.5 rounded ${criticalStockItems.length > 0 ? 'bg-amber-50 text-amber-600' : 'bg-safety-green/10 text-safety-green'}`}>
+            <span className="text-[10px] font-bold text-slate-455 uppercase tracking-wider block">Estoque Baixo</span>
+            <div className={`p-2 rounded-xl ${criticalStockItems.length > 0 ? 'bg-amber-50 text-amber-600' : 'bg-safety-green/15 text-safety-green'}`}>
               <Package className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className={`text-xl font-extrabold ${criticalStockItems.length > 0 ? 'text-amber-600' : 'text-slate-800'}`}>{criticalStockItems.length}</span>
-            <span className="text-[9px] text-amber-600 font-semibold">
-              {criticalStockItems.length > 0 ? 'Min. rompido' : 'Segurança total'}
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className={`text-2xl font-black tracking-tight ${criticalStockItems.length > 0 ? 'text-amber-600' : 'text-slate-900'}`}>{criticalStockItems.length}</span>
+            <span className="text-[10px] text-amber-600 font-bold">
+              {criticalStockItems.length > 0 ? 'Mínimo rompido' : 'Segurança total'}
             </span>
           </div>
         </div>
 
-        {/* KPI 4: Pending LMS Trainings */}
+        {/* KPI 4: LMS Trainings */}
         <div 
           onClick={() => onNavigate('trainings')}
-          className="dense-card hover:border-safety-green transition cursor-pointer"
+          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-safety-green/50 cursor-pointer"
         >
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Expirados (NR)</span>
-            <div className={`p-1.5 rounded ${expiredTrainings.length > 0 ? 'bg-amber-50 text-amber-600' : 'bg-safety-green/10 text-safety-green'}`}>
+            <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider block">Expirados (NR)</span>
+            <div className={`p-2 rounded-xl ${expiredTrainings.length > 0 ? 'bg-rose-50 text-rose-700' : 'bg-safety-green/15 text-safety-green'}`}>
               <CalendarCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="text-xl font-extrabold text-slate-800">{expiredTrainings.length}</span>
-            <span className="text-[9px] text-slate-400 font-medium">Treinamentos</span>
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className="text-2xl font-black tracking-tight text-slate-900">{expiredTrainings.length}</span>
+            <span className="text-[10px] text-slate-450 font-bold">Treinamentos</span>
           </div>
         </div>
       </div>

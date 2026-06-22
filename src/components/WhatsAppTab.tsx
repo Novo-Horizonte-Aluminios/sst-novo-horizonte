@@ -310,79 +310,77 @@ export default function WhatsAppTab({
         detailText: e.message
       });
     } finally {
-      setSendingId(null);
-    }
-  };
-
-  return (
-    <div className="space-y-4">
+      setSendi  return (
+    <div className="space-y-6">
       {/* Title Header with Connection Stats */}
-      <div className="bg-white p-4 rounded border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-md">
         <div>
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5 matches-tab-title">
-            <MessageCircle className="w-4 h-4 text-safety-green" />
+          <h2 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2 matches-tab-title">
+            <div className="bg-safety-green/10 text-safety-green p-1.5 rounded-lg">
+              <MessageCircle className="w-4 h-4" />
+            </div>
             Integração WhatsApp Business • Módulo Evolution API &amp; n8n SESMT
           </h2>
-          <p className="text-[10px] text-slate-400 mt-0.5 leading-tight">
+          <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
             Automação de eSocial &amp; Alertas de SST via WhatsApp para prevenção de passivos trabalhistas (NR-01, NR-06 &amp; NR-35).
           </p>
         </div>
 
-        <div className="flex items-center gap-2 mt-1 md:mt-0 select-none">
-          <div className="bg-slate-50 border border-slate-200 rounded px-2.5 py-1 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <div className="text-[10px]">
-              <span className="font-bold text-slate-600">Serviço: </span>
+        <div className="flex items-center gap-3 mt-1 md:mt-0 select-none">
+          <div className="bg-slate-50 border-2 border-slate-250/60 rounded-xl px-3 py-1.5 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div className="text-[10.5px] font-bold text-slate-700">
+              <span>Status: </span>
               <span className="text-slate-500 font-mono">Evolution (Go) + n8n Webhook</span>
             </div>
           </div>
           <button 
             onClick={fetchLogs} 
             disabled={loadingLogs}
-            className="p-1 px-2 border border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-slate-800 rounded flex items-center gap-1 text-[10px] cursor-pointer"
+            className="p-2 px-3.5 border-2 border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-800 rounded-xl flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all hover:border-slate-350"
             title="Atualizar Logs"
           >
-            <RefreshCw className={`w-3 h-3 ${loadingLogs ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loadingLogs ? 'animate-spin' : ''}`} />
             Sincronizar
           </button>
         </div>
       </div>
 
       {/* Active Integration Banner */}
-      <div className="bg-slate-900 text-white p-3.5 rounded border border-slate-800 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-sans">
-        <div className="flex items-start gap-2.5 text-xs">
-          <div className="bg-emerald-500/20 text-emerald-400 p-1.5 rounded shrink-0">
-            <CheckCircle2 className="w-4 h-4" />
+      <div className="bg-slate-950 text-white p-5 rounded-2xl border border-slate-900 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-sans transition-all hover:shadow-lg">
+        <div className="flex items-start gap-3 text-xs">
+          <div className="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl shrink-0 mt-0.5">
+            <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <p className="font-bold text-white text-[11px] uppercase tracking-wider flex items-center gap-1">
+            <p className="font-black text-white text-[12px] uppercase tracking-wider flex items-center gap-1">
               Motor n8n & Evolution API Ativos e Operacionais
             </p>
-            <p className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">
+            <p className="text-[10.5px] text-slate-400 mt-1.5 leading-relaxed">
               Os disparos de WhatsApp e e-mail estão sendo gerenciados com segurança pelos fluxos do servidor <strong>n8n.novohorizonte.com</strong>.
               Você pode disparar alertas manualmente abaixo ou acompanhar os envios automáticos que acontecem em segundo plano.
             </p>
           </div>
         </div>
-        <div className="bg-slate-800 border border-slate-700/60 p-2 rounded text-[10px] shrink-0 font-mono space-y-1 text-slate-300 w-full sm:w-auto">
-          <div className="flex justify-between gap-4">
+        <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-[10.5px] shrink-0 font-mono space-y-1.5 text-slate-300 w-full sm:w-auto font-bold">
+          <div className="flex justify-between gap-6">
             <span>MOTOR DE FLUXOS:</span>
-            <span className="text-emerald-400 text-[9px] font-bold">n8n Online</span>
+            <span className="text-emerald-400 text-[10px] font-black">n8n Online</span>
           </div>
-          <div className="flex justify-between gap-4 border-t border-white/5 pt-1">
+          <div className="flex justify-between gap-6 border-t border-white/5 pt-1.5">
             <span>EVOLUTION API:</span>
-            <span className="text-emerald-400 text-[9px] font-bold">Conectado (Ti-NH)</span>
+            <span className="text-emerald-400 text-[10px] font-black">Conectado (Ti-NH)</span>
           </div>
         </div>
       </div>
 
       {/* CONFIGURAÇÃO DE INTEGRAÇÃO */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm mt-4">
-        <h3 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mt-4 transition-all hover:shadow-md">
+        <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-2 flex items-center gap-2 border-b border-slate-100 pb-2">
           <Settings className="w-4 h-4 text-slate-500" />
           Configurações de Integração (n8n)
         </h3>
-        <p className="text-[11px] text-slate-500 mb-4">
+        <p className="text-[11px] text-slate-500 mb-4 leading-relaxed font-medium">
           Defina o endereço base do seu servidor n8n. Por padrão, o sistema utiliza a URL de ambiente configurada no servidor.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
@@ -392,31 +390,31 @@ export default function WhatsAppTab({
               value={n8nWebhookUrl}
               onChange={(e) => setN8nWebhookUrl(e.target.value)}
               placeholder="https://n8n.novohorizonte.com"
-              className="w-full text-xs px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono text-slate-700"
+              className="w-full text-[13px] p-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white font-mono text-slate-700 transition-all hover:border-slate-300"
             />
           </div>
           <button
             onClick={handleSaveSettings}
             disabled={isSavingSettings}
-            className="bg-slate-800 hover:bg-slate-900 text-white text-xs px-4 py-2 rounded font-bold transition-colors disabled:opacity-50"
+            className="bg-slate-900 hover:bg-slate-800 text-white text-xs px-5 py-3 rounded-xl font-bold transition-all hover:-translate-y-0.5 shadow-sm disabled:opacity-50 cursor-pointer"
           >
             {isSavingSettings ? 'Salvando...' : 'Salvar URL'}
           </button>
         </div>
         {saveSettingsResult && (
-          <div className="mt-2 text-[10px] font-medium">
+          <div className="mt-2 text-[10px] font-bold text-slate-600">
             {saveSettingsResult}
           </div>
         )}
       </div>
 
       {/* FERRAMENTAS DE TESTE (N8N) */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm mt-6">
-        <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mt-6 transition-all hover:shadow-md">
+        <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
           <Activity className="w-4 h-4 text-emerald-500" />
           FERRAMENTAS DE TESTE (N8N)
         </h3>
-        <p className="text-[11px] text-slate-500 mb-4">
+        <p className="text-[11px] text-slate-500 mb-4 leading-relaxed font-medium">
           Utilize estes botões para disparar eventos de teste diretamente para os Webhooks do n8n (modo <strong>Listen for test event</strong>).
           Você não precisa cadastrar nada real no sistema para validar a conexão.
         </p>
@@ -425,51 +423,51 @@ export default function WhatsAppTab({
           <button
             onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
           >
-            <Package className="w-5 h-5 text-emerald-600 mb-2" />
-            <span className="text-[10px] font-bold text-slate-700 text-center">Recibo EPI</span>
+            <Package className="w-6 h-6 text-emerald-600 mb-2" />
+            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Recibo EPI</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
           >
-            <Users className="w-5 h-5 text-indigo-600 mb-2" />
-            <span className="text-[10px] font-bold text-slate-700 text-center">Boas Vindas</span>
+            <Users className="w-6 h-6 text-indigo-600 mb-2" />
+            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Boas Vindas</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-training-new', { training: { employeeName: 'Colaborador Teste', trainingTitle: 'NR-35 Trabalho em Altura', issueDate: new Date().toISOString(), score: 10 } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
           >
-            <GraduationCap className="w-5 h-5 text-amber-600 mb-2" />
-            <span className="text-[10px] font-bold text-slate-700 text-center">Treinamento</span>
+            <GraduationCap className="w-6 h-6 text-amber-600 mb-2" />
+            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Treinamento</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-inspection-new', { inspection: { title: 'Inspeção de Rotina (Teste)', type: 'Rotina', scheduledDate: new Date().toISOString(), responsible: 'Técnico Teste' } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
           >
-            <ClipboardCheck className="w-5 h-5 text-blue-600 mb-2" />
-            <span className="text-[10px] font-bold text-slate-700 text-center">Inspeção</span>
+            <ClipboardCheck className="w-6 h-6 text-blue-600 mb-2" />
+            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Inspeção</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-accident', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-emerald-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-150 rounded-2xl hover:bg-slate-50 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-white"
           >
-            <AlertTriangle className="w-5 h-5 text-rose-600 mb-2" />
-            <span className="text-[10px] font-bold text-slate-700 text-center">Acidente</span>
+            <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
+            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Acidente</span>
           </button>
         </div>
         
         {testResult && (
-          <div className={"mt-3 p-2 rounded text-[11px] font-medium flex items-center gap-2 " + (testResult.includes('Erro') ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200')}>
+          <div className={"mt-3 p-3 rounded-xl text-[11px] font-bold flex items-center gap-2 " + (testResult.includes('Erro') ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200')}>
             {testResult.includes('Erro') ? <AlertCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
             {testResult}
           </div>
@@ -477,28 +475,30 @@ export default function WhatsAppTab({
       </div>
 
       {/* Primary Tab Bar */}
-      <div className="border-b border-slate-200 flex gap-2">
+      <div className="border-b border-slate-200/80 flex gap-3 pb-px">
         <button
           onClick={() => setSubTab('alerts')}
-          className={`px-3.5 py-1.5 font-bold uppercase tracking-wider text-[10.5px] border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
+          className={`px-4 py-2 font-black uppercase tracking-wider text-[11px] border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'alerts' 
               ? 'border-safety-green text-safety-green' 
               : 'border-transparent text-slate-400 hover:text-slate-600'
           }`}
         >
-          <Bell className="w-3.5 h-3.5" />
+          <Bell className="w-4 h-4" />
           Alertas Pendentes ({allPendingAlerts.length})
         </button>
         <button
           onClick={() => setSubTab('history')}
-          className={`px-3.5 py-1.5 font-bold uppercase tracking-wider text-[10.5px] border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
+          className={`px-4 py-2 font-black uppercase tracking-wider text-[11px] border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'history' 
               ? 'border-safety-green text-safety-green' 
               : 'border-transparent text-slate-400 hover:text-slate-600'
           }`}
         >
-          <History className="w-3.5 h-3.5" />
+          <History className="w-4 h-4" />
           Histórico de Envios ({logs.length})
+        </button>
+      </div>�rico de Envios ({logs.length})
         </button>
       </div>
 
