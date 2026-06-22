@@ -62,6 +62,7 @@ export interface PPE {
   manualUrl?: string;
   stockCount: number;
   minStock: number;
+  durabilityDays?: number;
 }
 
 export interface PPEDelivery {

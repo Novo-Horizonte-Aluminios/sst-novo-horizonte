@@ -166,6 +166,7 @@ export const initDb = async () => {
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS ca_status VARCHAR(50);
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS fispq_relation VARCHAR(255);
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS manual_url TEXT;
+      ALTER TABLE ppes ADD COLUMN IF NOT EXISTS durability_days INTEGER DEFAULT 90;
 
       ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS employee_name VARCHAR(255);
       ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS ppe_name VARCHAR(255);
@@ -339,10 +340,10 @@ export const initDb = async () => {
     if (ppeCheck.rows.length === 0) {
       console.log('Semeando EPIs iniciais...');
       await client.query(`
-        INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description, internal_code, bar_code, brand, manufacturer, category, ca_number, ca_issue_date, ca_expiry_date, ca_status, fispq_relation, manual_url) VALUES
-        ('ppe1', 'Protetor Auricular Plug de Silicone', '39712', '2029-11-18', 120, 20, 'Protetor auditivo de silicone antialérgico', 'EPI-AUD-01', '7891011121314', '3M', '3M do Brasil', 'Proteção Auditiva', '39712', '2021-02-15', '2029-11-18', 'Válido', 'N/A', '#'),
-        ('ppe2', 'Óculos de Segurança Fumê', '32145', '2029-12-05', 85, 15, 'Óculos de proteção em policarbonato com haste flexível', 'EPI-VIS-02', '7891011121321', 'Kalipso', 'Kalipso Indústria', 'Proteção Ocular', '32145', '2021-05-10', '2029-12-05', 'Válido', 'N/A', '#'),
-        ('ppe3', 'Luva de Vaqueta Cano Curto', '28932', '2024-03-12', 8, 10, 'Luva de proteção em couro de vaqueta macio', 'EPI-MAN-03', '7891011121338', 'Marluvas', 'Marluvas Calçados', 'Proteção dos Pés', '28932', '2019-03-12', '2024-03-12', 'Vencido', 'N/A', '#')
+        INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description, internal_code, bar_code, brand, manufacturer, category, ca_number, ca_issue_date, ca_expiry_date, ca_status, fispq_relation, manual_url, durability_days) VALUES
+        ('ppe1', 'Protetor Auricular Plug de Silicone', '39712', '2029-11-18', 120, 20, 'Protetor auditivo de silicone antialérgico', 'EPI-AUD-01', '7891011121314', '3M', '3M do Brasil', 'Proteção Auditiva', '39712', '2021-02-15', '2029-11-18', 'Válido', 'N/A', '#', 30),
+        ('ppe2', 'Óculos de Segurança Fumê', '32145', '2029-12-05', 85, 15, 'Óculos de proteção em policarbonato com haste flexível', 'EPI-VIS-02', '7891011121321', 'Kalipso', 'Kalipso Indústria', 'Proteção Ocular', '32145', '2021-05-10', '2029-12-05', 'Válido', 'N/A', '#', 180),
+        ('ppe3', 'Luva de Vaqueta Cano Curto', '28932', '2024-03-12', 8, 10, 'Luva de proteção em couro de vaqueta macio', 'EPI-MAN-03', '7891011121338', 'Marluvas', 'Marluvas Calçados', 'Proteção dos Pés', '28932', '2019-03-12', '2024-03-12', 'Vencido', 'N/A', '#', 90)
       `);
     }
 

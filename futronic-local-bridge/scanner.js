@@ -79,6 +79,56 @@ function hasRealFingerprint(buffer, size) {
     return stdDev > 15;
 }
 
+function getFingerprintSignature(buffer, width, height) {
+    const gridX = 16;
+    const gridY = 16;
+    const blockWidth = Math.floor(width / gridX);
+    const blockHeight = Math.floor(height / gridY);
+    const sig = new Float32Array(gridX * gridY);
+
+    for (let gy = 0; gy < gridY; gy++) {
+        for (let gx = 0; gx < gridX; gx++) {
+            let sum = 0;
+            let count = 0;
+            const startX = gx * blockWidth;
+            const startY = gy * blockHeight;
+
+            for (let y = startY; y < startY + blockHeight; y++) {
+                for (let x = startX; x < startX + blockWidth; x++) {
+                    const idx = y * width + x;
+                    sum += buffer[idx];
+                    count++;
+                }
+            }
+            sig[gy * gridX + gx] = sum / count;
+        }
+    }
+
+    // Normalize: subtract mean, divide by stdDev
+    let sum = 0;
+    for (let i = 0; i < sig.length; i++) sum += sig[i];
+    const mean = sum / sig.length;
+
+    let variance = 0;
+    for (let i = 0; i < sig.length; i++) {
+        const diff = sig[i] - mean;
+        variance += diff * diff;
+    }
+    const stdDev = Math.sqrt(variance / sig.length) || 1.0;
+
+    const normalized = [];
+    for (let i = 0; i < sig.length; i++) {
+        const val = (sig[i] - mean) / stdDev;
+        // Convert to a byte value 0-255 mapped from -3.0 to +3.0
+        let mapped = Math.floor(((val + 3) / 6) * 255);
+        if (mapped < 0) mapped = 0;
+        if (mapped > 255) mapped = 255;
+        normalized.push(mapped);
+    }
+
+    return Buffer.from(normalized).toString('hex');
+}
+
 async function captureBiometrics() {
     return new Promise(async (resolve) => {
         if (!lib) {
@@ -135,9 +185,10 @@ async function captureBiometrics() {
 
                 // PASSO 5: Gera o hash único da digital para armazenar no banco
                 const hash = crypto.createHash('sha256').update(imageBuffer).digest('hex').toUpperCase();
-                console.log(`[Scanner] ✅ DIGITAL VÁLIDA CAPTURADA! Hash: FUT-${hash.substring(0, 15)}...`);
+                const signature = getFingerprintSignature(imageBuffer, w, h);
+                console.log(`[Scanner] ✅ DIGITAL VÁLIDA CAPTURADA! Hash: FUT-${hash.substring(0, 15)}... Sig length: ${signature.length}`);
 
-                resolve({ success: true, hash: `FUT-${hash}` });
+                resolve({ success: true, hash: `FUT-${hash}`, signature });
             });
 
         } catch (e) {

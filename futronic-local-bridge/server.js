@@ -18,7 +18,7 @@ app.get('/scan', async (req, res) => {
     try {
         const result = await scanner.captureBiometrics();
         if (result.success) {
-            res.json({ success: true, hash: result.hash });
+            res.json({ success: true, hash: result.hash, signature: result.signature });
         } else {
             res.status(500).json({ success: false, error: result.error });
         }

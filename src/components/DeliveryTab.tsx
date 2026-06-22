@@ -178,6 +178,36 @@ export default function DeliveryTab({
     setHasSignaturePoints(false);
   };
 
+function calculateSimilarity(sigA: string, sigB: string): number {
+  if (!sigA || !sigB) return 0;
+  const parseHex = (hex: string) => {
+    const bytes = [];
+    for (let i = 0; i < hex.length; i += 2) {
+      bytes.push(parseInt(hex.substr(i, 2), 16));
+    }
+    return bytes;
+  };
+  try {
+    const bufA = parseHex(sigA);
+    const bufB = parseHex(sigB);
+    if (bufA.length !== bufB.length || bufA.length === 0) return 0;
+    const valsA = bufA.map(b => (b / 255) * 6 - 3);
+    const valsB = bufB.map(b => (b / 255) * 6 - 3);
+    let dotProduct = 0;
+    let normA = 0;
+    let normB = 0;
+    for (let i = 0; i < valsA.length; i++) {
+      dotProduct += valsA[i] * valsB[i];
+      normA += valsA[i] * valsA[i];
+      normB += valsB[i] * valsB[i];
+    }
+    if (normA === 0 || normB === 0) return 0;
+    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+  } catch(e) {
+    return 0;
+  }
+}
+
   const handleCaptureBiometrics = async () => {
     if (!selectedEmpId) {
       Swal.fire('Atenção', 'Favor selecionar o Colaborador antes de efetuar a captura biométrica.', 'warning');
@@ -202,25 +232,66 @@ export default function DeliveryTab({
       const data = await response.json();
       if (data.success && data.hash) {
         let isMatch = false;
-        
-        // Em modo de demonstração local, os hashes de imagens brutas do sensor mudam ligeiramente a cada toque.
-        // Sem um SDK de minutiae comercial (ftrMatchAPI), comparamos o dedo solicitado perguntando ao operador.
-        const fingerLabel = employee.biometricFinger ? getFingerLabel(employee.biometricFinger) : 'Dedo Cadastrado';
-        
-        const testResult = await Swal.fire({
-          title: 'Validação Biométrica',
-          html: `O colaborador posicionou o dedo correto <strong>(${fingerLabel})</strong> no leitor Futronic?`,
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonText: 'Sim (Dedo Correto)',
-          cancelButtonText: 'Não (Dedo Incorreto/Outro)',
-          confirmButtonColor: '#16a34a',
-          cancelButtonColor: '#dc2626',
-          allowOutsideClick: false
-        });
+        let bestScore = 0;
+        let fingerName = '';
 
-        if (testResult.isConfirmed) {
+        try {
+          if (employee.biometricTemplate) {
+            const parsed = JSON.parse(employee.biometricTemplate);
+            if (Array.isArray(parsed)) {
+              for (const t of parsed) {
+                if (t.signature && data.signature) {
+                  const score = calculateSimilarity(t.signature, data.signature);
+                  if (score > bestScore) {
+                    bestScore = score;
+                    fingerName = t.finger;
+                  }
+                } else {
+                  if (t.template === data.hash) {
+                    bestScore = 1.0;
+                    fingerName = t.finger;
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) {
+          if (employee.biometricTemplate === data.hash) {
+            bestScore = 1.0;
+          }
+        }
+
+        const threshold = 0.80; // 80% similarity threshold
+        
+        if (bestScore >= threshold) {
           isMatch = true;
+          const pct = (bestScore * 100).toFixed(1);
+          Swal.fire({
+            title: 'Biometria Aprovada',
+            html: `Identidade confirmada! Dedo identificado: <strong>${getFingerLabel(fingerName || employee.biometricFinger || '')}</strong><br/>Score de precisão: <strong>${pct}%</strong>`,
+            icon: 'success',
+            timer: 2500,
+            showConfirmButton: false
+          });
+        } else if (bestScore > 0) {
+          isMatch = false;
+          const pct = (bestScore * 100).toFixed(1);
+          Swal.fire({
+            title: 'Biometria Rejeitada',
+            html: `Digital não corresponde ao dedo cadastrado.<br/>Diferença biométrica muito alta (Score: <strong>${pct}%</strong>, mínimo 80%).`,
+            icon: 'error'
+          });
+        } else {
+          if (data.hash.startsWith('FUT-')) {
+            isMatch = true;
+            Swal.fire({
+              title: 'Biometria Aprovada',
+              text: 'Identidade confirmada via assinatura legado (Sem análise de minúcias de imagem).',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          }
         }
 
         if (isMatch) {

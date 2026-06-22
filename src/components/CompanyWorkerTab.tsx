@@ -117,7 +117,7 @@ export default function CompanyWorkerTab({
         }
         
         updatedTemplates = updatedTemplates.filter((t:any) => t.finger !== emp.biometricFinger);
-        updatedTemplates.push({ finger: emp.biometricFinger, template: data.hash });
+        updatedTemplates.push({ finger: emp.biometricFinger, template: data.hash, signature: data.signature });
         
         const newTemplateStr = JSON.stringify(updatedTemplates);
 

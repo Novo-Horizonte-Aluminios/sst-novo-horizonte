@@ -485,15 +485,15 @@ async function startServer() {
   app.post('/api/ppes', async (req, res) => {
     try {
       const id = 'p_' + Date.now();
-      const { name, ca, validityDate, stock, minStock, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus, fispqRelation, manualUrl } = req.body;
+      const { name, ca, validityDate, stock, minStock, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus, fispqRelation, manualUrl, durabilityDays } = req.body;
       const stockCount = stock !== undefined ? stock : (req.body.stockCount || 0);
       const minStockCount = minStock !== undefined ? minStock : (req.body.minStock || 0);
       const currentCaStatus = caStatus || 'Válido';
       await query(
-        'INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description, internal_code, bar_code, brand, manufacturer, category, ca_number, ca_issue_date, ca_expiry_date, ca_status, fispq_relation, manual_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)',
-        [id, name, ca || caNumber, validityDate || caExpiryDate || null, stockCount, minStockCount, description, internalCode || null, barCode || null, brand || null, manufacturer || null, category || null, caNumber || ca || null, caIssueDate || null, caExpiryDate || validityDate || null, currentCaStatus, fispqRelation || null, manualUrl || null]
+        'INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description, internal_code, bar_code, brand, manufacturer, category, ca_number, ca_issue_date, ca_expiry_date, ca_status, fispq_relation, manual_url, durability_days) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)',
+        [id, name, ca || caNumber, validityDate || caExpiryDate || null, stockCount, minStockCount, description, internalCode || null, barCode || null, brand || null, manufacturer || null, category || null, caNumber || ca || null, caIssueDate || null, caExpiryDate || validityDate || null, currentCaStatus, fispqRelation || null, manualUrl || null, durabilityDays || 90]
       );
-      res.status(201).json({ id, name, ca, validityDate, stockCount, minStockCount, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus: currentCaStatus, fispqRelation, manualUrl });
+      res.status(201).json({ id, name, ca, validityDate, stockCount, minStockCount, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus: currentCaStatus, fispqRelation, manualUrl, durabilityDays: durabilityDays || 90 });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -1123,6 +1123,8 @@ async function startServer() {
     let messageText = '';
     if (alertType === 'ca_vencimento') {
       messageText = `⚠️ *ALERTA DE SST - NOVO HORIZONTE ALUMÍNIOS* ⚠️\n\nOlá, *${employeeName}*!\nEste é um aviso automático do SESMT. Identificamos que o CA (Certificado de Aprovação) do seu EPI *${detail}* (CA: *${codeOrDate || 'N/A'}*) está próximo do vencimento ou necessita de substituição preventiva.\n\nPor favor, dirija-se ao Almoxarifado para realizar a devolução do item antigo e assinatura da nova ficha de entrega eletrônica (conforme a NR-06).\n\nEvite trabalhar com equipamentos não validados!`;
+    } else if (alertType === 'epi_vencimento') {
+      messageText = `⚠️ *ALERTA DE SUBSTITUIÇÃO DE EPI - NOVO HORIZONTE ALUMÍNIOS* ⚠️\n\nOlá, *${employeeName}*!\nEste é um aviso automático do SESMT. Identificamos que o seu EPI *${detail}* entregue em *${codeOrDate || 'N/A'}* atingiu ou está próximo do prazo de validade de uso recomendado (vida útil do equipamento).\n\nPor segurança e conformidade (NR-06), você deve realizar a troca deste item por um novo.\n\nPor favor, compareça ao Almoxarifado o quanto antes para retirar o seu novo equipamento e assinar a nova ficha de entrega.`;
     } else {
       messageText = `⚠️ *ALERTA DE SST - NOVO HORIZONTE ALUMÍNIOS* ⚠️\n\nOlá, *${employeeName}*!\nEste é um aviso automático do SESMT. O seu treinamento mandatório *${detail}* está vencido ou próximo do vencimento (Vencimento em *${codeOrDate || 'N/A'}*).\n\nPara garantir a sua integridade e conformidade com as Normas Regulamentadoras (NRs: *${nr || 'SST'}*), a sua inscrição foi pré-agendada para a próxima reciclagem no portal LMS.\n\nPor favor, fale com a supervisão ou equipe de SST para confirmar sua escala!`;
     }
@@ -1191,7 +1193,7 @@ async function startServer() {
               event: 'sst_alert',
               employeeId: employeeId || 'e_unk',
               employeeName,
-              alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : 'Treinamento Vencido',
+              alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : alertType === 'epi_vencimento' ? 'Substituição de EPI' : 'Treinamento Vencido',
               detail,
               codeOrDate,
               phone: formattedPhone,
@@ -1226,7 +1228,7 @@ async function startServer() {
         id: newLogId,
         employeeId: employeeId || 'e_unk',
         employeeName,
-        alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : 'Treinamento Vencido',
+        alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : alertType === 'epi_vencimento' ? 'Substituição de EPI' : 'Treinamento Vencido',
         detail,
         phone,
         sentAt: new Date().toISOString(),
@@ -1264,7 +1266,7 @@ async function startServer() {
         id: simulatedLogId,
         employeeId: employeeId || 'e_unk',
         employeeName,
-        alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : 'Treinamento Vencido',
+        alertType: alertType === 'ca_vencimento' ? 'CA de EPI Vencendo' : alertType === 'epi_vencimento' ? 'Substituição de EPI' : 'Treinamento Vencido',
         detail,
         phone,
         sentAt: new Date().toISOString(),
