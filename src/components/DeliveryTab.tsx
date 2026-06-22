@@ -59,6 +59,8 @@ export default function DeliveryTab({
   // Custom states
   const [pinNumber, setPinNumber] = useState('');
   const [selfieOptionSelected, setSelfieOptionSelected] = useState('');
+  const [isAnalyzingFace, setIsAnalyzingFace] = useState(false);
+  const [faceMatchScore, setFaceMatchScore] = useState<number | null>(null);
 
   // Webcam states
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -133,7 +135,7 @@ export default function DeliveryTab({
     }
   };
 
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     if (videoRef.current) {
       const canvas = document.createElement('canvas');
       canvas.width = videoRef.current.videoWidth;
@@ -144,6 +146,40 @@ export default function DeliveryTab({
         const dataUrl = canvas.toDataURL('image/jpeg');
         setSelfieOptionSelected(dataUrl);
         stopWebcam();
+
+        // RUN FACE RECOGNITION
+        const selectedEmployeeObj = companyEmployees.find(e => e.id === selectedEmpId);
+        if (selectedEmployeeObj && selectedEmployeeObj.photoUrl) {
+          setIsAnalyzingFace(true);
+          try {
+            const { compareFaces } = await import('../utils/faceRecognition');
+            const result = await compareFaces(selectedEmployeeObj.photoUrl, dataUrl);
+            setFaceMatchScore(result.score);
+            if (!result.match) {
+              Swal.fire('Rosto Incompatível', 'A foto capturada não corresponde à foto de perfil do colaborador cadastrado.', 'error');
+              setSelfieOptionSelected('');
+              setFaceMatchScore(null);
+            } else {
+              Swal.fire({
+                title: 'Identidade Confirmada',
+                text: `Rosto validado com sucesso! (Precisão: ${(result.score * 100).toFixed(1)}%)`,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            }
+          } catch (e: any) {
+            Swal.fire('Aviso de Validação Facial', 'Não foi possível analisar o rosto. Verifique se o colaborador possui uma foto clara no perfil.', 'warning');
+            console.error(e);
+            setSelfieOptionSelected('');
+            setFaceMatchScore(null);
+          } finally {
+            setIsAnalyzingFace(false);
+          }
+        } else {
+          Swal.fire('Sem Foto Base', 'Este colaborador não possui uma foto de perfil cadastrada no sistema. O Face ID exige uma foto base para comparação.', 'warning');
+          setSelfieOptionSelected('');
+        }
       }
     }
   };
@@ -152,6 +188,7 @@ export default function DeliveryTab({
     if (signingMethod !== 'selfie') {
       stopWebcam();
       setSelfieOptionSelected('');
+      setFaceMatchScore(null);
     }
   }, [signingMethod]);
 
@@ -822,17 +859,31 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                           </button>
                         )}
 
-                        {selfieOptionSelected && (
+                        {selfieOptionSelected && !isAnalyzingFace && (
                           <button
                             type="button"
                             onClick={() => {
                               setSelfieOptionSelected('');
+                              setFaceMatchScore(null);
                               startWebcam();
                             }}
                             className="w-full py-2 bg-slate-600 hover:bg-slate-700 text-white rounded font-bold text-xs transition shadow flex justify-center items-center gap-2"
                           >
                             <RefreshCw className="w-4 h-4" /> Tirar Novamente
                           </button>
+                        )}
+                        
+                        {isAnalyzingFace && (
+                          <div className="w-full py-2 bg-blue-100 text-blue-700 rounded font-bold text-xs border border-blue-200 flex justify-center items-center gap-2">
+                            <span className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
+                            Analisando Face ID...
+                          </div>
+                        )}
+                        
+                        {faceMatchScore && (
+                          <div className="mt-2 text-center text-[9px] font-bold text-emerald-700 bg-emerald-50 py-1 rounded border border-emerald-200">
+                            ✓ Face ID Confirmado ({(faceMatchScore * 100).toFixed(1)}%)
+                          </div>
                         )}
                       </div>
                       

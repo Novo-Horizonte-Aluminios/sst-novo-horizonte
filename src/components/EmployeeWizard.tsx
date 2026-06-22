@@ -237,12 +237,23 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                 transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
-                <PhotoSelector
-                  photoUrl={empData.photoUrl || ''}
-                  onPhotoSelected={(url) => setEmpData({ ...empData, photoUrl: url })}
-                  onPhotoRemoved={() => setEmpData({ ...empData, photoUrl: '' })}
-                  employeeName={empData.name || 'Novo Colaborador'}
-                />
+                <div className="flex flex-col md:flex-row gap-6 items-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <PhotoSelector
+                    photoUrl={empData.photoUrl || ''}
+                    onPhotoSelected={(url) => setEmpData({ ...empData, photoUrl: url })}
+                    onPhotoRemoved={() => setEmpData({ ...empData, photoUrl: '' })}
+                    employeeName={empData.name || 'Novo Colaborador'}
+                  />
+                  <div className="flex-1 bg-blue-50/50 border border-blue-200 p-3 rounded-lg">
+                    <h4 className="text-[10px] font-bold text-blue-800 uppercase mb-1 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      Foto Base para Face ID
+                    </h4>
+                    <p className="text-[10px] text-blue-700/80 leading-snug">
+                      A foto cadastrada aqui será usada como <strong>padrão de validação</strong> pelo sistema de Reconhecimento Facial durante as entregas de EPI. Para evitar rejeições falsas na entrega, exija uma foto clara e bem iluminada do rosto do colaborador.
+                    </p>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
