@@ -260,9 +260,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
             bestScore = 1.0;
           }
         }
-
-        const threshold = 0.80; // 80% similarity threshold
-        
+        const threshold = 0.95; // 95% similarity threshold para evitar falsos positivos na mesma mão
         if (bestScore >= threshold) {
           isMatch = true;
           const pct = (bestScore * 100).toFixed(1);
