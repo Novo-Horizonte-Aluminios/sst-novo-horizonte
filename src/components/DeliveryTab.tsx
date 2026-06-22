@@ -368,6 +368,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
     setSelectedPpeId('');
     setQuantity(1);
     clearCanvas();
+    setBiometricHash(null);
+    setBiometricError(null);
+    setIsScanningBiometrics(false);
     setPinNumber('');
   };
 
