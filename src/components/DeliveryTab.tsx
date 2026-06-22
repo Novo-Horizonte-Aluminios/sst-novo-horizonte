@@ -459,14 +459,14 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                 <button
                   type="button"
                   onClick={() => setIsOpenDelivery(!isOpenDelivery)}
-                  className="w-full border border-slate-200 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white text-[11px] text-left flex justify-between items-center cursor-pointer"
+                  className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[13px] text-left flex justify-between items-center cursor-pointer transition-all hover:border-slate-300"
                 >
-                  <span className={selectedEmployeeObj ? "text-slate-800 font-medium" : "text-slate-400"}>
+                  <span className={selectedEmployeeObj ? "text-slate-800 font-black tracking-tight" : "text-slate-400 font-medium"}>
                     {selectedEmployeeObj 
                       ? `${selectedEmployeeObj.name} (${selectedEmployeeObj.role} - ${selectedEmployeeObj.matricula})`
                       : "Selecione o Colaborador..."}
                   </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                  <ChevronDown className="w-4 h-4 text-slate-500" />
                 </button>
 
                 {isOpenDelivery && (
@@ -524,9 +524,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     required
                     value={selectedPpeId}
                     onChange={(e) => setSelectedPpeId(e.target.value)}
-                    className="w-full border border-slate-200 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white text-[11px]"
+                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[13px] font-black tracking-tight text-slate-800 transition-all hover:border-slate-300 cursor-pointer"
                   >
-                    <option value="">Selecione o EPI...</option>
+                    <option value="" className="font-medium text-slate-400">Selecione o EPI...</option>
                     {ppes.map((p) => (
                       <option key={p.id} value={p.id} disabled={p.caStatus !== 'Válido'}>
                         {p.name} (CA: {p.caNumber} {p.caStatus !== 'Válido' ? '⚠️ EXPIRED' : ''})
@@ -543,7 +543,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value))}
-                    className="w-full border border-slate-250 rounded-lg p-2.5 focus:outline-none focus:border-emerald-500 bg-white font-mono text-[11px]"
+                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white font-mono text-[14px] font-black text-slate-800 transition-all hover:border-slate-300"
                   />
                 </div>
               </div>
