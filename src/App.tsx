@@ -439,17 +439,6 @@ export default function App() {
               </h1>
             </div>
 
-            {/* Quick Search Bar */}
-            <div className="hidden md:flex relative ml-4 group">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors group-focus-within:text-brand-primary">
-                <Search className="w-4 h-4" />
-              </span>
-              <input
-                type="text"
-                placeholder="Busca rápida (Colaborador, EPI, NR)..."
-                className="w-80 bg-slate-100 hover:bg-slate-200/50 focus:bg-white text-[13px] pl-9 pr-4 py-2.5 rounded-xl border border-transparent focus:border-brand-primary/30 focus:ring-4 focus:ring-brand-primary/10 transition-all text-slate-700 outline-none font-medium placeholder:text-slate-400"
-              />
-            </div>
           </div>
 
           <div className="flex items-center gap-4">
