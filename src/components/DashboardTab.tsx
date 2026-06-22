@@ -247,36 +247,36 @@ export default function DashboardTab({
   return (
     <div className="space-y-4">
       {/* Fluxos de Operação Rápidos */}
-      <div className="bg-white p-4 rounded border border-slate-200 shadow-sm">
-        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
           <Workflow className="w-3.5 h-3.5 text-slate-400" />
           Fluxos de Operação Rápidos
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <button 
             onClick={() => onNavigate('delivery')}
-            className="p-3 bg-slate-50 hover:bg-safety-green/5 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+            className="p-4 bg-white hover:bg-slate-50 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
           >
             <CheckCircle2 className="w-4 h-4 text-safety-green" />
             Entrega de EPI
           </button>
           <button 
             onClick={() => onNavigate('ppes')}
-            className="p-3 bg-slate-50 hover:bg-safety-green/5 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+            className="p-4 bg-white hover:bg-slate-50 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
           >
             <Shield className="w-4 h-4 text-[#0369a1]" />
             Auditar CAs
           </button>
           <button 
             onClick={() => onNavigate('incidents')}
-            className="p-3 bg-slate-50 hover:bg-red-50 hover:text-red-700 border border-slate-200 hover:border-red-350 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+            className="p-4 bg-white hover:bg-rose-50 hover:text-rose-700 border border-slate-200 hover:border-rose-300 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
           >
             <AlertTriangle className="w-4 h-4 text-red-500" />
             Comunicar Risco
           </button>
           <button 
             onClick={() => onNavigate('ai')}
-            className="p-3 bg-slate-50 hover:bg-safety-green/5 hover:text-safety-green border border-slate-200 hover:border-safety-green/50 rounded transition text-[11px] font-bold text-slate-700 flex flex-col items-center gap-1.5 cursor-pointer"
+            className="p-4 bg-white hover:bg-slate-50 hover:text-amber-600 border border-slate-200 hover:border-amber-400 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-[11px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
             SST Especialista

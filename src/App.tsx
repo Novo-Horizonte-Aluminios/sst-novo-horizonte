@@ -315,7 +315,7 @@ export default function App() {
   const activeCompany = companies.find(c => c.id === selectedCompanyId) || companies[0];
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] overflow-hidden font-sans antialiased text-slate-800">
+    <div className="flex h-screen bg-[#f4f7f9] overflow-hidden font-sans antialiased text-slate-800">
       
       {/* Sidebar Navigation Drawer */}
       <Sidebar 
@@ -328,32 +328,32 @@ export default function App() {
       />
 
       {/* Main Workspace Frame */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         
         {/* Top Navbar Header */}
-        <header className="h-14 bg-white border-b border-slate-200 px-6 flex justify-between items-center shrink-0">
-          <div></div>
+        <header className="h-20 bg-transparent px-8 pt-6 pb-2 flex justify-between items-start shrink-0 z-10">
+          <div>
+            <h2 className="text-[10px] font-bold tracking-widest text-safety-green uppercase mb-1">
+              Painel de Gestão SST
+            </h2>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              Olá, {currentUser.name.split(' ')[0]}
+            </h1>
+            <p className="text-xs text-slate-500 font-medium">{currentUser.username}</p>
+          </div>
 
-          <div className="flex items-center gap-4 text-xs">
-            <div className="text-right">
-              <span className="text-[11px] font-bold text-slate-800 uppercase tracking-tight block">
-                {currentUser.name}
+          <div className="flex items-center gap-4 text-xs mt-2">
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 bg-safety-green/10 text-safety-green border border-safety-green/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                {currentUser.role} Ativo
               </span>
-              <span className="text-[9px] font-mono text-safety-green font-bold uppercase tracking-wider block">
-                {currentUser.role} • Credenciado
-              </span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-1.5 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 hover:text-rose-600 rounded-full text-[11px] font-bold text-slate-600 transition-all shadow-sm cursor-pointer"
+              >
+                Sair
+              </button>
             </div>
-
-            <div className="px-2 py-0.5 bg-safety-green/10 text-safety-green border border-safety-green/20 rounded text-[9px] font-mono font-bold uppercase">
-              SESMT Ativo
-            </div>
-
-            <button
-              onClick={handleLogout}
-              className="px-2 py-1 bg-slate-100 hover:bg-red-50 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded text-[10px] font-bold text-slate-600 transition-all cursor-pointer"
-            >
-              Sair
-            </button>
           </div>
         </header>
 

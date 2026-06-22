@@ -275,12 +275,6 @@ function calculateSimilarity(sigA: string, sigB: string): number {
           });
         } else if (bestScore > 0) {
           isMatch = false;
-          const pct = (bestScore * 100).toFixed(1);
-          Swal.fire({
-            title: 'Biometria Rejeitada',
-            html: `Digital não corresponde ao dedo cadastrado.<br/>Diferença biométrica muito alta (Score: <strong>${pct}%</strong>, mínimo 80%).`,
-            icon: 'error'
-          });
         } else {
           if (data.hash.startsWith('FUT-')) {
             isMatch = true;

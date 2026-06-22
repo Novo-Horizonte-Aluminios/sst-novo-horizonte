@@ -41,8 +41,9 @@ export const getRegisteredFingers = (emp: Partial<Employee> | null): string[] =>
     }
   } catch(e) {
     if (emp.biometricFinger) return [emp.biometricFinger];
+    return ['Digital Cadastrada'];
   }
-  return [];
+  return ['Digital Cadastrada'];
 };
 
 interface CompanyWorkerTabProps {
