@@ -259,50 +259,50 @@
 
 
 /* SweetAlert2 Modernization */
-div:where(.swal2-container) div:where(.swal2-popup) {
-  border-radius: 20px;
-  padding: 24px 20px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  font-family: var(--font-sans);
-  border: 1px solid var(--color-border-default);
+.swal-modern-popup {
+  border-radius: 20px !important;
+  padding: 24px 20px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  font-family: var(--font-sans) !important;
+  border: 1px solid var(--color-border-default) !important;
 }
-div:where(.swal2-container) h2:where(.swal2-title) {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-top: 10px;
+.swal-modern-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin-top: 10px !important;
 }
-div:where(.swal2-container) div:where(.swal2-html-container) {
-  font-size: 0.9rem;
-  color: #475569;
-  margin-top: 8px;
+.swal-modern-html {
+  font-size: 0.9rem !important;
+  color: #475569 !important;
+  margin-top: 8px !important;
 }
-div:where(.swal2-container) button:where(.swal2-confirm) {
-  background-color: var(--color-brand-primary);
-  color: white;
-  border-radius: 10px;
-  padding: 10px 24px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
-  transition: all 0.2s ease;
+.swal-modern-confirm {
+  background-color: var(--color-brand-primary) !important;
+  color: white !important;
+  border-radius: 10px !important;
+  padding: 10px 24px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2) !important;
+  transition: all 0.2s ease !important;
 }
-div:where(.swal2-container) button:where(.swal2-confirm):hover {
-  background-color: var(--color-brand-primary-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+.swal-modern-confirm:hover {
+  background-color: var(--color-brand-primary-dark) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3) !important;
 }
-div:where(.swal2-container) button:where(.swal2-cancel) {
-  background-color: #f1f5f9;
-  color: #475569;
-  border-radius: 10px;
-  padding: 10px 24px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
+.swal-modern-cancel {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border-radius: 10px !important;
+  padding: 10px 24px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  transition: all 0.2s ease !important;
 }
-div:where(.swal2-container) button:where(.swal2-cancel):hover {
-  background-color: #e2e8f0;
-  color: #1e293b;
+.swal-modern-cancel:hover {
+  background-color: #e2e8f0 !important;
+  color: #1e293b !important;
 }
 

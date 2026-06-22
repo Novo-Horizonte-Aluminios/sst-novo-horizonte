@@ -4,7 +4,7 @@ import {
   Trash2, Edit3, Save, X, ChevronDown, ChevronRight, FlaskConical,
   AlertTriangle, PackageCheck
 } from 'lucide-react';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface FISPQDocument {
   id: string;

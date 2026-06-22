@@ -4,7 +4,7 @@ import {
   XCircle, AlertCircle, Clock, ChevronDown, ChevronRight, Trash2, Edit3,
   Save, X, FileCheck, BarChart2, Eye, CheckSquare, Square
 } from 'lucide-react';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface Inspection {
   id: string;

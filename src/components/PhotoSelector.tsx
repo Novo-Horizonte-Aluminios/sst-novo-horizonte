@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, Trash2, X, RefreshCw, AlertCircle } from 'lucide-react';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface PhotoSelectorProps {
   photoUrl?: string;

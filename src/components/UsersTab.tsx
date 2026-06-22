@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, Trash2, Shield, User, Key, Users, AlertCircle, CheckCircle, Pencil, X, Phone, Mail, Lock } from 'lucide-react';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface SystemUser {
   id: string;

@@ -27,7 +27,7 @@ import {
 import { Employee, PPE, PPEDelivery, Company } from '../types';
 import { exportDeliveriesToExcel, exportDeliveriesToPDF } from '../utils/exportUtils';
 import { getFingerLabel, getRegisteredFingers } from './CompanyWorkerTab';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface DeliveryTabProps {
   companies: Company[];

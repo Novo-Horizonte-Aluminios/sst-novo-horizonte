@@ -4,7 +4,7 @@ import {
   Clock, Download, Trash2, Edit3, Save, X, RefreshCw, Eye, Shield,
   BookOpen, FileWarning
 } from 'lucide-react';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface SSTDocument {
   id: string;

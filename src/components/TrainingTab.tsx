@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Employee, Training, EmployeeTraining } from '../types';
 import { LMS_QUIZZES } from '../utils/mockData.js';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface TrainingTabProps {
   employees: Employee[];

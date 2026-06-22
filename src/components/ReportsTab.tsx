@@ -46,7 +46,7 @@ import {
   exportDashboardToPDF
 } from '../utils/exportUtils';
 import { generateBulkZip } from '../utils/bulkExportUtils';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 import PageHeader from './ui/PageHeader';
 import Badge from './ui/Badge';
 

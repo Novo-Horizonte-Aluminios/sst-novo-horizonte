@@ -12,7 +12,7 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 import { PPE } from '../types';
-import Swal from 'sweetalert2';
+import Swal from '../utils/swal';
 
 interface StockTabProps {
   ppes: PPE[];
