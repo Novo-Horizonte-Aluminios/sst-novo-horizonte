@@ -206,59 +206,47 @@
    Oculta tudo e exibe apenas a ficha de EPI
    ============================================= */
 @media print {
-  /* Force reset of any framer-motion or tailwind transforms that break fixed/absolute positioning */
-  *, *::before, *::after {
-    transform: none !important;
-    filter: none !important;
-    perspective: none !important;
-    transition: none !important;
-    animation: none !important;
-    overflow: visible !important;
-    contain: none !important;
-    position: static !important; /* CRITICAL: Prevent parents from trapping absolute positioning */
+  /* 1. Esconde completamente os painéis laterais e cabeçalho */
+  aside, header {
+    display: none !important;
   }
 
-  /* Oculta TUDO por padrão */
+  /* 2. Remove restrições de layout apenas dos containers principais (evita quebrar filhos) */
+  #root, #root > div, #root > div > div, main, main > div {
+    position: static !important;
+    transform: none !important;
+    filter: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    height: auto !important;
+  }
+
+  /* 3. Oculta tudo por padrão usando visibility (preserva fluxo mas não renderiza) */
   body * {
     visibility: hidden;
   }
 
-  /* Remove margins and paddings on root elements to prevent shifting */
-  html, body, #root {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    overflow: visible !important;
-  }
-
-  /* Exibe apenas o conteúdo da ficha */
+  /* 4. Torna apenas o recibo e seus filhos visíveis */
   .print-receipt,
   .print-receipt * {
     visibility: visible;
   }
 
-  /* Posiciona a ficha para ocupar a página inteira no topo/esquerda */
+  /* 5. Posiciona o recibo no topo da página inteira */
   .print-receipt {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
-    width: 100vw !important;
-    min-height: 100vh !important;
-    padding: 30px !important;
+    width: 100% !important;
     margin: 0 !important;
+    padding: 20px !important;
     background: white !important;
-    font-size: 11px !important;
-    color: #000 !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Remove sombras e bordas desnecessárias */
-  .print-receipt * {
     box-shadow: none !important;
   }
 
-  /* Garante que cores de fundo apareçam na impressão */
+  /* Garante que cores de fundo apareçam na impressão (Biometria) */
   .print-biometric-badge {
     background-color: #dcfce7 !important;
     -webkit-print-color-adjust: exact !important;
