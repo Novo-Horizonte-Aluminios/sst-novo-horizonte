@@ -58,7 +58,11 @@ export default function DeliveryTab({
   
   // Custom states
   const [pinNumber, setPinNumber] = useState('');
-  const [selfieOptionSelected, setSelfieOptionSelected] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150');
+  const [selfieOptionSelected, setSelfieOptionSelected] = useState('');
+
+  // Webcam states
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isWebcamActive, setIsWebcamActive] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successModalData, setSuccessModalData] = useState<{empName: string, ppeName: string} | null>(null);
@@ -105,6 +109,51 @@ export default function DeliveryTab({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Webcam controls
+  const startWebcam = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setIsWebcamActive(true);
+      }
+    } catch (err) {
+      console.error("Error accessing webcam: ", err);
+      Swal.fire('Erro', 'Não foi possível acessar a câmera. Verifique as permissões.', 'error');
+    }
+  };
+
+  const stopWebcam = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      setIsWebcamActive(false);
+    }
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        setSelfieOptionSelected(dataUrl);
+        stopWebcam();
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (signingMethod !== 'selfie') {
+      stopWebcam();
+      setSelfieOptionSelected('');
+    }
+  }, [signingMethod]);
 
   // System users for auto-populating receipt signatures
   const [systemUsers, setSystemUsers] = useState<{id: string; name: string; role: string}[]>([]);
@@ -359,6 +408,10 @@ function calculateSimilarity(sigA: string, sigB: string): number {
       }
       signatureValue = `Biometria: ${biometricHash}`;
     } else {
+      if (!selfieOptionSelected) {
+        Swal.fire('Atenção', 'Por favor, capture a foto do colaborador antes de registrar.', 'warning');
+        return;
+      }
       signatureValue = `Selfie Anexa: ${selfieOptionSelected}`;
     }
 
@@ -744,33 +797,67 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   )}
 
                   {signingMethod === 'selfie' && (
-                    <div className="grid grid-cols-3 gap-2 items-center">
-                      <div className="col-span-2 space-y-1 text-[10px]">
-                        <span className="text-[9px] text-slate-400 font-mono block">Reconhecimento Facial Ativo</span>
-                        <p className="text-slate-400 text-[9px] leading-snug">Registra o colaborador com o EPI em mãos para robustez jurídica.</p>
-                        <select
-                          value={selfieOptionSelected}
-                          onChange={(e) => setSelfieOptionSelected(e.target.value)}
-                          className="w-full border border-slate-200 bg-white rounded p-1 text-[9px] focus:outline-none"
-                        >
-                          {companyEmployees.length === 0 ? (
-                            <option value="">Nenhum colaborador cadastrado</option>
-                          ) : (
-                            companyEmployees.map(emp => (
-                              <option key={emp.id} value={emp.photoUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150"}>
-                                {emp.name} {emp.sector ? `(${emp.sector})` : ''}
-                              </option>
-                            ))
-                          )}
-                        </select>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mt-2">
+                      <div className="space-y-1 text-[10px]">
+                        <span className="text-[11px] text-slate-700 font-bold block">Captura de Reconhecimento Facial</span>
+                        <p className="text-slate-500 text-[10px] leading-snug mb-3">Tire a foto do colaborador com o EPI em mãos para garantir a validade jurídica.</p>
+                        
+                        {!isWebcamActive && !selfieOptionSelected && (
+                          <button
+                            type="button"
+                            onClick={startWebcam}
+                            className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-xs transition shadow flex justify-center items-center gap-2"
+                          >
+                            <Camera className="w-4 h-4" /> Iniciar Câmera
+                          </button>
+                        )}
+                        
+                        {isWebcamActive && !selfieOptionSelected && (
+                          <button
+                            type="button"
+                            onClick={capturePhoto}
+                            className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs transition shadow flex justify-center items-center gap-2"
+                          >
+                            <Camera className="w-4 h-4" /> Capturar Foto
+                          </button>
+                        )}
+
+                        {selfieOptionSelected && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelfieOptionSelected('');
+                              startWebcam();
+                            }}
+                            className="w-full py-2 bg-slate-600 hover:bg-slate-700 text-white rounded font-bold text-xs transition shadow flex justify-center items-center gap-2"
+                          >
+                            <RefreshCw className="w-4 h-4" /> Tirar Novamente
+                          </button>
+                        )}
                       </div>
-                      <div className="col-span-1 text-center">
-                        <img 
-                          src={selfieOptionSelected} 
-                          className="w-12 h-12 object-cover rounded border border-safety-green mx-auto shadow-sm"
-                          alt="Selfie check" 
+                      
+                      <div className="text-center bg-slate-100 rounded-lg border border-slate-300 p-2 overflow-hidden flex justify-center items-center min-h-[140px]">
+                        {!isWebcamActive && !selfieOptionSelected && (
+                          <div className="text-slate-400 flex flex-col items-center">
+                            <Camera className="w-8 h-8 mb-1 opacity-50" />
+                            <span className="text-[9px] uppercase font-bold tracking-wider">Câmera Desligada</span>
+                          </div>
+                        )}
+                        
+                        <video 
+                          ref={videoRef} 
+                          autoPlay 
+                          playsInline 
+                          className={`w-full max-w-[200px] rounded shadow-sm ${(!isWebcamActive || selfieOptionSelected) ? 'hidden' : 'block'}`}
                         />
-                        <span className="text-[8px] font-mono text-safety-green font-bold mt-0.5 block uppercase">Câmera Ativa</span>
+                        
+                        {selfieOptionSelected && (
+                          <img 
+                            src={selfieOptionSelected} 
+                            className="w-full max-w-[200px] object-contain rounded shadow-sm border border-safety-green"
+                            alt="Selfie capturada" 
+                          />
+                        )}
                       </div>
                     </div>
                   )}
