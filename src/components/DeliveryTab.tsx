@@ -864,7 +864,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
             {activeReceiptEmployee ? (
               <div className="flex-1 mt-4 overflow-y-auto pr-2 custom-scrollbar print:overflow-visible print:h-auto print:m-0 print:pr-0" style={{maxHeight: 'calc(100vh - 14rem)'}}>
-                <div className="print-receipt bg-white border border-slate-300 text-xs text-slate-800 shadow-sm mx-auto w-full print:border-none print:shadow-none" style={{fontFamily: "'Inter', sans-serif"}}>
+                <div className="print-receipt bg-white border border-slate-300 text-xs text-slate-800 shadow-sm mx-auto w-full print:border print:border-slate-300 print:shadow-none" style={{fontFamily: "'Inter', sans-serif"}}>
                   {/* ── CABEÇALHO ── */}
                   <div className="flex items-center border-b-2 border-slate-700 px-3 py-2 gap-3">
                     {/* Foto do colaborador */}
