@@ -44,7 +44,7 @@ export default function Sidebar({
   const menuItems = [
     { id: 'dashboard', label: 'Monitor Geral', icon: LayoutDashboard },
     { id: 'companies', label: 'Cadastro da Equipe', icon: Users },
-    { id: 'delivery', label: 'Entrega (Ficha NR-06)', icon: FileCheck },
+    { id: 'delivery', label: 'Entrega de EPI', icon: FileCheck },
     { id: 'stock', label: 'Estoque Inteligente', icon: Package },
     { id: 'ppes', label: 'Garantia de EPI (CAs)', icon: Shield },
     { id: 'trainings', label: 'Treinamentos LMS', icon: GraduationCap },
