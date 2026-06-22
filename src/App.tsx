@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Bell, Search } from 'lucide-react';
 import Sidebar from './components/Sidebar.tsx';
 import DashboardTab from './components/DashboardTab.tsx';
 import CompanyWorkerTab from './components/CompanyWorkerTab.tsx';
@@ -27,6 +29,7 @@ export default function App() {
   });
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedCompanyId, setSelectedCompanyId] = useState('c1');
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const userRole = currentUser?.role || 'SST';
 
@@ -314,8 +317,105 @@ export default function App() {
 
   const activeCompany = companies.find(c => c.id === selectedCompanyId) || companies[0];
 
+  // Component rendering mapping
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return <DashboardTab 
+                  employees={employees}
+                  ppes={ppes}
+                  deliveries={deliveries}
+                  trainings={employeeTrainings}
+                  activeCompanyId={selectedCompanyId}
+                  onNavigate={(tab) => setActiveTab(tab)}
+                />;
+      case 'reports':
+        return <ReportsTab 
+                  companies={companies}
+                  employees={employees}
+                  ppes={ppes}
+                  deliveries={deliveries}
+                  employeeTrainings={employeeTrainings}
+                  accidents={accidents}
+                  actionPlans={actionPlans}
+                  fispqDocs={fispqDocs}
+                  activeCompanyId={selectedCompanyId}
+                />;
+      case 'companies':
+        return <CompanyWorkerTab 
+                  companies={companies}
+                  employees={employees}
+                  activeCompanyId={selectedCompanyId}
+                  onAddEmployee={handleAddEmployee}
+                  onUpdateEmployee={handleUpdateEmployee}
+                  onDeleteEmployee={handleDeleteEmployee}
+                  onUpdateCompany={handleUpdateCompany}
+                />;
+      case 'ppes':
+        return <PPETab 
+                  ppes={ppes}
+                  onAddPPE={handleAddPPE}
+                />;
+      case 'stock':
+        return <StockTab 
+                  ppes={ppes}
+                  onAdjustStock={handleAdjustStock}
+                  onReplenishUnderstocked={handleReplenishUnderstocked}
+                />;
+      case 'delivery':
+        return <DeliveryTab 
+                  companies={companies}
+                  employees={employees}
+                  ppes={ppes}
+                  deliveries={deliveries}
+                  activeCompanyId={selectedCompanyId}
+                  onAddDelivery={handleAddDelivery}
+                />;
+      case 'trainings':
+        return <TrainingTab 
+                  employees={employees}
+                  trainings={trainings}
+                  employeeTrainings={employeeTrainings}
+                  activeCompanyId={selectedCompanyId}
+                  onAddCertification={handleAddCertification}
+                />;
+      case 'incidents':
+        return <IncidentTab 
+                  accidents={accidents}
+                  actionPlans={actionPlans}
+                  onAddAccident={handleAddAccident}
+                  onAddActionPlan={handleAddActionPlan}
+                  onUpdateActionPlan={handleUpdateActionPlan}
+                />;
+      case 'inspections':
+        return <InspectionTab />;
+      case 'documents':
+        return <DocumentsTab />;
+      case 'fispq':
+        return <FispqTab fispqDocs={fispqDocs} />;
+      case 'whatsapp_alerts':
+        return <WhatsAppTab 
+                  employees={employees}
+                  ppes={ppes}
+                  deliveries={deliveries}
+                  employeeTrainings={employeeTrainings}
+                  onNavigate={(tab) => setActiveTab(tab)}
+                />;
+      case 'ai':
+        return <AIChatTab />;
+      case 'risk_map':
+        return <RiskMapTab />;
+      case 'backup':
+        return <BackupTab />;
+      case 'users':
+        return currentUser.role === 'Admin' ? <UsersTab currentUser={currentUser} /> : null;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-surface-page overflow-hidden font-sans antialiased text-slate-800">
+    <div className="flex h-screen bg-surface-page overflow-hidden font-sans antialiased text-slate-800 selection:bg-brand-primary selection:text-white">
       
       <Sidebar 
         activeTab={activeTab} 
@@ -328,169 +428,116 @@ export default function App() {
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         
-        <header className="h-[72px] bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-8 flex justify-between items-center shrink-0 z-10">
-          <div className="flex items-center gap-4">
+        <header className="h-[72px] bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-8 flex justify-between items-center shrink-0 z-10 shadow-sm">
+          <div className="flex items-center gap-6">
             <div>
-              <h2 className="text-[9px] font-bold tracking-[0.15em] text-brand-primary uppercase leading-relaxed">
+              <h2 className="text-[9px] font-black tracking-[0.18em] text-brand-primary uppercase leading-relaxed">
                 Painel de Gestão SST
               </h2>
-              <h1 className="text-xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-[1.35rem] font-black text-slate-900 tracking-tight leading-tight">
                 Olá, {currentUser.name.split(' ')[0]}
               </h1>
             </div>
+
+            {/* Quick Search Bar */}
+            <div className="hidden md:flex relative ml-4 group">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors group-focus-within:text-brand-primary">
+                <Search className="w-4 h-4" />
+              </span>
+              <input
+                type="text"
+                placeholder="Busca rápida (Colaborador, EPI, NR)..."
+                className="w-80 bg-slate-100 hover:bg-slate-200/50 focus:bg-white text-[13px] pl-9 pr-4 py-2.5 rounded-xl border border-transparent focus:border-brand-primary/30 focus:ring-4 focus:ring-brand-primary/10 transition-all text-slate-700 outline-none font-medium placeholder:text-slate-400"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="px-3 py-1.5 bg-brand-primary/10 text-brand-primary border border-brand-primary/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-4">
+            
+            {/* Global Notifications Bell */}
+            <div className="relative">
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2.5 bg-slate-100 hover:bg-brand-primary/10 text-slate-500 hover:text-brand-primary rounded-xl transition-all cursor-pointer shadow-sm hover:shadow active:scale-95"
+              >
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
+              </button>
+
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-3 w-80 bg-white border border-slate-200 shadow-xl rounded-2xl overflow-hidden z-50 origin-top-right"
+                  >
+                    <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                      <h3 className="font-black text-[13px] text-slate-800 uppercase tracking-tight">Notificações</h3>
+                      <span className="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full">2 Novas</span>
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto">
+                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group">
+                        <p className="text-[12px] font-bold text-slate-700 group-hover:text-brand-primary transition-colors">EPI com CA Vencido detectado</p>
+                        <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">Luva de Vaqueta está com CA 12345 vencido. Atualize o estoque.</p>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase mt-2 block">Há 5 minutos</span>
+                      </div>
+                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group">
+                        <p className="text-[12px] font-bold text-slate-700 group-hover:text-brand-primary transition-colors">Scanner Biométrico Desconectado</p>
+                        <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">A ponte local do Futronic parou de responder. Verifique a porta USB.</p>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase mt-2 block">Há 1 hora</span>
+                      </div>
+                    </div>
+                    <div className="p-3 bg-slate-50 border-t border-slate-100 text-center">
+                      <button className="text-[11px] font-bold text-brand-primary hover:text-brand-primary-dark transition-colors uppercase tracking-wider">
+                        Ver todas as notificações
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="w-px h-8 bg-slate-200 mx-1"></div>
+
+            <span className="px-3 py-1.5 bg-brand-primary/10 text-brand-primary border border-brand-primary/20 rounded-xl text-[10.5px] font-bold uppercase tracking-wider shadow-sm">
               {currentUser.role}
             </span>
             <button
               onClick={handleLogout}
-              className="px-4 py-1.5 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 hover:text-rose-600 rounded-full text-[11px] font-bold text-slate-600 transition-all shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+              className="px-5 py-2 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 hover:text-rose-600 rounded-xl text-[12px] font-black text-slate-600 transition-all shadow-sm cursor-pointer hover:shadow-md active:scale-95 uppercase tracking-wide"
             >
               Sair
             </button>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 min-h-0">
+        <main className="flex-1 overflow-y-auto p-6 min-h-0 relative z-0">
           {loading ? (
-            <div className="h-full flex flex-col items-center justify-center gap-4">
+            <div className="h-full flex flex-col items-center justify-center gap-5">
               <div className="relative">
-                <div className="w-10 h-10 border-[3px] border-brand-primary/20 border-t-brand-primary rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin"></div>
+                <div className="absolute inset-0 bg-brand-primary/5 blur-xl rounded-full"></div>
               </div>
               <div className="text-center">
-                <p className="text-sm font-bold text-slate-600">Carregando Sistema SST</p>
-                <p className="text-[11px] text-slate-400 mt-1">Sincronizando módulos operacionais...</p>
+                <p className="text-[15px] font-black text-slate-700">Carregando Sistema SST</p>
+                <p className="text-[12px] text-slate-500 mt-1 font-medium">Sincronizando módulos e banco de dados...</p>
               </div>
             </div>
           ) : (
-            <>
-              {activeTab === 'dashboard' && (
-                <DashboardTab 
-                  employees={employees}
-                  ppes={ppes}
-                  deliveries={deliveries}
-                  trainings={employeeTrainings}
-                  activeCompanyId={selectedCompanyId}
-                  onNavigate={(tab) => setActiveTab(tab)}
-                />
-              )}
-
-              {activeTab === 'reports' && (
-                <ReportsTab 
-                  companies={companies}
-                  employees={employees}
-                  ppes={ppes}
-                  deliveries={deliveries}
-                  employeeTrainings={employeeTrainings}
-                  accidents={accidents}
-                  actionPlans={actionPlans}
-                  fispqDocs={fispqDocs}
-                  activeCompanyId={selectedCompanyId}
-                />
-              )}
-
-              {activeTab === 'companies' && (
-                <CompanyWorkerTab 
-                  companies={companies}
-                  employees={employees}
-                  activeCompanyId={selectedCompanyId}
-                  onAddEmployee={handleAddEmployee}
-                  onUpdateEmployee={handleUpdateEmployee}
-                  onDeleteEmployee={handleDeleteEmployee}
-                  onUpdateCompany={handleUpdateCompany}
-                />
-              )}
-
-              {activeTab === 'ppes' && (
-                <PPETab 
-                  ppes={ppes}
-                  onAddPPE={handleAddPPE}
-                />
-              )}
-
-              {activeTab === 'stock' && (
-                <StockTab 
-                  ppes={ppes}
-                  onAdjustStock={handleAdjustStock}
-                  onReplenishUnderstocked={handleReplenishUnderstocked}
-                />
-              )}
-
-              {activeTab === 'delivery' && (
-                <DeliveryTab 
-                  companies={companies}
-                  employees={employees}
-                  ppes={ppes}
-                  deliveries={deliveries}
-                  activeCompanyId={selectedCompanyId}
-                  onAddDelivery={handleAddDelivery}
-                />
-              )}
-
-              {activeTab === 'trainings' && (
-                <TrainingTab 
-                  employees={employees}
-                  trainings={trainings}
-                  employeeTrainings={employeeTrainings}
-                  activeCompanyId={selectedCompanyId}
-                  onAddCertification={handleAddCertification}
-                />
-              )}
-
-              {activeTab === 'incidents' && (
-                <IncidentTab 
-                  accidents={accidents}
-                  actionPlans={actionPlans}
-                  onAddAccident={handleAddAccident}
-                  onAddActionPlan={handleAddActionPlan}
-                  onUpdateActionPlan={handleUpdateActionPlan}
-                />
-              )}
-
-              {activeTab === 'inspections' && (
-                <InspectionTab />
-              )}
-
-              {activeTab === 'documents' && (
-                <DocumentsTab />
-              )}
-
-              {activeTab === 'fispq' && (
-                <FispqTab 
-                  fispqDocs={fispqDocs}
-                />
-              )}
-
-              {activeTab === 'whatsapp_alerts' && (
-                <WhatsAppTab 
-                  employees={employees}
-                  ppes={ppes}
-                  deliveries={deliveries}
-                  employeeTrainings={employeeTrainings}
-                  onNavigate={(tab) => setActiveTab(tab)}
-                />
-              )}
-
-              {activeTab === 'ai' && (
-                <AIChatTab />
-              )}
-
-              {activeTab === 'risk_map' && (
-                <RiskMapTab />
-              )}
-
-              {activeTab === 'backup' && (
-                <BackupTab />
-              )}
-
-              {activeTab === 'users' && currentUser.role === 'Admin' && (
-                <UsersTab currentUser={currentUser} />
-              )}
-
-
-            </>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -15, filter: 'blur(4px)' }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="h-full"
+              >
+                {renderTabContent()}
+              </motion.div>
+            </AnimatePresence>
           )}
         </main>
 

@@ -317,11 +317,11 @@ export default function WhatsAppTab({
   return (
     <div className="space-y-6">
       {/* Title Header with Connection Stats */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-md">
+      <div className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
         <div>
-          <h2 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2 matches-tab-title">
-            <div className="bg-safety-green/10 text-safety-green p-1.5 rounded-lg">
-              <MessageCircle className="w-4 h-4" />
+          <h2 className="text-[13px] font-black text-slate-800 uppercase tracking-tight flex items-center gap-2 matches-tab-title">
+            <div className="bg-brand-primary/10 text-brand-primary p-2 rounded-xl">
+              <MessageCircle className="w-5 h-5" />
             </div>
             Integração WhatsApp Business • Módulo Evolution API &amp; n8n SESMT
           </h2>
@@ -484,7 +484,7 @@ export default function WhatsAppTab({
           onClick={() => setSubTab('alerts')}
           className={`px-4 py-2 font-black uppercase tracking-wider text-[11px] border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'alerts' 
-              ? 'border-safety-green text-safety-green' 
+              ? 'border-brand-primary text-brand-primary' 
               : 'border-transparent text-slate-400 hover:text-slate-600'
           }`}
         >
@@ -495,7 +495,7 @@ export default function WhatsAppTab({
           onClick={() => setSubTab('history')}
           className={`px-4 py-2 font-black uppercase tracking-wider text-[11px] border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'history' 
-              ? 'border-safety-green text-safety-green' 
+              ? 'border-brand-primary text-brand-primary' 
               : 'border-transparent text-slate-400 hover:text-slate-600'
           }`}
         >
@@ -635,7 +635,7 @@ export default function WhatsAppTab({
                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-bold uppercase tracking-wider text-[9.5px] rounded border transition shadow-sm cursor-pointer ${
                               sendingId === alert.id
                                 ? 'bg-slate-100 text-slate-400 border-slate-200'
-                                : 'bg-safety-green/10 hover:bg-safety-green hover:text-white text-safety-green border-safety-green/20'
+                                : 'bg-brand-primary/10 hover:bg-brand-primary hover:text-white text-brand-primary border-brand-primary/20'
                             }`}
                           >
                             <Send className="w-3 h-3 shrink-0" />

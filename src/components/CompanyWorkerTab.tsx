@@ -512,11 +512,11 @@ export default function CompanyWorkerTab({
   return (
     <div className="space-y-6">
       {/* Header Info Card */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm transition-all hover:shadow-md">
+      <div className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
         <div>
-          <h2 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
-            <div className="bg-safety-green/10 text-safety-green p-1.5 rounded-lg">
-              <Building2 className="w-4 h-4" />
+          <h2 className="text-[13px] font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+            <div className="bg-brand-primary/10 text-brand-primary p-2 rounded-xl">
+              <Building2 className="w-5 h-5" />
             </div>
             Controle de Colaboradores — {activeCompany?.tradingName || 'Novo Horizonte Alumínios'}
           </h2>
@@ -555,7 +555,7 @@ export default function CompanyWorkerTab({
               placeholder="Buscar por Nome, CPF ou Matrícula..."
               value={employeeSearch}
               onChange={(e) => setEmployeeSearch(e.target.value)}
-              className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 transition-all hover:border-slate-300 shadow-sm font-bold text-slate-800"
+              className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-slate-300 shadow-sm font-bold text-slate-800"
             />
           </div>
 
@@ -591,7 +591,7 @@ export default function CompanyWorkerTab({
                 setNewEmp(prev => ({ ...prev, companyId: activeCompanyId }));
                 setShowEmpModal(true);
               }}
-              className="flex items-center gap-1.5 text-[11px] font-black px-4 py-2.5 bg-safety-green text-white rounded-xl hover:bg-safety-green-dark transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
+              className="flex items-center gap-1.5 text-[11px] font-black px-4 py-2.5 bg-brand-primary text-white rounded-xl hover:bg-brand-primary-dark transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Adicionar Colaborador</span>
