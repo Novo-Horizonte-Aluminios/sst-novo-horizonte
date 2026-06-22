@@ -62,6 +62,9 @@ export default function DeliveryTab({
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successModalData, setSuccessModalData] = useState<{empName: string, ppeName: string} | null>(null);
+  const [showMismatchModal, setShowMismatchModal] = useState(false);
+  const [mismatchFingers, setMismatchFingers] = useState<string[]>([]);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
 
   // Biometric states
   const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
@@ -72,8 +75,6 @@ export default function DeliveryTab({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignaturePoints, setHasSignaturePoints] = useState(false);
-  const [showMismatchModal, setShowMismatchModal] = useState(false);
-  const [mismatchFingers, setMismatchFingers] = useState<string[]>([]);
 
   // Derived Values selected employee receipt
   const [selectedReceiptEmpId, setSelectedReceiptEmpId] = useState('');
@@ -401,25 +402,10 @@ function calculateSimilarity(sigA: string, sigB: string): number {
     );
   });
 
-  const filteredEmployeesReceipt = employees
-    .filter(e => e.companyId === activeCompanyId)
-    .filter(emp => {
-      const term = searchTermReceipt.toLowerCase();
-      return (
-        emp.name.toLowerCase().includes(term) ||
-        (emp.matricula && emp.matricula.toLowerCase().includes(term)) ||
-        (emp.cpf && emp.cpf.toLowerCase().includes(term)) ||
-        (emp.role && emp.role.toLowerCase().includes(term)) ||
-        (emp.sector && emp.sector.toLowerCase().includes(term))
-      );
-    });
-
   return (
     <div className="space-y-4 text-xs">
       
-      {/* REMOVED: Top Export Banner */}
-
-      <div className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         
         {/* Left column: Create Hand-out registration */}
         <div className="flex flex-col justify-between">
@@ -434,13 +420,6 @@ function calculateSimilarity(sigA: string, sigB: string): number {
               Siga os passos abaixo para registrar a entrega de EPIs com assinatura eletrônica de validade jurídica.
             </p>
           </div>
-
-          {successMsg && (
-            <div className="p-3 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200 font-bold mb-4 text-[11px] animate-fade-in flex items-center gap-2 shadow-sm">
-              <CheckCircle className="w-4 h-4" />
-              <span>{successMsg}</span>
-            </div>
-          )}
 
           <div>
             <form onSubmit={handleSubmitDelivery} className="space-y-4 text-slate-700">
@@ -872,175 +851,18 @@ function calculateSimilarity(sigA: string, sigB: string): number {
             </div>
 
             {activeReceiptEmployee ? (
-              /* =====================================================
-                 FICHA PROFISSIONAL NR-06 — Modelo tabular regulamentar
-                 ===================================================== */
-              <div className="print-receipt bg-white border border-slate-300 text-xs text-slate-800" style={{fontFamily: "'Inter', sans-serif"}}>
-
-                {/* ── CABEÇALHO ── */}
-                <div className="flex items-center border-b-2 border-slate-700 px-3 py-2 gap-3">
-                  {/* Foto do colaborador */}
-                  <div className="shrink-0">
-                    {activeReceiptEmployee.photoUrl ? (
-                      <img src={activeReceiptEmployee.photoUrl} alt="Foto" className="w-12 h-12 rounded-full object-cover border-2 border-slate-300" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center">
-                        <User className="w-6 h-6 text-slate-400" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Título central */}
-                  <div className="flex-1 text-center">
-                    <p className="text-[11px] font-bold text-slate-500 uppercase">Portaria SIT/MTE n.º 107 — NR-06</p>
-                    <h1 className="text-base font-extrabold text-slate-900 uppercase leading-tight">
-                      FICHA DE FORNECIMENTO DE<br />EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL (EPI)
-                    </h1>
-                  </div>
-
-                  {/* Logo da empresa */}
-                  <div className="shrink-0 text-right flex flex-col items-end justify-center">
-                    <img src="/logo_horizontal.png" alt="Novo Horizonte Alumínios" className="h-10 object-contain mb-1" />
-                    <p className="text-[10px] text-slate-500 font-semibold uppercase">Segurança do Trabalho</p>
-                  </div>
-                </div>
-
-                {/* ── DADOS DA EMPRESA E COLABORADOR ── */}
-                <div className="border-b border-slate-300 px-3 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs">
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Empresa:</span><span>{currentCompany?.name}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Admissão:</span><span>{activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—'}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Colaborador:</span><span className="font-semibold">{activeReceiptEmployee.name}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">CNPJ:</span><span>{currentCompany?.cnpj}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Cargo:</span><span>{activeReceiptEmployee.role}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">CPF:</span><span>{activeReceiptEmployee.cpf}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Setor:</span><span>{activeReceiptEmployee.sector}</span></div>
-                  <div className="flex gap-1"><span className="font-bold uppercase w-28 shrink-0">Nº Matrícula:</span><span className="font-bold">{activeReceiptEmployee.matricula}</span></div>
-                  <div className="col-span-2 text-center mt-2 font-bold text-xs uppercase border-t border-slate-200 pt-2">
-                    Data de Emissão do Relatório: {new Date().toLocaleDateString('pt-BR')}
-                  </div>
-                </div>
-
-                {/* ── TABELA DE EPIs ── */}
-                <table className="w-full border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-700 text-white">
-                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-10">QTDE</th>
-                      <th className="border border-slate-500 px-1.5 py-1.5 text-left font-bold uppercase">DESCRIÇÃO DO EQUIPAMENTO</th>
-                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-20">DATA DA ENTREGA</th>
-                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-20">Nº CA MTE</th>
-                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-28">MOTIVO</th>
-                      <th className="border border-slate-500 px-1.5 py-1.5 text-center font-bold uppercase w-36">ASSINATURA DO COLABORADOR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {activeReceiptDeliveries.length > 0 ? activeReceiptDeliveries.map((del, i) => (
-                      <tr key={del.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                        <td className="border border-slate-300 px-1.5 py-2 text-center font-bold">{String(del.quantity).padStart(2, '0')}</td>
-                        <td className="border border-slate-300 px-1.5 py-2 font-semibold uppercase">{del.ppeName}</td>
-                        <td className="border border-slate-300 px-1.5 py-2 text-center font-mono">
-                          {del.deliveryDate ? new Date(del.deliveryDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—'}
-                        </td>
-                        <td className="border border-slate-300 px-1.5 py-2 text-center font-mono">{del.caNumber}</td>
-                        <td className="border border-slate-300 px-1.5 py-2 text-center">{del.reason}</td>
-                        <td className="border border-slate-300 px-1.5 py-2 text-center">
-                          {/* Coluna adaptável por método de assinatura */}
-                          {del.signingMethod === 'assinatura_digital' && del.signatureData && del.signatureData.startsWith('data:') ? (
-                            <img src={del.signatureData} alt="Assinatura" className="h-10 mx-auto object-contain" />
-                          ) : del.signingMethod === 'biometria' ? (
-                            <div className="flex flex-col items-center gap-0.5 py-1">
-                              <Fingerprint className="w-5 h-5 text-green-700" />
-                              <span className="text-[10px] font-bold text-green-700 uppercase">Biometria</span>
-                              <span className="text-[9px] font-mono text-slate-500 break-all leading-tight max-w-[120px]">
-                                {del.signatureData?.replace('Biometria Futronic: ', '').replace('Biometria: ', '').substring(0, 20)}...
-                              </span>
-                            </div>
-                          ) : del.signingMethod === 'senha' ? (
-                            <div className="flex flex-col items-center gap-0.5 py-1">
-                              <Lock className="w-5 h-5 text-blue-600" />
-                              <span className="text-[10px] font-bold text-blue-700 uppercase">PIN Validado</span>
-                            </div>
-                          ) : del.signingMethod === 'selfie' && del.selfieUrl ? (
-                            <img src={del.selfieUrl} alt="Selfie" className="w-10 h-10 rounded-full object-cover mx-auto border border-slate-300" />
-                          ) : del.signingMethod === 'link' ? (
-                            <div className="flex flex-col items-center gap-0.5 py-1">
-                              <Smartphone className="w-5 h-5 text-purple-600" />
-                              <span className="text-[10px] font-bold text-purple-700 uppercase">Via Link</span>
-                            </div>
-                          ) : (
-                            <span className="text-slate-400 italic text-[10px]">—</span>
-                          )}
-                        </td>
-                      </tr>
-                    )) : (
-                      <tr>
-                        <td colSpan={6} className="border border-slate-300 px-2 py-4 text-center text-slate-400 italic">
-                          Nenhum EPI registrado para este colaborador.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-
-                {/* ── TERMO DE RESPONSABILIDADE ── */}
-                <div className="px-4 py-3 border-t border-slate-300 text-[11px] text-slate-600">
-                  <p className="font-bold uppercase mb-1">Termo de Recebimento de EPI (NR-06 / Portaria SIT/MTE n.º 107):</p>
-                  <p className="text-justify leading-relaxed">
-                    Declaro que recebi gratuitamente os equipamentos de proteção individual relacionados acima, adequados aos riscos inerentes ao cumprimento do meu contrato de trabalho. Comprometo-me a utilizá-los apenas para a finalidade que se destinam, conservando-os adequadamente e comunicando ao empregador qualquer alteração que o torne impróprio para uso, sob penas da legislação trabalhista vigente.
-                  </p>
-                </div>
-
-                {/* ── RODAPÉ: ASSINATURAS ── */}
-                {(() => {
-                  // Busca automática pelos usuários do sistema por perfil
-                  const sstUser    = systemUsers.find(u => u.role === 'SST');
-                  const rhUser     = systemUsers.find(u => u.role === 'GestorRH');
-                  const sstName    = sstUser?.name || currentCompany?.sstResponsible || 'Responsável SST';
-                  const rhName     = rhUser?.name  || currentCompany?.rhResponsible  || 'Gestor / RH';
-                  const colabName  = activeReceiptEmployee.name;
-
-                  return (
-                    <div className="px-10 py-4 mt-6 border-t-2 border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-16 text-xs">
-
-                      {/* SST */}
-                      <div className="text-center">
-                        <div className="relative h-16 flex items-end justify-center pb-1">
-                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '26px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
-                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
-                            {sstName}
-                          </p>
-                        </div>
-                        <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Responsável SST</p>
-                        <p className="text-slate-500 text-[10px]">{sstName}</p>
-                      </div>
-
-                      {/* Colaborador(a) */}
-                      <div className="text-center">
-                        <div className="relative h-16 flex items-end justify-center pb-1">
-                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '24px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
-                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
-                            {colabName}
-                          </p>
-                        </div>
-                        <div className="border-b-2 border-slate-700" />
-                        <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Colaborador(a)</p>
-                        <p className="text-slate-500 text-[10px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
-                      </div>
-
-                    </div>
-                  );
-                })()}
-
-
-                {/* ── HASH DE INTEGRIDADE DO DOCUMENTO ── */}
-                <div className="px-4 py-2.5 bg-slate-100 border-t border-slate-300 flex justify-between items-center text-[9px] font-mono text-slate-500">
-                  <span>Sistema SST Novo Horizonte Alumínios — {new Date().toLocaleString('pt-BR')}</span>
-                  <span>DOC-ID: {activeReceiptDeliveries[0]?.id?.substring(0, 16).toUpperCase()}</span>
-                </div>
+              <div className="flex flex-col items-center justify-center p-8 bg-white border border-slate-200 rounded-xl mt-4">
+                <FileCheck className="w-12 h-12 text-safety-green mb-3 opacity-80" />
+                <h4 className="text-sm font-bold text-slate-800 mb-1">{activeReceiptEmployee.name}</h4>
+                <p className="text-[10px] text-slate-500 mb-4">{activeReceiptDeliveries.length} entrega(s) encontrada(s) neste filtro.</p>
+                <button
+                  onClick={() => setShowReceiptModal(true)}
+                  className="bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center justify-center gap-2 transition uppercase tracking-wide cursor-pointer shadow-md"
+                >
+                  <Eye className="w-4 h-4" />
+                  Abrir Ficha de EPI
+                </button>
               </div>
-
-
-
             ) : (
               <div className="bg-slate-50 border border-dashed border-slate-200 p-12 text-center text-slate-400 rounded flex flex-col items-center justify-center gap-1.5">
                 <Eye className="w-8 h-8 text-slate-350 bg-slate-100/40" />
@@ -1049,20 +871,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
               </div>
             )}
           </div>
-
-          {activeReceiptEmployee && activeReceiptDeliveries.length > 0 && (
-            <div className="mt-3 flex gap-1.5">
-              <button
-                onClick={() => window.print()}
-                className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded text-[10px] flex items-center justify-center gap-1.5 transition uppercase tracking-wide cursor-pointer"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                Imprimir Ficha (PDF)
-              </button>
-            </div>
-          )}
         </div>
-
       </div>
 
       {/* Success Modal */}
@@ -1148,6 +957,215 @@ function calculateSimilarity(sigA: string, sigB: string): number {
               >
                 ENTENDI
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal da Ficha de EPI */}
+      {showReceiptModal && activeReceiptEmployee && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fade-in print:bg-transparent print:p-0 print:absolute print:inset-0">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl border border-slate-200 overflow-hidden flex flex-col max-h-[95vh] print:max-h-none print:shadow-none print:border-none print:rounded-none">
+            
+            <div className="bg-slate-900 p-4 flex justify-between items-center shrink-0 print:hidden">
+              <div className="flex items-center gap-2">
+                <Printer className="w-5 h-5 text-white" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-tight">Ficha Regulamentada (NR-06)</h3>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => window.print()}
+                  className="bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-1.5 px-4 rounded text-xs flex items-center justify-center gap-1.5 transition uppercase tracking-wide cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  Imprimir PDF
+                </button>
+                <button 
+                  onClick={() => setShowReceiptModal(false)}
+                  className="text-slate-400 hover:text-white transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="overflow-y-auto p-4 md:p-8 bg-slate-100 flex-1 print:p-0 print:bg-white">
+              <div className="print-receipt bg-white border border-slate-300 text-xs text-slate-800 shadow-sm mx-auto w-full max-w-3xl print:border-none print:shadow-none" style={{fontFamily: "'Inter', sans-serif"}}>
+
+                {/* ── CABEÇALHO ── */}
+                <div className="flex items-center border-b-2 border-slate-700 px-3 py-2 gap-3">
+                  {/* Foto do colaborador */}
+                  <div className="shrink-0">
+                    {activeReceiptEmployee.photoUrl ? (
+                      <img src={activeReceiptEmployee.photoUrl} alt="Foto" className="w-12 h-12 rounded-full object-cover border-2 border-slate-300" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center">
+                        <User className="w-6 h-6 text-slate-400" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Título central */}
+                  <div className="flex-1 text-center">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase">Portaria SIT/MTE n.º 107 — NR-06</p>
+                    <h1 className="text-base font-extrabold text-slate-900 uppercase leading-tight">
+                      FICHA DE FORNECIMENTO DE<br />EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL (EPI)
+                    </h1>
+                  </div>
+
+                  {/* Logo SST */}
+                  <div className="shrink-0 text-right">
+                    <h2 className="text-sm font-black text-[#006B3F] leading-none uppercase tracking-tighter">
+                      Novo<br/>Horizonte
+                    </h2>
+                    <p className="text-[6.5px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Alumínios</p>
+                    <p className="text-[7.5px] font-bold text-slate-600 mt-1 uppercase tracking-tighter">Segurança do Trabalho</p>
+                  </div>
+                </div>
+
+                {/* ── DADOS DO EMPREGADOR E EMPREGADO ── */}
+                <div className="grid grid-cols-2 gap-4 px-4 py-2 text-[10px] uppercase font-mono">
+                  <div className="space-y-1">
+                    <p><span className="font-bold text-slate-900 inline-block w-24">Empresa:</span> Novo Horizonte Alumínios LTDA</p>
+                    <p><span className="font-bold text-slate-900 inline-block w-24">Colaborador:</span> <strong className="text-[11px] text-slate-800">{activeReceiptEmployee.name}</strong></p>
+                    <p><span className="font-bold text-slate-900 inline-block w-24">Cargo:</span> {activeReceiptEmployee.role}</p>
+                    <p><span className="font-bold text-slate-900 inline-block w-24">Setor:</span> {activeReceiptEmployee.sector}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p><span className="font-bold text-slate-900 inline-block w-24">Admissão:</span> {activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR') : '-'}</p>
+                    <p><span className="font-bold text-slate-900 inline-block w-24">CNPJ:</span> 01.374.729/0001-90</p>
+                    <p><span className="font-bold text-slate-900 inline-block w-24">CPF:</span> {activeReceiptEmployee.cpf}</p>
+                    <p><span className="font-bold text-slate-900 inline-block w-24">Nº Matrícula:</span> <strong className="text-[11px] text-slate-800">{activeReceiptEmployee.matricula}</strong></p>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-300 py-1.5 text-center bg-slate-50/50">
+                  <p className="font-bold text-[9px] uppercase tracking-wider text-slate-600">Data de Emissão do Relatório: {new Date().toLocaleDateString('pt-BR')}</p>
+                </div>
+
+                {/* ── TABELA DE EQUIPAMENTOS ── */}
+                <div className="min-h-[150px]">
+                  <table className="w-full text-left border-collapse text-[10px]">
+                    <thead>
+                      <tr className="bg-slate-800 text-white uppercase font-bold text-[9px] tracking-wider">
+                        <th className="p-2 border-y border-slate-700 text-center w-12">Qtde</th>
+                        <th className="p-2 border border-slate-700">Descrição do Equipamento</th>
+                        <th className="p-2 border border-slate-700 text-center w-24">Data da<br/>Entrega</th>
+                        <th className="p-2 border border-slate-700 text-center w-20">Nº CA MTE</th>
+                        <th className="p-2 border border-slate-700 text-center w-24">Motivo</th>
+                        <th className="p-2 border-y border-slate-700 text-center w-36">Assinatura do<br/>Colaborador</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      {activeReceiptDeliveries.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="p-8 text-center text-slate-400 font-mono italic">
+                            Nenhum registro de entrega encontrado para este filtro.
+                          </td>
+                        </tr>
+                      ) : (
+                        activeReceiptDeliveries.map((delivery, index) => (
+                          <tr key={index} className="hover:bg-slate-50">
+                            <td className="p-2 text-center font-mono font-bold text-slate-700 border-r border-slate-200">
+                              {String(delivery.quantity).padStart(2, '0')}
+                            </td>
+                            <td className="p-2 font-bold text-slate-800 uppercase border-r border-slate-200">
+                              {delivery.ppeName}
+                            </td>
+                            <td className="p-2 text-center font-mono border-r border-slate-200">
+                              {new Date(delivery.deliveryDate || '').toLocaleDateString('pt-BR')}
+                            </td>
+                            <td className="p-2 text-center font-mono text-slate-600 border-r border-slate-200">
+                              {delivery.caNumber || 'N/A'}
+                            </td>
+                            <td className="p-2 text-center text-slate-600 border-r border-slate-200">
+                              {delivery.reason}
+                            </td>
+                            <td className="p-2 text-center flex items-center justify-center">
+                              {/* Lógica de Assinatura Eletrônica na Tabela */}
+                              {delivery.signatureData?.startsWith('data:image/') ? (
+                                <img src={delivery.signatureData} alt="Assinatura Digital" className="h-8 max-w-[120px] object-contain drop-shadow-sm opacity-90" />
+                              ) : delivery.signatureData?.startsWith('Biometria:') ? (
+                                <div className="text-center">
+                                  <Fingerprint className="w-5 h-5 text-emerald-600 mx-auto opacity-80" />
+                                  <span className="text-[7px] font-bold text-emerald-700 uppercase block mt-0.5 tracking-tighter">Biometria</span>
+                                  <span className="text-[5.5px] font-mono text-slate-400 block mt-0.5 leading-none">{delivery.signatureData.split(':')[1]?.substring(0,20)}...</span>
+                                </div>
+                              ) : delivery.signatureData?.startsWith('Selfie') || delivery.selfieUrl ? (
+                                <div className="flex flex-col items-center">
+                                  <img src={delivery.selfieUrl || delivery.signatureData?.split('Selfie Anexa: ')[1]} alt="Selfie" className="w-7 h-7 object-cover rounded-full border border-slate-300" />
+                                  <span className="text-[7px] font-bold text-indigo-600 uppercase block mt-0.5 tracking-tighter">Reconhecimento</span>
+                                </div>
+                              ) : delivery.signatureData?.startsWith('PIN') ? (
+                                <div className="text-center">
+                                  <Lock className="w-5 h-5 text-sky-600 mx-auto opacity-80" />
+                                  <span className="text-[7px] font-bold text-sky-700 uppercase block mt-0.5 tracking-tighter">PIN Pessoal</span>
+                                </div>
+                              ) : (
+                                <span className="text-[8px] italic text-slate-400 font-serif">— Pendente —</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* ── TERMO DE RESPONSABILIDADE ── */}
+                <div className="p-3 border-y border-slate-300 bg-slate-50/80">
+                  <p className="text-[8.5px] font-bold uppercase text-slate-700 mb-1">Termo de Recebimento de EPI (NR-06 / Portaria SIT/MTE n.º 107):</p>
+                  <p className="text-[8.5px] text-slate-600 leading-relaxed text-justify uppercase font-mono">
+                    Declaro que recebi gratuitamente os equipamentos de proteção individual relacionados acima, adequados aos riscos inerentes ao cumprimento do meu contrato de trabalho. Comprometo-me a utilizá-los apenas para a finalidade que se destinam, conservando-os adequadamente e comunicando ao empregador qualquer alteração que o torne impróprio para uso, sob penas da legislação trabalhista vigente.
+                  </p>
+                </div>
+
+                {/* ── ÁREA DE ASSINATURAS MANUAIS (CASO IMPRESSO VAZIO OU RESPONSÁVEL) ── */}
+                {(() => {
+                  const company = companies.find(c => c.id === activeCompanyId);
+                  const sstName = company?.sstResponsible || 'Responsável SST';
+                  const colabName = activeReceiptEmployee.name;
+
+                  return (
+                    <div className="px-10 py-4 mt-6 border-t-2 border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-16 text-xs">
+
+                      {/* SST */}
+                      <div className="text-center">
+                        <div className="relative h-16 flex items-end justify-center pb-1">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '26px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
+                            {sstName}
+                          </p>
+                        </div>
+                        <div className="border-b-2 border-slate-700" />
+                        <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Responsável SST</p>
+                        <p className="text-slate-500 text-[10px]">{sstName}</p>
+                      </div>
+
+                      {/* Colaborador(a) */}
+                      <div className="text-center">
+                        <div className="relative h-16 flex items-end justify-center pb-1">
+                          <p style={{fontFamily: "'Dancing Script', cursive", fontSize: '24px', color: '#1e293b', lineHeight: 1, userSelect: 'none'}}
+                            className="absolute bottom-1 left-0 right-0 text-center leading-none">
+                            {colabName}
+                          </p>
+                        </div>
+                        <div className="border-b-2 border-slate-700" />
+                        <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Colaborador(a)</p>
+                        <p className="text-slate-500 text-[10px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
+                      </div>
+
+                    </div>
+                  );
+                })()}
+
+
+                {/* ── HASH DE INTEGRIDADE DO DOCUMENTO ── */}
+                <div className="px-4 py-2.5 bg-slate-100 border-t border-slate-300 flex justify-between items-center text-[9px] font-mono text-slate-500">
+                  <span>Sistema SST Novo Horizonte Alumínios — {new Date().toLocaleString('pt-BR')}</span>
+                  <span>DOC-ID: {activeReceiptDeliveries[0]?.id?.substring(0, 16).toUpperCase()}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

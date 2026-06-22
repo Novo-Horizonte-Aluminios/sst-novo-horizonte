@@ -21,8 +21,8 @@ import {
   Hand
 } from 'lucide-react';
 import { Company, Employee } from '../types';
-import PhotoSelector from './PhotoSelector';
 import { maskCPF, maskCNPJ, maskPhone, maskRG } from '../utils/masks';
+import EmployeeWizard from './EmployeeWizard';
 
 export const getFingerLabel = (code?: string) => {
   if (!code) return 'Nenhum dedo selecionado';
@@ -79,146 +79,7 @@ export default function CompanyWorkerTab({
   // Delete Employee Confirmation State
   const [deletingEmp, setDeletingEmp] = useState<Employee | null>(null);
 
-  // New Employee fields state
-  const [newEmp, setNewEmp ] = useState({
-    name: '', cpf: '', rg: '', birthDate: '', matricula: '',
-    companyId: activeCompanyId, sector: 'Usinagem', role: 'Operador de Máquinas',
-    manager: 'Luiz Gonzaga', admissionDate: new Date().toISOString().split('T')[0],
-    phone: '', email: '', photoUrl: '', biometricTemplate: '', biometricFinger: ''
-  });
-
-  // Biometrics states for enrollment
-  const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
-  const [biometricError, setBiometricError] = useState<string | null>(null);
-
-  const handleRegisterBiometrics = async (isEdit: boolean) => {
-    const emp = isEdit ? editingEmp : newEmp;
-    if (!emp || !emp.biometricFinger) {
-      setBiometricError('Selecione um dedo primeiro.');
-      return;
-    }
-
-    setIsScanningBiometrics(true);
-    setBiometricError(null);
-    try {
-      const response = await fetch('http://localhost:8080/scan');
-      if (!response.ok) throw new Error('Falha na comunicação com o leitor.');
-      const data = await response.json();
-      if (data.success && data.hash) {
-        let updatedTemplates: any[] = [];
-        try {
-          if (emp.biometricTemplate) {
-            const parsed = JSON.parse(emp.biometricTemplate);
-            if (Array.isArray(parsed)) updatedTemplates = parsed;
-          }
-        } catch(e) {
-          if (emp.biometricTemplate && emp.biometricFinger) {
-            updatedTemplates.push({ finger: emp.biometricFinger, template: emp.biometricTemplate });
-          }
-        }
-        
-        updatedTemplates = updatedTemplates.filter((t:any) => t.finger !== emp.biometricFinger);
-        updatedTemplates.push({ finger: emp.biometricFinger, template: data.hash, signature: data.signature });
-        
-        const newTemplateStr = JSON.stringify(updatedTemplates);
-
-        if (isEdit && editingEmp) {
-          setEditingEmp({ ...editingEmp, biometricTemplate: newTemplateStr });
-        } else {
-          setNewEmp(prev => ({ ...prev, biometricTemplate: newTemplateStr }));
-        }
-      } else {
-        setBiometricError(data.error || 'Erro ao extrair biometria.');
-      }
-    } catch (err) {
-      setBiometricError('Agente do Leitor Biométrico Local não encontrado. Certifique-se de que o Bridge está rodando.');
-    } finally {
-      setIsScanningBiometrics(false);
-    }
-  };
-
-  const handleClearBiometrics = (isEdit: boolean) => {
-    if (isEdit && editingEmp) {
-      setEditingEmp({ ...editingEmp, biometricTemplate: '', biometricFinger: '' });
-    } else {
-      setNewEmp(prev => ({ ...prev, biometricTemplate: '', biometricFinger: '' }));
-    }
-    setBiometricError(null);
-  };
-
-  const renderHandSelector = (selectedFinger: string, registeredFingers: string[], onChange: (finger: string) => void) => {
-    const hands = [
-      {
-        side: 'E',
-        name: 'Mão Esquerda',
-        fingers: [
-          { code: 'E-Mínimo', name: 'Mínimo', abbrev: 'Mi', class: 'left-[10px] top-[45px]' },
-          { code: 'E-Anelar', name: 'Anelar', abbrev: 'A', class: 'left-[32px] top-[22px]' },
-          { code: 'E-Médio', name: 'Médio', abbrev: 'M', class: 'left-[54px] top-[14px]' },
-          { code: 'E-Indicador', name: 'Indicador', abbrev: 'I', class: 'left-[76px] top-[22px]' },
-          { code: 'E-Polegar', name: 'Polegar', abbrev: 'P', class: 'left-[96px] top-[50px]' },
-        ]
-      },
-      {
-        side: 'D',
-        name: 'Mão Direita',
-        fingers: [
-          { code: 'D-Polegar', name: 'Polegar', abbrev: 'P', class: 'left-[10px] top-[50px]' },
-          { code: 'D-Indicador', name: 'Indicador', abbrev: 'I', class: 'left-[30px] top-[22px]' },
-          { code: 'D-Médio', name: 'Médio', abbrev: 'M', class: 'left-[52px] top-[14px]' },
-          { code: 'D-Anelar', name: 'Anelar', abbrev: 'A', class: 'left-[74px] top-[22px]' },
-          { code: 'D-Mínimo', name: 'Mínimo', abbrev: 'Mi', class: 'left-[96px] top-[45px]' },
-        ]
-      }
-    ];
-
-    return (
-      <div className="flex flex-col items-center bg-white p-3 rounded-lg border border-slate-200 mt-2 shadow-inner w-full">
-        <span className="font-bold text-[9px] text-slate-500 uppercase tracking-wider mb-2">Selecione o dedo para cadastro</span>
-        <div className="flex justify-around w-full gap-4">
-          {hands.map(hand => (
-            <div key={hand.side} className="flex flex-col items-center">
-              <span className="text-[10px] font-semibold text-slate-600 mb-1">{hand.name}</span>
-              <div className="relative w-32 h-24 border border-slate-100 bg-slate-50 rounded-xl overflow-hidden flex items-end justify-center pb-2">
-                {/* Stylized hand illustration */}
-                <div className="absolute inset-0 flex items-center justify-center translate-y-6 opacity-20 pointer-events-none">
-                  <Hand 
-                    className={`w-28 h-28 text-slate-800 ${hand.side === 'E' ? '-scale-x-100' : ''}`} 
-                    strokeWidth={1.5}
-                  />
-                </div>
-                {hand.fingers.map(finger => {
-                  const isSelected = selectedFinger === finger.code;
-                  return (
-                    <button
-                      key={finger.code}
-                      type="button"
-                      title={`${finger.name} - ${hand.name}`}
-                      onClick={() => onChange(finger.code)}
-                      className={`absolute w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold transition-all shadow-sm ${
-                        isSelected
-                          ? 'bg-safety-green text-white border-2 border-emerald-600 scale-110 z-10'
-                          : registeredFingers.includes(finger.code)
-                            ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500 scale-105 z-10'
-                            : 'bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 hover:scale-105'
-                      } ${finger.class}`}
-                    >
-                      {finger.abbrev}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-        {selectedFinger && (
-          <span className="text-[10px] font-bold text-slate-700 mt-2 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-            Dedo Selecionado: <span className="text-safety-green">{getFingerLabel(selectedFinger)}</span>
-          </span>
-        )}
-      </div>
-    );
-  };
+  // (Removido handSelector interno pois agora vive no EmployeeWizard)
 
   // Real Bulk CSV Import States
   const [showBulkImport, setShowBulkImport] = useState(false);
@@ -440,26 +301,18 @@ export default function CompanyWorkerTab({
   // Mock template importing
   const [importStatus, setImportStatus] = useState<string | null>(null);
 
-  const handleCreateEmployee = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newEmp.name || !newEmp.cpf) return;
+  const handleCreateEmployee = async (empData: Partial<Employee>) => {
+    if (!empData.name || !empData.cpf) return;
     await onAddEmployee({
-      ...newEmp,
+      ...(empData as Omit<Employee, 'id'>),
       status: 'Ativo'
-    });
-    setNewEmp({
-      name: '', cpf: '', rg: '', birthDate: '', matricula: '',
-      companyId: activeCompanyId, sector: 'Usinagem', role: 'Operador de Máquinas',
-      manager: 'Luiz Gonzaga', admissionDate: new Date().toISOString().split('T')[0],
-      phone: '', email: '', photoUrl: '', biometricTemplate: '', biometricFinger: ''
     });
     setShowEmpModal(false);
   };
 
-  const handleUpdateEmployeeSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingEmp || !editingEmp.name || !editingEmp.cpf) return;
-    await onUpdateEmployee(editingEmp.id, editingEmp);
+  const handleUpdateEmployeeSubmit = async (empData: Partial<Employee>) => {
+    if (!editingEmp || !empData.name || !empData.cpf) return;
+    await onUpdateEmployee(editingEmp.id, empData);
     setEditingEmp(null);
   };
 
@@ -587,10 +440,7 @@ export default function CompanyWorkerTab({
             </button>
 
             <button
-              onClick={() => {
-                setNewEmp(prev => ({ ...prev, companyId: activeCompanyId }));
-                setShowEmpModal(true);
-              }}
+              onClick={() => setShowEmpModal(true)}
               className="flex items-center gap-1.5 text-[11px] font-black px-4 py-2.5 bg-brand-primary text-white rounded-xl hover:bg-brand-primary-dark transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
@@ -894,463 +744,27 @@ export default function CompanyWorkerTab({
         </div>
       </div>
 
-      {/* --- ADD EMPLOYEE MODAL DIALOG --- */}
+      {/* --- ADD EMPLOYEE WIZARD --- */}
       {showEmpModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-xl rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205 flex flex-col max-h-[95vh]">
-            <div className="bg-slate-950 p-4 text-white flex justify-between items-center shrink-0">
-              <div>
-                <h3 className="font-bold text-xs uppercase tracking-wider">Adicionar Novo Colaborador</h3>
-                <p className="text-[9.5px] text-slate-400 mt-0.5">Garante conformidade estrita aos programas PGR e GRO integrados</p>
-              </div>
-              <button onClick={() => setShowEmpModal(false)} className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateEmployee} className="p-4 space-y-3.5 overflow-y-auto">
-              {/* Photo Selector (Webcam or File Upload) */}
-              <PhotoSelector
-                photoUrl={newEmp.photoUrl}
-                onPhotoSelected={(url) => setNewEmp({ ...newEmp, photoUrl: url })}
-                onPhotoRemoved={() => setNewEmp({ ...newEmp, photoUrl: '' })}
-                employeeName={newEmp.name || 'Novo Colaborador'}
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Nome Completo</label>
-                  <input
-                    type="text"
-                    required
-                    value={newEmp.name}
-                    onChange={(e) => setNewEmp({...newEmp, name: e.target.value})}
-                    placeholder="Ex: João da Silva Santos"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Matrícula Interna</label>
-                  <input
-                    type="text"
-                    required
-                    value={newEmp.matricula}
-                    onChange={(e) => setNewEmp({...newEmp, matricula: e.target.value})}
-                    placeholder="Ex: NHA-8921"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">CPF</label>
-                  <input
-                    type="text"
-                    required
-                    value={newEmp.cpf}
-                    onChange={(e) => setNewEmp({...newEmp, cpf: maskCPF(e.target.value)})}
-                    placeholder="000.000.000-00"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">RG</label>
-                  <input
-                    type="text"
-                    value={newEmp.rg}
-                    onChange={(e) => setNewEmp({...newEmp, rg: maskRG(e.target.value)})}
-                    placeholder="0.000.000"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Data de Nascimento</label>
-                  <input
-                    type="date"
-                    required
-                    value={newEmp.birthDate}
-                    onChange={(e) => setNewEmp({...newEmp, birthDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Data de Admissão</label>
-                  <input
-                    type="date"
-                    required
-                    value={newEmp.admissionDate}
-                    onChange={(e) => setNewEmp({...newEmp, admissionDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/40 p-3 rounded border border-emerald-100">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-emerald-800 tracking-wider flex items-center gap-1">
-                    <Phone className="w-3 h-3 text-emerald-600" />
-                    Telefone WhatsApp
-                  </label>
-                  <input
-                    type="text"
-                    value={newEmp.phone}
-                    onChange={(e) => setNewEmp({...newEmp, phone: maskPhone(e.target.value)})}
-                    placeholder="(00) 00000-0000"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-emerald-800 tracking-wider flex items-center gap-1">
-                    <Mail className="w-3 h-3 text-indigo-500" />
-                    E-mail do Colaborador
-                  </label>
-                  <input
-                    type="email"
-                    value={newEmp.email}
-                    onChange={(e) => setNewEmp({...newEmp, email: e.target.value})}
-                    placeholder="exemplo@novohorizonte.com"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Setor</label>
-                  <select
-                    value={newEmp.sector}
-                    onChange={(e) => setNewEmp({...newEmp, sector: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs cursor-pointer"
-                  >
-                    <option value="Usinagem">Usinagem</option>
-                    <option value="Soldagem">Soldagem</option>
-                    <option value="Extrusão">Extrusão</option>
-                    <option value="Logística">Logística / Almoxarifado</option>
-                    <option value="Administrativo">Administrativo</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Cargo</label>
-                  <input
-                    type="text"
-                    required
-                    value={newEmp.role}
-                    onChange={(e) => setNewEmp({...newEmp, role: e.target.value})}
-                    placeholder="Ex: Operador I"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Gestor Direto</label>
-                  <input
-                    type="text"
-                    required
-                    value={newEmp.manager}
-                    onChange={(e) => setNewEmp({...newEmp, manager: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* Biometria */}
-              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 space-y-3">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <div className="space-y-0.5">
-                    <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital</span>
-                    <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
-                      Garante conformidade legal total.
-                    </p>
-                    {biometricError ? (
-                      <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                    ) : getRegisteredFingers(newEmp).length > 0 ? (
-                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ {getRegisteredFingers(newEmp).length} Digital(is) Cadastrada(s)!</span>
-                    ) : null}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {getRegisteredFingers(newEmp).length > 0 ? (
-                      <button
-                        type="button"
-                        onClick={() => handleClearBiometrics(false)}
-                        title="Limpar Digital Cadastrada"
-                        className="px-3 py-1.5 bg-rose-50 text-rose-600 font-bold rounded hover:bg-rose-100 transition uppercase text-[9px] tracking-wider shrink-0 border border-rose-200 cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Limpar Digital para Trocar
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleRegisterBiometrics(false)}
-                        disabled={isScanningBiometrics || !newEmp.biometricFinger}
-                        className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
-                      >
-                        {isScanningBiometrics ? "Aguardando leitor..." : "Capturar Digital"}
-                      </button>
-                    )}
-                  </div>
-                </div>
-                {getRegisteredFingers(newEmp).length === 0 && renderHandSelector(newEmp.biometricFinger || '', [], (finger) => setNewEmp(prev => ({ ...prev, biometricFinger: finger })))}
-              </div>
-
-              <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setShowEmpModal(false)}
-                  className="px-3.5 py-1.5 hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4.5 py-1.5 bg-safety-green text-white font-bold rounded hover:bg-safety-green-dark transition uppercase text-[10px] tracking-wider cursor-pointer font-semibold"
-                >
-                  Confirmar Cadastro
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <EmployeeWizard
+          isEdit={false}
+          initialData={{
+            companyId: activeCompanyId, sector: 'Usinagem', role: 'Operador de Máquinas',
+            manager: 'Luiz Gonzaga', admissionDate: new Date().toISOString().split('T')[0]
+          }}
+          onSave={handleCreateEmployee}
+          onCancel={() => setShowEmpModal(false)}
+        />
       )}
 
-      {/* --- EDIT EMPLOYEE MODAL DIALOG --- */}
+      {/* --- EDIT EMPLOYEE WIZARD --- */}
       {editingEmp && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-xl rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205 flex flex-col max-h-[95vh]">
-            <div className="bg-slate-900 p-4 text-white flex justify-between items-center shrink-0">
-              <div>
-                <h3 className="font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
-                  <UserCheck className="w-4 h-4 text-sky-400" />
-                  Editar Dados do Colaborador
-                </h3>
-                <p className="text-[9.5px] text-slate-400 mt-0.5">Atualize as informações oficiais e dados de contato</p>
-              </div>
-              <button onClick={() => setEditingEmp(null)} className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleUpdateEmployeeSubmit} className="p-4 space-y-3.5 overflow-y-auto">
-              {/* Photo Selector (Webcam or File Upload) */}
-              <PhotoSelector
-                photoUrl={editingEmp.photoUrl}
-                onPhotoSelected={(url) => setEditingEmp({ ...editingEmp, photoUrl: url })}
-                onPhotoRemoved={() => setEditingEmp({ ...editingEmp, photoUrl: '' })}
-                employeeName={editingEmp.name || 'Colaborador'}
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Nome Completo</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingEmp.name}
-                    onChange={(e) => setEditingEmp({...editingEmp, name: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Matrícula Interna</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingEmp.matricula}
-                    onChange={(e) => setEditingEmp({...editingEmp, matricula: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">CPF</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingEmp.cpf}
-                    onChange={(e) => setEditingEmp({...editingEmp, cpf: maskCPF(e.target.value)})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">RG</label>
-                  <input
-                    type="text"
-                    value={editingEmp.rg || ''}
-                    onChange={(e) => setEditingEmp({...editingEmp, rg: maskRG(e.target.value)})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Data de Nascimento</label>
-                  <input
-                    type="date"
-                    required
-                    value={editingEmp.birthDate}
-                    onChange={(e) => setEditingEmp({...editingEmp, birthDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Data de Admissão</label>
-                  <input
-                    type="date"
-                    required
-                    value={editingEmp.admissionDate}
-                    onChange={(e) => setEditingEmp({...editingEmp, admissionDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/40 p-3 rounded border border-emerald-100">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-emerald-800 tracking-wider flex items-center gap-1">
-                    <Phone className="w-3 h-3 text-emerald-600" />
-                    Telefone WhatsApp
-                  </label>
-                  <input
-                    type="text"
-                    value={editingEmp.phone || ''}
-                    onChange={(e) => setEditingEmp({...editingEmp, phone: maskPhone(e.target.value)})}
-                    placeholder="(00) 00000-0000"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-emerald-800 tracking-wider flex items-center gap-1">
-                    <Mail className="w-3 h-3 text-indigo-500" />
-                    E-mail do Colaborador
-                  </label>
-                  <input
-                    type="email"
-                    value={editingEmp.email || ''}
-                    onChange={(e) => setEditingEmp({...editingEmp, email: e.target.value})}
-                    placeholder="exemplo@novohorizonte.com"
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Setor</label>
-                  <select
-                    value={editingEmp.sector}
-                    onChange={(e) => setEditingEmp({...editingEmp, sector: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs cursor-pointer"
-                  >
-                    <option value="Usinagem">Usinagem</option>
-                    <option value="Soldagem">Soldagem</option>
-                    <option value="Extrusão">Extrusão</option>
-                    <option value="Logística">Logística / Almoxarifado</option>
-                    <option value="Administrativo">Administrativo</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Cargo</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingEmp.role}
-                    onChange={(e) => setEditingEmp({...editingEmp, role: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Gestor Direto</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingEmp.manager}
-                    onChange={(e) => setEditingEmp({...editingEmp, manager: e.target.value})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3">
-                <div>
-                  <label className="font-bold uppercase text-[9px] block mb-1 text-slate-500 tracking-wider">Status Ocupacional</label>
-                  <select
-                    value={editingEmp.status}
-                    onChange={(e) => setEditingEmp({...editingEmp, status: e.target.value as 'Ativo' | 'Inativo' | 'Afastado'})}
-                    className="w-full border border-slate-200 rounded p-2 focus:outline-none focus:border-safety-green bg-white text-xs cursor-pointer"
-                  >
-                    <option value="Ativo">Ativo</option>
-                    <option value="Inativo">Inativo</option>
-                    <option value="Afastado">Afastado</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Biometria */}
-              <div className="bg-slate-50 p-3 rounded border border-slate-200/60 space-y-3">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <div className="space-y-0.5">
-                    <span className="font-bold text-slate-700 block text-[10px] uppercase tracking-wide">Cadastro de Digital</span>
-                    <p className="text-slate-400 text-[9px] leading-relaxed max-w-sm">
-                      Garante conformidade legal total.
-                    </p>
-                    {biometricError ? (
-                      <span className="text-rose-600 font-bold block text-[9.5px] mt-1">{biometricError}</span>
-                    ) : getRegisteredFingers(editingEmp).length > 0 ? (
-                      <span className="text-emerald-600 font-bold block text-[9.5px] mt-1">✓ {getRegisteredFingers(editingEmp).length} Digital(is) Cadastrada(s)!</span>
-                    ) : (
-                      <span className="text-amber-600 font-bold block text-[9.5px] mt-1">Nenhuma digital cadastrada para este funcionário.</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {getRegisteredFingers(editingEmp).length > 0 ? (
-                      <button
-                        type="button"
-                        onClick={() => handleClearBiometrics(true)}
-                        title="Limpar Digital Cadastrada"
-                        className="px-3 py-1.5 bg-rose-50 text-rose-600 font-bold rounded hover:bg-rose-100 transition uppercase text-[9px] tracking-wider shrink-0 border border-rose-200 cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Limpar Digital para Trocar
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleRegisterBiometrics(true)}
-                        disabled={isScanningBiometrics || !editingEmp.biometricFinger}
-                        className="px-3.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-800 transition uppercase text-[9px] tracking-wider shrink-0 disabled:opacity-50 cursor-pointer"
-                      >
-                        {isScanningBiometrics ? "Aguardando leitor..." : "Capturar Digital"}
-                      </button>
-                    )}
-                  </div>
-                </div>
-                {getRegisteredFingers(editingEmp).length === 0 && renderHandSelector(editingEmp.biometricFinger || '', [], (finger) => setEditingEmp({ ...editingEmp, biometricFinger: finger }))}
-              </div>
-
-              <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setEditingEmp(null)}
-                  className="px-3.5 py-1.5 hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4.5 py-1.5 bg-slate-900 text-white font-bold rounded hover:bg-slate-950 transition uppercase text-[10px] tracking-wider cursor-pointer font-semibold"
-                >
-                  Salvar Alterações
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <EmployeeWizard
+          isEdit={true}
+          initialData={editingEmp}
+          onSave={handleUpdateEmployeeSubmit}
+          onCancel={() => setEditingEmp(null)}
+        />
       )}
 
       {/* --- CONFIRM DELETE MODAL DIALOG --- */}

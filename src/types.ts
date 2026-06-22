@@ -29,6 +29,7 @@ export interface Employee {
   email?: string;
   biometricTemplate?: string;
   biometricFinger?: string;
+  pin?: string;
 }
 
 export interface RoleConfig {
