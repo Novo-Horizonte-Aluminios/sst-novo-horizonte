@@ -11,7 +11,8 @@ import {
   Phone,
   Mail,
   Trash2,
-  Lock
+  Lock,
+  Hand
 } from 'lucide-react';
 import { Employee } from '../types';
 import PhotoSelector from './PhotoSelector';
@@ -98,6 +99,80 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
   const handleClearBiometrics = () => {
     setEmpData({ ...empData, biometricTemplate: '', biometricFinger: '' });
     setBiometricError(null);
+  };
+
+  const renderHandSelector = (selectedFinger: string, registeredFingers: string[], onChange: (finger: string) => void) => {
+    const hands = [
+      {
+        side: 'E',
+        name: 'Mão Esquerda',
+        fingers: [
+          { code: 'E-Mínimo', name: 'Mínimo', abbrev: 'Mi', class: 'left-[10px] top-[45px]' },
+          { code: 'E-Anelar', name: 'Anelar', abbrev: 'A', class: 'left-[32px] top-[22px]' },
+          { code: 'E-Médio', name: 'Médio', abbrev: 'M', class: 'left-[54px] top-[14px]' },
+          { code: 'E-Indicador', name: 'Indicador', abbrev: 'I', class: 'left-[76px] top-[22px]' },
+          { code: 'E-Polegar', name: 'Polegar', abbrev: 'P', class: 'left-[96px] top-[50px]' },
+        ]
+      },
+      {
+        side: 'D',
+        name: 'Mão Direita',
+        fingers: [
+          { code: 'D-Polegar', name: 'Polegar', abbrev: 'P', class: 'left-[10px] top-[50px]' },
+          { code: 'D-Indicador', name: 'Indicador', abbrev: 'I', class: 'left-[30px] top-[22px]' },
+          { code: 'D-Médio', name: 'Médio', abbrev: 'M', class: 'left-[52px] top-[14px]' },
+          { code: 'D-Anelar', name: 'Anelar', abbrev: 'A', class: 'left-[74px] top-[22px]' },
+          { code: 'D-Mínimo', name: 'Mínimo', abbrev: 'Mi', class: 'left-[96px] top-[45px]' },
+        ]
+      }
+    ];
+
+    return (
+      <div className="flex flex-col items-center bg-white p-3 rounded-lg border border-slate-200 mt-2 shadow-inner w-full">
+        <span className="font-bold text-[9px] text-slate-500 uppercase tracking-wider mb-2">Selecione o dedo para cadastro</span>
+        <div className="flex justify-around w-full gap-4">
+          {hands.map(hand => (
+            <div key={hand.side} className="flex flex-col items-center">
+              <span className="text-[10px] font-semibold text-slate-600 mb-1">{hand.name}</span>
+              <div className="relative w-32 h-24 border border-slate-100 bg-slate-50 rounded-xl overflow-hidden flex items-end justify-center pb-2">
+                {/* Stylized hand illustration */}
+                <div className="absolute inset-0 flex items-center justify-center translate-y-6 opacity-20 pointer-events-none">
+                  <Hand 
+                    className={`w-28 h-28 text-slate-800 ${hand.side === 'E' ? '-scale-x-100' : ''}`} 
+                    strokeWidth={1.5}
+                  />
+                </div>
+                {hand.fingers.map(finger => {
+                  const isSelected = selectedFinger === finger.code;
+                  return (
+                    <button
+                      key={finger.code}
+                      type="button"
+                      title={`${finger.name} - ${hand.name}`}
+                      onClick={() => onChange(finger.code)}
+                      className={`absolute w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold transition-all shadow-sm ${
+                        isSelected
+                          ? 'bg-safety-green text-white border-2 border-emerald-600 scale-110 z-10'
+                          : registeredFingers.includes(finger.code)
+                            ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500 scale-105 z-10 pointer-events-none'
+                            : 'bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 hover:scale-105'
+                      } ${finger.class}`}
+                    >
+                      {finger.abbrev}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+        {selectedFinger && (
+          <span className="text-[10px] font-bold text-slate-700 mt-2 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+            Dedo Selecionado: <span className="text-safety-green">{getFingerLabel(selectedFinger)}</span>
+          </span>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -385,18 +460,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
 
                   {getRegisteredFingers(empData).length === 0 && (
                     <div className="mt-4">
-                      <label className="text-[10px] font-bold uppercase text-slate-500 block mb-2 text-center">Qual dedo será cadastrado?</label>
-                      <select 
-                        value={empData.biometricFinger || ''} 
-                        onChange={(e) => setEmpData({...empData, biometricFinger: e.target.value})}
-                        className="w-full max-w-xs mx-auto block border-2 border-slate-200 rounded-xl p-2 text-xs font-semibold bg-white cursor-pointer"
-                      >
-                        <option value="">-- Selecione --</option>
-                        <option value="D-Polegar">Polegar Direito</option>
-                        <option value="D-Indicador">Indicador Direito</option>
-                        <option value="E-Polegar">Polegar Esquerdo</option>
-                        <option value="E-Indicador">Indicador Esquerdo</option>
-                      </select>
+                      {renderHandSelector(empData.biometricFinger || '', getRegisteredFingers(empData), (finger) => setEmpData({...empData, biometricFinger: finger}))}
                     </div>
                   )}
                 </div>
