@@ -215,6 +215,7 @@
     animation: none !important;
     overflow: visible !important;
     contain: none !important;
+    position: static !important; /* CRITICAL: Prevent parents from trapping absolute positioning */
   }
 
   /* Oculta TUDO por padrão */
