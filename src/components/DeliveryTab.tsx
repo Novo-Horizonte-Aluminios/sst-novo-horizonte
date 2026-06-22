@@ -18,6 +18,9 @@ import {
   Smartphone,
   Send,
   Search,
+  CheckCircle2,
+  RefreshCw,
+  AlertTriangle,
   ChevronDown,
   X
 } from 'lucide-react';
@@ -414,42 +417,41 @@ function calculateSimilarity(sigA: string, sigB: string): number {
   return (
     <div className="space-y-4 text-xs">
       
-      {/* Top Export Banner */}
-      <div className="bg-white p-4 rounded border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
-        <div>
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-            <FileCheck className="w-4 h-4 text-safety-green" />
-            Fichas e Comprovantes de Entrega de EPI (NR-06)
-          </h2>
-          <p className="text-[11px] text-slate-500 mt-0.5">
-            Módulo de controle individual de EPIs e conformidade do eSocial S-2240. Gere de forma imediata laudos e planilhas regulamentares.
-          </p>
-        </div>
+      {/* REMOVED: Top Export Banner */}
 
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 gap-5">
         
         {/* Left column: Create Hand-out registration */}
-        <div className="bg-white p-4 rounded border border-slate-200 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-1.5 mb-2">
-              <FileCheck className="w-4 h-4 text-safety-green" />
-              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-tight">Registro de Entrega (NR-06)</h3>
-            </div>
-            <p className="text-slate-400 text-[10px] leading-relaxed mb-3">
-              Evite passivos trabalhistas. Registre a entrega de novos EPIs com assinatura eletrônica de validade jurídica imediata.
-            </p>
-
-            {successMsg && (
-              <div className="p-2.5 bg-safety-green/10 text-safety-green rounded border border-safety-green/20 font-bold mb-3 text-[11px] animate-fade-in flex items-center gap-1.5">
-                <CheckCircle className="w-3.5 h-3.5" />
-                <span>{successMsg}</span>
+        <div className="flex flex-col justify-between">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="bg-safety-green text-white p-1.5 rounded-lg shadow-sm">
+                <FileCheck className="w-4 h-4" />
               </div>
-            )}
+              <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Registro de Entrega (NR-06)</h3>
+            </div>
+            <p className="text-slate-500 text-[11px] leading-relaxed ml-9">
+              Siga os passos abaixo para registrar a entrega de EPIs com assinatura eletrônica de validade jurídica.
+            </p>
+          </div>
 
-            <form onSubmit={handleSubmitDelivery} className="space-y-3 text-slate-700">
+          {successMsg && (
+            <div className="p-3 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200 font-bold mb-4 text-[11px] animate-fade-in flex items-center gap-2 shadow-sm">
+              <CheckCircle className="w-4 h-4" />
+              <span>{successMsg}</span>
+            </div>
+          )}
+
+          <div>
+            <form onSubmit={handleSubmitDelivery} className="space-y-4 text-slate-700">
               
+              {/* Card 1: Dados da Entrega */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                  <span className="bg-slate-100 text-slate-500 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">1</span>
+                  Dados da Entrega
+                </h4>
+                <div className="space-y-3">
               {/* Select target worker */}
               <div className="relative" ref={deliveryDropdownRef}>
                 <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Colaborador Destinatário</label>
@@ -546,99 +548,114 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                 </div>
               </div>
 
-              {/* Reason for delivery */}
-              <div>
-                <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Motivo do Fornecimento</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
-                  {(['Entrega Inicial', 'Substituição', 'Extravio', 'Danificado'] as const).map(m => (
+                </div>
+              </div>
+
+              {/* Card 2: Motivo do Fornecimento */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                  <span className="bg-slate-100 text-slate-500 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">2</span>
+                  Motivo do Fornecimento
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                  {[
+                    { label: 'Entrega Inicial', icon: <FileCheck className="w-3.5 h-3.5 mb-1" /> },
+                    { label: 'Substituição', icon: <RefreshCw className="w-3.5 h-3.5 mb-1" /> },
+                    { label: 'Extravio', icon: <AlertTriangle className="w-3.5 h-3.5 mb-1" /> },
+                    { label: 'Danificado', icon: <AlertCircle className="w-3.5 h-3.5 mb-1" /> }
+                  ].map(m => (
                     <button
-                      key={m}
+                      key={m.label}
                       type="button"
-                      onClick={() => setReason(m)}
-                      className={`p-1.5 rounded border text-center transition font-bold text-[10px] uppercase tracking-tighter ${
-                        reason === m 
-                          ? 'border-safety-green bg-safety-green/10 text-safety-green' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-650'
+                      onClick={() => setReason(m.label as any)}
+                      className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center justify-center font-bold text-[10px] uppercase tracking-tighter cursor-pointer ${
+                        reason === m.label 
+                          ? 'border-safety-green bg-safety-green text-white shadow-md -translate-y-0.5' 
+                          : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
                       }`}
                     >
-                      {m}
+                      {m.icon}
+                      {m.label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Signing workflow configurations */}
-              <div>
-                <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Método de Assinatura Regulatória (NR-06)</label>
-                <div className="grid grid-cols-5 gap-1 mb-2">
+              {/* Card 3: Autenticação */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                  <span className="bg-slate-100 text-slate-500 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">3</span>
+                  Assinatura Regulatória
+                </h4>
+                <div className="grid grid-cols-5 gap-2 mb-4">
                   <button
                     type="button"
                     onClick={() => setSigningMethod('assinatura_digital')}
-                    className={`p-2 rounded border text-center transition flex flex-col items-center gap-1 font-bold ${
+                    className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'assinatura_digital' 
-                        ? 'border-safety-green bg-safety-green/10 text-safety-green' 
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
+                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    <FileSignature className="w-3.5 h-3.5" />
-                    <span className="text-[8px] uppercase tracking-tight">Digital</span>
+                    <FileSignature className="w-4 h-4" />
+                    <span className="text-[9px] uppercase tracking-tight">Digital</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setSigningMethod('biometria')}
-                    className={`p-2 rounded border text-center transition flex flex-col items-center gap-1 font-bold ${
+                    className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'biometria' 
-                        ? 'border-safety-green bg-safety-green/10 text-safety-green' 
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
+                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    <Fingerprint className="w-3.5 h-3.5" />
-                    <span className="text-[8px] uppercase tracking-tight">Biometria</span>
+                    <Fingerprint className="w-4 h-4" />
+                    <span className="text-[9px] uppercase tracking-tight">Biometria</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setSigningMethod('senha')}
-                    className={`p-2 rounded border text-center transition flex flex-col items-center gap-1 font-bold ${
+                    className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'senha' 
-                        ? 'border-safety-green bg-safety-green/10 text-safety-green' 
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
+                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    <Lock className="w-3.5 h-3.5" />
-                    <span className="text-[8px] uppercase tracking-tight">PIN</span>
+                    <Lock className="w-4 h-4" />
+                    <span className="text-[9px] uppercase tracking-tight">PIN</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setSigningMethod('selfie')}
-                    className={`p-2 rounded border text-center transition flex flex-col items-center gap-1 font-bold ${
+                    className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'selfie' 
-                        ? 'border-safety-green bg-safety-green/10 text-safety-green' 
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
+                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    <Camera className="w-3.5 h-3.5" />
-                    <span className="text-[8px] uppercase tracking-tight">Selfie</span>
+                    <Camera className="w-4 h-4" />
+                    <span className="text-[9px] uppercase tracking-tight">Selfie</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setSigningMethod('link')}
-                    className={`p-2 rounded border text-center transition flex flex-col items-center gap-1 font-bold ${
+                    className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'link' 
-                        ? 'border-safety-green bg-safety-green/10 text-safety-green' 
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
+                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    <Smartphone className="w-3.5 h-3.5" />
-                    <span className="text-[8px] uppercase tracking-tight">Celular</span>
+                    <Smartphone className="w-4 h-4" />
+                    <span className="text-[9px] uppercase tracking-tight">Celular</span>
                   </button>
                 </div>
 
                 {/* Sub signature interface blocks */}
-                <div className="bg-slate-50 p-3 rounded border border-slate-200/60">
+                <div className="bg-[#f8fafc] p-4 rounded-xl border border-slate-200 shadow-inner">
                   {signingMethod === 'assinatura_digital' && (
                     <div className="space-y-1">
                       <span className="text-[9px] text-slate-400 font-mono block">Desenhe a assinatura abaixo:</span>
@@ -681,36 +698,57 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   )}
 
                   {signingMethod === 'biometria' && (
-                    <div className="text-center py-3 space-y-1.5">
-                      <Fingerprint className={`w-8 h-8 mx-auto ${isScanningBiometrics ? 'text-blue-500 animate-spin' : 'text-safety-green animate-pulse'}`} />
-                      <span className="font-bold text-slate-800 block text-[10px]">Leitor Biométrico</span>
-                      <p className="text-[9px] text-slate-500 max-w-xs mx-auto font-medium">
-                        {selectedEmployeeObj?.biometricFinger ? (
-                          <>Posicione o dedo <span className="text-safety-green font-bold">{getFingerLabel(selectedEmployeeObj.biometricFinger)}</span> do funcionário no coletor para verificação.</>
-                        ) : (
-                          "Posicione o dedo cadastrado do funcionário no coletor para verificação."
-                        )}
-                      </p>
+                    <div className="text-center py-6 space-y-3 bg-white rounded-xl border border-slate-100 shadow-sm relative overflow-hidden">
+                      {isScanningBiometrics && (
+                        <div className="absolute inset-0 bg-blue-50/50 flex items-center justify-center">
+                          <div className="absolute w-full h-1 bg-blue-400/30 animate-pulse top-0 left-0" />
+                          <div className="absolute w-full h-1 bg-blue-400/30 animate-pulse bottom-0 left-0" />
+                        </div>
+                      )}
                       
-                      {biometricError && (
-                        <div className="text-red-500 text-[9px] font-bold mt-2 bg-red-50 p-1.5 rounded border border-red-200">
-                          {biometricError}
+                      <div className="relative z-10 flex flex-col items-center">
+                        <div className={`p-4 rounded-full mb-2 transition-all duration-500 ${isScanningBiometrics ? 'bg-blue-100 scale-110 shadow-lg shadow-blue-500/20' : biometricHash ? 'bg-emerald-100 shadow-lg shadow-emerald-500/20' : 'bg-safety-green/10'}`}>
+                          <Fingerprint className={`w-10 h-10 ${isScanningBiometrics ? 'text-blue-600 animate-pulse' : biometricHash ? 'text-emerald-600' : 'text-safety-green'}`} />
                         </div>
-                      )}
-                      {biometricHash && (
-                        <div className="text-safety-green text-[9px] font-bold mt-2 bg-safety-green/10 p-1.5 rounded border border-safety-green/20 break-all">
-                          ✓ Digital Capturada com Sucesso
-                        </div>
-                      )}
+                        <span className="font-black text-slate-800 tracking-tight text-[12px] uppercase mb-1">
+                          Leitor Biométrico
+                        </span>
+                        <p className="text-[10px] text-slate-500 max-w-[250px] mx-auto font-medium leading-relaxed">
+                          {selectedEmployeeObj?.biometricFinger ? (
+                            <>Posicione o dedo <strong className="text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded">{getFingerLabel(selectedEmployeeObj.biometricFinger)}</strong> no sensor para validar a assinatura legal.</>
+                          ) : (
+                            "Posicione o dedo cadastrado do funcionário no sensor para validar."
+                          )}
+                        </p>
+                        
+                        {biometricError && (
+                          <div className="text-rose-600 text-[10px] font-bold mt-4 bg-rose-50 px-3 py-2 rounded-lg border border-rose-200 shadow-sm animate-fade-in flex items-center gap-1.5">
+                            <AlertCircle className="w-3.5 h-3.5" />
+                            {biometricError}
+                          </div>
+                        )}
+                        {biometricHash && (
+                          <div className="text-emerald-700 text-[10px] font-bold mt-4 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 break-all shadow-sm animate-fade-in flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Digital Capturada e Validada
+                          </div>
+                        )}
 
-                      <button
-                        type="button"
-                        onClick={handleCaptureBiometrics}
-                        disabled={isScanningBiometrics || !!biometricHash}
-                        className="bg-[#1e293b] hover:bg-[#0f172a] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-3 py-1.5 rounded text-[9px] uppercase font-sans mt-2"
-                      >
-                        {isScanningBiometrics ? 'Aguardando Leitor...' : biometricHash ? 'Biometria Pronta' : 'Capturar Digital'}
-                      </button>
+                        <button
+                          type="button"
+                          onClick={handleCaptureBiometrics}
+                          disabled={isScanningBiometrics || !!biometricHash}
+                          className={`mt-5 font-bold px-6 py-2.5 rounded-full text-[10px] uppercase tracking-wider transition-all duration-300 shadow-md ${
+                            isScanningBiometrics 
+                              ? 'bg-blue-600 text-white shadow-blue-500/30' 
+                              : biometricHash 
+                                ? 'bg-emerald-600 text-white shadow-emerald-500/30' 
+                                : 'bg-slate-900 hover:bg-slate-800 text-white hover:shadow-slate-900/30 cursor-pointer hover:-translate-y-0.5'
+                          } disabled:opacity-80 disabled:cursor-not-allowed`}
+                        >
+                          {isScanningBiometrics ? 'Aguardando Sensor...' : biometricHash ? 'Assinatura Coletada' : 'Ativar Sensor Biométrico'}
+                        </button>
+                      </div>
                     </div>
                   )}
 
@@ -777,17 +815,17 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
               <button
                 type="submit"
-                className="w-full bg-safety-green hover:bg-safety-green-dark text-white font-bold p-2.5 rounded transition flex items-center justify-center gap-1.5 uppercase text-[10px] tracking-wide cursor-pointer"
+                className="w-full bg-safety-green hover:bg-safety-green-dark text-white font-black p-4 rounded-xl transition-all hover:shadow-lg hover:shadow-safety-green/20 hover:-translate-y-0.5 flex items-center justify-center gap-2 uppercase text-[11px] tracking-widest cursor-pointer mt-6"
               >
-                <Plus className="w-3.5 h-3.5" />
-                Registrar Entrega e Criar Ficha
+                <Plus className="w-4 h-4" />
+                Registrar Entrega e Gerar Ficha Legal
               </button>
             </form>
           </div>
         </div>
 
         {/* Right column: Interactive Printable Regulatory Sheet (Ficha de EPI) conforme Portaria SIT/MTE n.º 107 */}
-        <div className="bg-white p-4 rounded border border-slate-200 flex flex-col justify-between">
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-inner">
           <div>
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-1.5">
