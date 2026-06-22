@@ -209,8 +209,12 @@
   /* Force reset of any framer-motion or tailwind transforms that break fixed/absolute positioning */
   *, *::before, *::after {
     transform: none !important;
+    filter: none !important;
+    perspective: none !important;
     transition: none !important;
     animation: none !important;
+    overflow: visible !important;
+    contain: none !important;
   }
 
   /* Oculta TUDO por padrão */
