@@ -590,8 +590,7 @@ export default function CipaElectionTab() {
                   {candidates
                     .filter(c => c.name.toLowerCase().includes(searchFilterQuery.toLowerCase()))
                     .map((cand, idx) => {
-                      // Attempt to find candidate admission date from employees
-                      const empMatch = employees.find(e => e.name.toLowerCase() === cand.name.toLowerCase());
+                                      const empMatch = employees.find(e => e.name.toLowerCase() === cand.name.toLowerCase());
                       const admissionStr = empMatch ? new Date(empMatch.admissionDate).toLocaleDateString('pt-BR') : '09/06/2019';
                       const lotacaoStr = empMatch ? `NOVO HORIZONTE ALUMÍNIOS LTDA\n${empMatch.sector.toUpperCase()}\n${empMatch.role.toUpperCase()}` : `NOVO HORIZONTE ALUMÍNIOS LTDA\n${cand.sector.toUpperCase()}`;
 
@@ -600,9 +599,17 @@ export default function CipaElectionTab() {
                           <td className="p-4 text-center font-bold text-slate-500">{idx + 1}</td>
                           <td className="p-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
-                                {cand.name.charAt(0)}
-                              </div>
+                              {empMatch && empMatch.photoUrl ? (
+                                <img 
+                                  src={empMatch.photoUrl} 
+                                  alt={cand.name} 
+                                  className="w-10 h-10 rounded-full object-cover border border-slate-200" 
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
+                                  {cand.name.charAt(0)}
+                                </div>
+                              )}
                               <div>
                                 <div className="font-bold text-slate-800 leading-tight">{cand.name}</div>
                                 <div className="text-slate-450 text-[10px] uppercase font-semibold">{empMatch ? empMatch.role : 'CANDIDATO'}</div>
@@ -680,9 +687,17 @@ export default function CipaElectionTab() {
                         <td className="p-4 text-center font-bold text-slate-500">{idx + 1}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
-                              {emp.name.charAt(0)}
-                            </div>
+                            {emp.photoUrl ? (
+                              <img 
+                                src={emp.photoUrl} 
+                                alt={emp.name} 
+                                className="w-10 h-10 rounded-full object-cover border border-slate-200" 
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
+                                {emp.name.charAt(0)}
+                              </div>
+                            )}
                             <div>
                               <div className="font-bold text-slate-800 leading-tight">{emp.name}</div>
                               <div className="text-slate-450 text-[10px] font-semibold">{emp.role}</div>
@@ -778,9 +793,17 @@ export default function CipaElectionTab() {
                           <td className="p-4 text-center font-bold text-slate-500">{idx + 1}</td>
                           <td className="p-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
-                                {emp.name.charAt(0)}
-                              </div>
+                              {emp.photoUrl ? (
+                                <img 
+                                  src={emp.photoUrl} 
+                                  alt={emp.name} 
+                                  className="w-10 h-10 rounded-full object-cover border border-slate-200" 
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
+                                  {emp.name.charAt(0)}
+                                </div>
+                              )}
                               <div>
                                 <div className="font-bold text-slate-800 leading-tight">{emp.name}</div>
                                 <div className="text-slate-450 text-[10px] font-semibold">{emp.role}</div>
@@ -855,20 +878,38 @@ export default function CipaElectionTab() {
                     <tbody className="divide-y divide-slate-100">
                       {voters
                         .filter(v => v.employeeName.toLowerCase().includes(searchFilterQuery.toLowerCase()))
-                        .map((v) => (
-                          <tr key={v.id} className="hover:bg-slate-50/50 transition">
-                            <td className="p-4 font-bold text-slate-800">{v.employeeName}</td>
-                            <td className="p-4 text-slate-500 font-medium">{v.sector || 'Fábrica'}</td>
-                            <td className="p-4 font-semibold text-slate-650">
-                              {new Date(v.votedAt).toLocaleString('pt-BR')}
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[9px] text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full font-mono font-bold border border-emerald-100">
-                                COMPROVADO
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
+                        .map((v) => {
+                          const empMatch = employees.find(e => e.id === v.employeeId);
+                          return (
+                            <tr key={v.id} className="hover:bg-slate-50/50 transition">
+                              <td className="p-4">
+                                <div className="flex items-center gap-3">
+                                  {empMatch && empMatch.photoUrl ? (
+                                    <img 
+                                      src={empMatch.photoUrl} 
+                                      alt={v.employeeName} 
+                                      className="w-8 h-8 rounded-full object-cover border border-slate-200" 
+                                    />
+                                  ) : (
+                                    <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold uppercase">
+                                      {v.employeeName.charAt(0)}
+                                    </div>
+                                  )}
+                                  <span className="font-bold text-slate-800">{v.employeeName}</span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-slate-500 font-medium">{v.sector || 'Fábrica'}</td>
+                              <td className="p-4 font-semibold text-slate-650">
+                                {new Date(v.votedAt).toLocaleString('pt-BR')}
+                              </td>
+                              <td className="p-4 text-center">
+                                <span className="text-[9px] text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full font-mono font-bold border border-emerald-100">
+                                  COMPROVADO
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       {voters.length === 0 && (
                         <tr>
                           <td colSpan={4} className="text-center py-12 text-slate-450 font-bold">
