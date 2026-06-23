@@ -505,7 +505,7 @@ export default function CipaElectionTab() {
             onClick={() => setSelectionView('candidatos')}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
               selectionView === 'candidatos' 
-                ? 'bg-slate-800 text-white shadow-sm' 
+                ? 'bg-brand-primary text-white shadow-sm' 
                 : 'text-slate-650 hover:bg-slate-200/60'
             }`}
           >
@@ -516,7 +516,7 @@ export default function CipaElectionTab() {
             onClick={() => setSelectionView('eleitores')}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
               selectionView === 'eleitores' 
-                ? 'bg-slate-800 text-white shadow-sm' 
+                ? 'bg-brand-primary text-white shadow-sm' 
                 : 'text-slate-650 hover:bg-slate-200/60'
             }`}
           >
@@ -541,7 +541,7 @@ export default function CipaElectionTab() {
           <button
             onClick={() => setActiveSubTab('candidatos')}
             className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === 'candidatos' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-100'
+              activeSubTab === 'candidatos' ? 'bg-brand-primary text-white' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             Candidatos
@@ -549,7 +549,7 @@ export default function CipaElectionTab() {
           <button
             onClick={() => setActiveSubTab('funcionarios')}
             className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === 'funcionarios' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-100'
+              activeSubTab === 'funcionarios' ? 'bg-brand-primary text-white' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             Funcionários
@@ -557,7 +557,7 @@ export default function CipaElectionTab() {
           <button
             onClick={() => setActiveSubTab('nao_votaram')}
             className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === 'nao_votaram' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-100'
+              activeSubTab === 'nao_votaram' ? 'bg-brand-primary text-white' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             Não votaram

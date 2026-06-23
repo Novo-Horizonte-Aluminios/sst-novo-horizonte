@@ -33,6 +33,17 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Dark Mode Color Variables overrides */
+.dark {
+  --color-surface-page: #0f172a;
+  --color-surface-card: #1e293b;
+  --color-surface-sidebar: #0f172a;
+  --color-surface-elevated: #1e293b;
+  --color-border-default: #334155;
+  --color-border-strong: #475569;
+  color-scheme: dark;
+}
+
 :root {
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;

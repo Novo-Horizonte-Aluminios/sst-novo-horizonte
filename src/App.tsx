@@ -36,6 +36,22 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedCompanyId, setSelectedCompanyId] = useState('c1');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('sst_dark_mode');
+    return saved === 'true';
+  });
+
+  // Efeito para sincronizar a classe .dark no HTML para suporte global a CSS dark variables
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('sst_dark_mode', String(isDarkMode));
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
   const userRole = currentUser?.role || 'SST';
 
@@ -433,7 +449,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-surface-page overflow-hidden font-sans antialiased text-slate-800 selection:bg-brand-primary selection:text-white">
+    <div className="flex h-screen bg-surface-page overflow-hidden font-sans antialiased text-slate-800 dark:text-slate-100 selection:bg-brand-primary selection:text-white">
       
       <Sidebar 
         activeTab={activeTab} 
@@ -442,17 +458,19 @@ export default function App() {
         setSelectedCompanyId={setSelectedCompanyId}
         userRole={userRole}
         companies={companies}
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
       />
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         
-        <header className="h-[72px] bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-8 flex justify-between items-center shrink-0 z-10 shadow-sm">
+        <header className="h-[72px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800 px-8 flex justify-between items-center shrink-0 z-10 shadow-sm">
           <div className="flex items-center gap-6">
             <div>
-              <h2 className="text-[9px] font-black tracking-[0.18em] text-brand-primary uppercase leading-relaxed">
+              <h2 className="text-[9px] font-black tracking-[0.18em] text-brand-primary dark:text-brand-primary uppercase leading-relaxed">
                 Painel de Gestão SST
               </h2>
-              <h1 className="text-[1.35rem] font-black text-slate-900 tracking-tight leading-tight">
+              <h1 className="text-[1.35rem] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
                 Olá, {currentUser.name.split(' ')[0]}
               </h1>
             </div>

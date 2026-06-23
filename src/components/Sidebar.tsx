@@ -32,6 +32,8 @@ interface SidebarProps {
   setSelectedCompanyId: (id: string) => void;
   userRole: string;
   companies: any[];
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
 }
 
 export default function Sidebar({
@@ -40,7 +42,9 @@ export default function Sidebar({
   selectedCompanyId,
   setSelectedCompanyId,
   userRole,
-  companies
+  companies,
+  isDarkMode,
+  toggleDarkMode
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -203,6 +207,20 @@ export default function Sidebar({
           );
         })}
       </nav>
+
+      {/* Switcher de Tema no Rodapé do Menu */}
+      <div className={`px-4 py-2 border-t flex items-center justify-between border-slate-200/80`}>
+        {!isCollapsed && (
+          <span className="text-[10px] font-bold text-slate-450 uppercase">Alternar Tema</span>
+        )}
+        <button
+          onClick={toggleDarkMode}
+          className={`p-1.5 rounded-lg transition-all hover:bg-slate-200 text-slate-500 hover:text-slate-800`}
+          title={isDarkMode ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro'}
+        >
+          {isDarkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4" />}
+        </button>
+      </div>
 
       {!isCollapsed && (
         <div className={`px-4 py-3 border-t bg-slate-950/5 ${themeClasses.systemInfo}`}>
