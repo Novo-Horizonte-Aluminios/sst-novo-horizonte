@@ -43,7 +43,6 @@ export default function Sidebar({
   companies
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false); // Alternador de temas claro/escuro
 
   const menuGroups = [
     {
@@ -100,31 +99,18 @@ export default function Sidebar({
     }
   ];
 
-  // Variáveis de Estilo Baseadas no Tema
-  const themeClasses = isDarkMode ? {
-    aside: 'bg-slate-900 text-slate-100 border-slate-800',
-    collapseBtn: 'bg-slate-850 border-slate-700 text-slate-400 hover:text-emerald-450 hover:border-emerald-500/40',
-    textLogo: 'text-white',
-    avatarText: 'bg-emerald-500 text-slate-950',
-    navGroupTitle: 'text-slate-450',
-    itemBtnActive: 'bg-emerald-500 text-slate-950 font-extrabold shadow-sm',
-    itemBtnInactive: 'text-slate-300 hover:bg-slate-800 hover:text-white',
-    itemIconActive: 'text-slate-950',
-    itemIconInactive: 'text-emerald-500',
-    systemInfo: 'border-slate-800 bg-slate-950/20 text-slate-400',
-    themeToggle: 'hover:bg-slate-800 text-slate-400 hover:text-white'
-  } : {
+  // Estilo Claro baseado na paleta Azul do Sistema
+  const themeClasses = {
     aside: 'bg-slate-50 text-slate-700 border-slate-200/80',
-    collapseBtn: 'bg-white border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-600/40',
+    collapseBtn: 'bg-white border-slate-200 text-slate-400 hover:text-brand-primary hover:border-brand-primary/40',
     textLogo: 'text-slate-800',
-    avatarText: 'bg-emerald-600 text-white',
-    navGroupTitle: 'text-emerald-700',
-    itemBtnActive: 'bg-emerald-100/75 text-emerald-900 border-l-4 border-emerald-600 font-extrabold shadow-sm',
-    itemBtnInactive: 'text-slate-650 hover:bg-slate-200/50 hover:text-emerald-800',
-    itemIconActive: 'text-emerald-700',
-    itemIconInactive: 'text-emerald-600',
-    systemInfo: 'border-slate-200/80 bg-white/40 text-slate-500',
-    themeToggle: 'hover:bg-slate-200 text-slate-500 hover:text-slate-800'
+    avatarText: 'bg-brand-primary text-white',
+    navGroupTitle: 'text-brand-primary-text font-black',
+    itemBtnActive: 'bg-brand-primary-light text-brand-primary-text border-l-4 border-brand-primary font-extrabold shadow-sm',
+    itemBtnInactive: 'text-slate-650 hover:bg-slate-200/50 hover:text-brand-primary-dark',
+    itemIconActive: 'text-brand-primary',
+    itemIconInactive: 'text-brand-primary/70',
+    systemInfo: 'border-slate-200/80 bg-white/40 text-slate-500'
   };
 
   return (
@@ -138,7 +124,7 @@ export default function Sidebar({
         {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
       </button>
 
-      <div className={`px-4 border-b flex flex-col items-center ${isCollapsed ? 'h-[68px] justify-center' : 'py-4'} ${isDarkMode ? 'border-slate-800' : 'border-slate-200/80'} transition-all`}>
+      <div className="px-4 border-b flex flex-col items-center py-4 border-slate-200/80 transition-all">
         {!isCollapsed ? (
           <>
             <div className="w-full flex justify-center bg-white p-2 rounded-xl border border-slate-100 shadow-sm">
@@ -155,7 +141,7 @@ export default function Sidebar({
             </div>
             <div id="sidebar-text-logo" className={`hidden font-extrabold text-xs tracking-tight leading-none text-center uppercase mt-1 ${themeClasses.textLogo}`}>
               <span>Novo Horizonte</span>
-              <span className="text-emerald-500 text-[10px] font-semibold block mt-0.5">Alumínios</span>
+              <span className="text-brand-primary text-[10px] font-semibold block mt-0.5">Alumínios</span>
             </div>
           </>
         ) : (
@@ -217,20 +203,6 @@ export default function Sidebar({
           );
         })}
       </nav>
-
-      {/* Switcher de Tema no Rodapé do Menu */}
-      <div className={`px-4 py-2 border-t flex items-center justify-between ${isDarkMode ? 'border-slate-800' : 'border-slate-200/80'}`}>
-        {!isCollapsed && (
-          <span className="text-[10px] font-bold text-slate-450 uppercase">Alternar Tema</span>
-        )}
-        <button
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          className={`p-1.5 rounded-lg transition-all ${themeClasses.themeToggle}`}
-          title={isDarkMode ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro'}
-        >
-          {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-        </button>
-      </div>
 
       {!isCollapsed && (
         <div className={`px-4 py-3 border-t bg-slate-950/5 ${themeClasses.systemInfo}`}>
