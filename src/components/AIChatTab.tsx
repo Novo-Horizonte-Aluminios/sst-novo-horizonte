@@ -122,7 +122,7 @@ export default function AIChatTab() {
   ];
 
   return (
-    <div className="bg-white rounded border border-slate-200 overflow-hidden flex flex-col h-[650px] text-xs">
+    <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-[650px] text-xs">
       {/* Tab Header bar */}
       <div className="bg-slate-950 text-white p-3.5 flex justify-between items-center shrink-0 border-b border-slate-900">
         <div className="flex items-center gap-2">
@@ -143,7 +143,7 @@ export default function AIChatTab() {
       </div>
 
       {/* Main chat log */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 min-h-0 text-slate-705">
+      <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 dark:bg-slate-900 min-h-0 text-slate-705">
         {messages.map((m) => {
           const isUser = m.role === 'user';
           return (
@@ -162,7 +162,7 @@ export default function AIChatTab() {
               <div className={`p-3 rounded border relative group/bubble ${
                 isUser 
                   ? 'bg-slate-900 text-white border-slate-800' 
-                  : 'bg-white text-slate-800 border-slate-200 shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-700 shadow-sm'
               }`}>
                 {/* Formatted body rendering */}
                 <p className="whitespace-pre-wrap font-sans font-normal leading-relaxed text-[11.5px] pr-5">
@@ -174,7 +174,7 @@ export default function AIChatTab() {
                   <button
                     type="button"
                     onClick={() => handleSpeak(m.id, m.content)}
-                    className="absolute right-1 top-1 p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition cursor-pointer"
+                    className="absolute right-1 top-1 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-400 hover:text-slate-700 dark:text-slate-200 transition cursor-pointer"
                     title={speakingId === m.id ? "Parar áudio" : "Ouvir com voz especializada"}
                   >
                     {speakingId === m.id ? (
@@ -190,11 +190,11 @@ export default function AIChatTab() {
         })}
 
         {loading && (
-          <div className="flex gap-2.5 max-w-xs animate-pulse text-slate-600">
+          <div className="flex gap-2.5 max-w-xs animate-pulse text-slate-600 dark:text-slate-300">
             <div className="p-1.5 bg-safety-green/10 text-safety-green rounded h-8 w-8 flex items-center justify-center border border-safety-green/20">
               <Bot className="w-3.5 h-3.5" />
             </div>
-            <div className="p-3 bg-white rounded border border-slate-200 shadow-sm flex items-center gap-1.5">
+            <div className="p-3 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1.5">
               <RefreshCw className="w-3 h-3 animate-spin text-safety-green" />
               <span className="text-[10px] font-bold text-slate-400 font-mono">Analisando Normas do MTE...</span>
             </div>
@@ -212,14 +212,14 @@ export default function AIChatTab() {
       </div>
 
       {/* Suggested prompts / shortcuts */}
-      <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap gap-1 shrink-0 text-slate-600">
+      <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex flex-wrap gap-1 shrink-0 text-slate-600 dark:text-slate-300">
         <span className="text-[8px] font-mono font-bold uppercase tracking-wider block w-full mb-1 text-slate-400">Sugestões de Perguntas Rápidas</span>
         {quickQuestions.map((q, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => handleSendMessage(q)}
-            className="text-[9.5px] bg-slate-100 hover:bg-slate-200 hover:text-slate-800 border border-slate-300 rounded px-2.5 py-1 font-bold transition cursor-pointer"
+            className="text-[9.5px] bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 hover:text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded px-2.5 py-1 font-bold transition cursor-pointer"
           >
             {q}
           </button>
@@ -227,14 +227,14 @@ export default function AIChatTab() {
       </div>
 
       {/* Inputs container */}
-      <div className="p-3 border-t border-slate-200 bg-white flex gap-2 shrink-0">
+      <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex gap-2 shrink-0">
         <input
           type="text"
           placeholder="Escreva sua consulta sobre EPI, CA, FISPQ ou Normas Regulamentadoras (e.g. NR-35)..."
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-          className="flex-1 bg-slate-50 border border-slate-200 rounded px-3 py-2 placeholder-slate-400 focus:outline-none focus:border-safety-green text-xs text-slate-805"
+          className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-3 py-2 placeholder-slate-400 focus:outline-none focus:border-safety-green text-xs text-slate-805"
         />
         <button
           onClick={() => handleSendMessage()}

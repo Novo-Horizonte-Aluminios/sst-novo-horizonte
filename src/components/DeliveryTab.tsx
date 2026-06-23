@@ -571,50 +571,50 @@ function calculateSimilarity(sigA: string, sigB: string): number {
               <div className="bg-safety-green text-white p-1.5 rounded-lg shadow-sm">
                 <FileCheck className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Registro de Entrega (NR-06)</h3>
+              <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Registro de Entrega (NR-06)</h3>
             </div>
-            <p className="text-slate-500 text-[11px] leading-relaxed ml-9">
+            <p className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed ml-9">
               Siga os passos abaixo para registrar a entrega de EPIs com assinatura eletrônica de validade jurídica.
             </p>
           </div>
 
           <div>
-            <form onSubmit={handleSubmitDelivery} className="space-y-4 text-slate-700">
+            <form onSubmit={handleSubmitDelivery} className="space-y-4 text-slate-700 dark:text-slate-200">
               
               {/* Card 1: Dados da Entrega */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                  <span className="bg-slate-100 text-slate-500 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">1</span>
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-700 pb-2">
+                  <span className="bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">1</span>
                   Dados da Entrega
                 </h4>
                 <div className="space-y-3">
               {/* Select target worker */}
               <div className="relative" ref={deliveryDropdownRef}>
-                <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Colaborador Destinatário</label>
+                <label className="font-bold block mb-1 text-[10px] text-slate-500 dark:text-slate-400 uppercase">Colaborador Destinatário</label>
                 <input type="hidden" name="employeeId" value={selectedEmpId} required />
                 <button
                   type="button"
                   onClick={() => setIsOpenDelivery(!isOpenDelivery)}
-                  className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[13px] text-left flex justify-between items-center cursor-pointer transition-all hover:border-slate-300"
+                  className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 text-[13px] text-left flex justify-between items-center cursor-pointer transition-all hover:border-slate-300 dark:border-slate-600"
                 >
-                  <span className={selectedEmployeeObj ? "text-[15px] text-slate-900 font-black tracking-tight" : "text-[15px] text-slate-500 font-bold"}>
+                  <span className={selectedEmployeeObj ? "text-[15px] text-slate-900 dark:text-white font-black tracking-tight" : "text-[15px] text-slate-500 dark:text-slate-400 font-bold"}>
                     {selectedEmployeeObj 
                       ? `${selectedEmployeeObj.name} (${selectedEmployeeObj.role} - ${selectedEmployeeObj.matricula})`
                       : "Selecione o Colaborador..."}
                   </span>
-                  <ChevronDown className="w-4 h-4 text-slate-500" />
+                  <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                 </button>
 
                 {isOpenDelivery && (
-                  <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded shadow-lg max-h-60 flex flex-col">
-                    <div className="p-1.5 border-b border-slate-100 flex items-center gap-1.5 bg-slate-50">
+                  <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-lg max-h-60 flex flex-col">
+                    <div className="p-1.5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900">
                       <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <input
                         type="text"
                         placeholder="Buscar por nome, setor, matrícula, CPF..."
                         value={searchTermDelivery}
                         onChange={(e) => setSearchTermDelivery(e.target.value)}
-                        className="w-full bg-transparent border-none focus:outline-none text-[14px] text-slate-700 py-1"
+                        className="w-full bg-transparent border-none focus:outline-none text-[14px] text-slate-700 dark:text-slate-200 py-1"
                         autoFocus
                       />
                     </div>
@@ -632,16 +632,16 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                               setSearchTermDelivery('');
                             }}
                             className={`p-2 px-3 hover:bg-safety-green/10 hover:text-safety-green cursor-pointer flex justify-between items-center transition-colors ${
-                              selectedEmpId === emp.id ? "bg-safety-green/5 text-safety-green font-bold" : "text-slate-700"
+                              selectedEmpId === emp.id ? "bg-safety-green/5 text-safety-green font-bold" : "text-slate-700 dark:text-slate-200"
                             }`}
                           >
                             <div>
-                              <span className="block text-[14px] font-bold text-slate-800">{emp.name}</span>
-                              <span className="block text-[12px] text-slate-500 font-medium mt-0.5">
+                              <span className="block text-[14px] font-bold text-slate-800 dark:text-slate-100">{emp.name}</span>
+                              <span className="block text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                                 {emp.role} {emp.sector ? `• ${emp.sector}` : ''}
                               </span>
                             </div>
-                            <span className="text-[9px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                            <span className="text-[9px] font-mono bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
                               Mat: {emp.matricula}
                             </span>
                           </li>
@@ -655,14 +655,14 @@ function calculateSimilarity(sigA: string, sigB: string): number {
               {/* Select PPE and Qty */}
               <div className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
-                  <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">EPI a Fornecer</label>
+                  <label className="font-bold block mb-1 text-[10px] text-slate-500 dark:text-slate-400 uppercase">EPI a Fornecer</label>
                   <select
                     required
                     value={selectedPpeId}
                     onChange={(e) => setSelectedPpeId(e.target.value)}
-                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white text-[15px] tracking-tight text-slate-900 transition-all hover:border-slate-300 cursor-pointer"
+                    className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 text-[15px] tracking-tight text-slate-900 dark:text-white transition-all hover:border-slate-300 dark:border-slate-600 cursor-pointer"
                   >
-                    <option value="" className="text-[15px] text-slate-500">Selecione o EPI...</option>
+                    <option value="" className="text-[15px] text-slate-500 dark:text-slate-400">Selecione o EPI...</option>
                     {ppes.map((p) => (
                       <option key={p.id} value={p.id} disabled={p.caStatus !== 'Válido'}>
                         {p.name} (CA: {p.caNumber} {p.caStatus !== 'Válido' ? '⚠️ EXPIRED' : ''})
@@ -672,14 +672,14 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                 </div>
 
                 <div>
-                  <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Qtd Fornecida</label>
+                  <label className="font-bold block mb-1 text-[10px] text-slate-500 dark:text-slate-400 uppercase">Qtd Fornecida</label>
                   <input
                     type="number"
                     required
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value))}
-                    className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white font-mono text-[16px] font-black text-slate-900 transition-all hover:border-slate-300"
+                    className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 font-mono text-[16px] font-black text-slate-900 dark:text-white transition-all hover:border-slate-300 dark:border-slate-600"
                   />
                 </div>
               </div>
@@ -688,9 +688,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
               </div>
 
               {/* Card 2: Motivo do Fornecimento */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                  <span className="bg-slate-100 text-slate-500 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">2</span>
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-700 pb-2">
+                  <span className="bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">2</span>
                   Motivo do Fornecimento
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
@@ -707,7 +707,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                       className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center justify-center font-bold text-[11px] uppercase cursor-pointer ${
                         reason === m.label 
                           ? 'border-brand-primary-dark bg-brand-primary-dark text-white shadow-md -translate-y-0.5' 
-                          : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
+                          : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:border-slate-600'
                       }`}
                     >
                       {m.icon}
@@ -718,9 +718,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
               </div>
 
               {/* Card 3: Autenticação */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                  <span className="bg-slate-100 text-slate-500 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">3</span>
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-700 pb-2">
+                  <span className="bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 w-4 h-4 rounded-full flex items-center justify-center text-[9px]">3</span>
                   Assinatura Regulatória
                 </h4>
                 <div className="grid grid-cols-5 gap-2 mb-4">
@@ -730,7 +730,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'assinatura_digital' 
                         ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
-                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:border-slate-600'
                     }`}
                   >
                     <FileSignature className="w-4 h-4" />
@@ -743,7 +743,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'biometria' 
                         ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
-                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:border-slate-600'
                     }`}
                   >
                     <Fingerprint className="w-4 h-4" />
@@ -756,7 +756,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'senha' 
                         ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
-                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:border-slate-600'
                     }`}
                   >
                     <Lock className="w-4 h-4" />
@@ -769,7 +769,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'selfie' 
                         ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
-                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:border-slate-600'
                     }`}
                   >
                     <Camera className="w-4 h-4" />
@@ -782,7 +782,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     className={`p-2.5 rounded-xl border text-center transition-all duration-200 flex flex-col items-center gap-1.5 font-bold cursor-pointer ${
                       signingMethod === 'link' 
                         ? 'border-safety-green bg-safety-green/10 text-safety-green shadow-sm' 
-                        : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:border-slate-300'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:border-slate-600'
                     }`}
                   >
                     <Smartphone className="w-4 h-4" />
@@ -791,7 +791,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                 </div>
 
                 {/* Sub signature interface blocks */}
-                <div className="bg-[#f8fafc] p-4 rounded-xl border border-slate-200 shadow-inner">
+                <div className="bg-[#f8fafc] p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner">
                   {signingMethod === 'assinatura_digital' && (
                     <div className="space-y-1">
                       <span className="text-[9px] text-slate-400 font-mono block">Desenhe a assinatura abaixo:</span>
@@ -806,7 +806,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         onTouchStart={startDraw}
                         onTouchMove={draw}
                         onTouchEnd={stopDraw}
-                        className="w-full bg-white border border-slate-250 rounded cursor-crosshair h-20 shadow-inner"
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-250 rounded cursor-crosshair h-20 shadow-inner"
                       />
                       <div className="flex justify-end">
                         <button
@@ -828,13 +828,13 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         placeholder="ID ou PIN numérico..."
                         value={pinNumber}
                         onChange={(e) => setPinNumber(e.target.value)}
-                        className="w-full p-1 px-2 border border-slate-200 bg-white rounded font-mono focus:outline-none focus:border-safety-green text-center text-[11px]"
+                        className="w-full p-1 px-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded font-mono focus:outline-none focus:border-safety-green text-center text-[11px]"
                       />
                     </div>
                   )}
 
                   {signingMethod === 'biometria' && (
-                    <div className="text-center py-6 space-y-3 bg-white rounded-xl border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div className="text-center py-6 space-y-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
                       {isScanningBiometrics && (
                         <div className="absolute inset-0 bg-blue-50/50 flex items-center justify-center">
                           <div className="absolute w-full h-1 bg-blue-400/30 animate-pulse top-0 left-0" />
@@ -846,12 +846,12 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         <div className={`p-4 rounded-full mb-2 transition-all duration-500 ${isScanningBiometrics ? 'bg-blue-100 scale-110 shadow-lg shadow-blue-500/20' : biometricHash ? 'bg-emerald-100 shadow-lg shadow-emerald-500/20' : 'bg-safety-green/10'}`}>
                           <Fingerprint className={`w-10 h-10 ${isScanningBiometrics ? 'text-blue-600 animate-pulse' : biometricHash ? 'text-emerald-600' : 'text-safety-green'}`} />
                         </div>
-                        <span className="font-black text-slate-800 tracking-tight text-[12px] uppercase mb-1">
+                        <span className="font-black text-slate-800 dark:text-slate-100 tracking-tight text-[12px] uppercase mb-1">
                           Leitor Biométrico
                         </span>
-                        <p className="text-[10px] text-slate-500 max-w-[250px] mx-auto font-medium leading-relaxed">
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 max-w-[250px] mx-auto font-medium leading-relaxed">
                           {selectedEmployeeObj?.biometricFinger ? (
-                            <>Posicione o dedo <strong className="text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded">{getFingerLabel(selectedEmployeeObj.biometricFinger)}</strong> no sensor para validar a assinatura legal.</>
+                            <>Posicione o dedo <strong className="text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-800/80 px-1.5 py-0.5 rounded">{getFingerLabel(selectedEmployeeObj.biometricFinger)}</strong> no sensor para validar a assinatura legal.</>
                           ) : (
                             "Posicione o dedo cadastrado do funcionário no sensor para validar."
                           )}
@@ -891,8 +891,8 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   {signingMethod === 'selfie' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mt-2">
                       <div className="space-y-1 text-[10px]">
-                        <span className="text-[11px] text-slate-700 font-bold block">Captura de Reconhecimento Facial</span>
-                        <p className="text-slate-500 text-[10px] leading-snug mb-3">Tire a foto do colaborador com o EPI em mãos para garantir a validade jurídica.</p>
+                        <span className="text-[11px] text-slate-700 dark:text-slate-200 font-bold block">Captura de Reconhecimento Facial</span>
+                        <p className="text-slate-500 dark:text-slate-400 text-[10px] leading-snug mb-3">Tire a foto do colaborador com o EPI em mãos para garantir a validade jurídica.</p>
                         
                         {!isWebcamActive && !selfieOptionSelected && (
                           <button
@@ -950,7 +950,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         )}
                       </div>
                       
-                      <div className="text-center bg-slate-100 rounded-lg border border-slate-300 p-2 overflow-hidden flex justify-center items-center min-h-[140px]">
+                      <div className="text-center bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-300 dark:border-slate-600 p-2 overflow-hidden flex justify-center items-center min-h-[140px]">
                         {!isWebcamActive && !selfieOptionSelected && (
                           <div className="text-slate-400 flex flex-col items-center">
                             <Camera className="w-8 h-8 mb-1 opacity-50" />
@@ -979,7 +979,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   {signingMethod === 'link' && (
                     <div className="flex flex-col items-center py-2 space-y-3">
                       <div className="text-center space-y-1">
-                        <span className="text-[10px] text-slate-500 font-mono block">Assinatura no Celular do Colaborador</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block">Assinatura no Celular do Colaborador</span>
                         <p className="text-[9px] text-slate-400 max-w-[200px] leading-snug">Envie o link seguro para o WhatsApp ou mostre o QR Code para o funcionário assinar a ficha no próprio aparelho.</p>
                       </div>
                       
@@ -994,7 +994,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                         
                         <button
                           type="button"
-                          className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 rounded font-bold text-[9px] uppercase transition shadow-sm"
+                          className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-600 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded font-bold text-[9px] uppercase transition shadow-sm"
                         >
                           <QrCode className="w-3.5 h-3.5" />
                           Gerar QR Code
@@ -1017,12 +1017,12 @@ function calculateSimilarity(sigA: string, sigB: string): number {
         </div>
 
         {/* Right column: Interactive Printable Regulatory Sheet (Ficha de EPI) conforme Portaria SIT/MTE n.º 107 */}
-        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-inner">
+        <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between shadow-inner">
           <div>
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-1.5">
-                <Printer className="w-4 h-4 text-slate-600" />
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-tight">Ficha Regulamentada (NR-06)</h3>
+                <Printer className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                <h3 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight">Ficha Regulamentada (NR-06)</h3>
               </div>
               
               {/* Select recipe to check */}
@@ -1032,7 +1032,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                 <select
                   value={filterMonth}
                   onChange={(e) => setFilterMonth(e.target.value)}
-                  className="border border-slate-200 rounded p-1 text-[10px] bg-white text-slate-700 font-semibold focus:outline-none focus:border-safety-green cursor-pointer"
+                  className="border border-slate-200 dark:border-slate-700 rounded p-1 text-[10px] bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold focus:outline-none focus:border-safety-green cursor-pointer"
                 >
                   <option value="all">Mês (Todos)</option>
                   <option value="1">Janeiro</option>
@@ -1052,7 +1052,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                 <select
                   value={filterYear}
                   onChange={(e) => setFilterYear(e.target.value)}
-                  className="border border-slate-200 rounded p-1 text-[10px] bg-white text-slate-700 font-semibold focus:outline-none focus:border-safety-green cursor-pointer"
+                  className="border border-slate-200 dark:border-slate-700 rounded p-1 text-[10px] bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold focus:outline-none focus:border-safety-green cursor-pointer"
                 >
                   <option value="all">Ano (Todos)</option>
                   <option value="2026">2026</option>
@@ -1065,15 +1065,15 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
             {activeReceiptEmployee ? (
               <div className="flex-1 mt-4 overflow-y-auto pr-2 custom-scrollbar print:overflow-visible print:h-auto print:m-0 print:pr-0" style={{maxHeight: 'calc(100vh - 14rem)'}}>
-                <div className="print-receipt bg-white border border-slate-300 text-xs text-slate-800 shadow-sm mx-auto w-full print:border print:border-slate-300 print:shadow-none" style={{fontFamily: "'Inter', sans-serif"}}>
+                <div className="print-receipt bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs text-slate-800 dark:text-slate-100 shadow-sm mx-auto w-full print:border print:border-slate-300 dark:border-slate-600 print:shadow-none" style={{fontFamily: "'Inter', sans-serif"}}>
                   {/* ── CABEÇALHO ── */}
                   <div className="flex items-center border-b-2 border-slate-700 px-3 py-2 gap-3">
                     {/* Foto do colaborador */}
                     <div className="shrink-0">
                       {activeReceiptEmployee.photoUrl ? (
-                        <img src={activeReceiptEmployee.photoUrl} alt="Foto" className="w-12 h-12 rounded-full object-cover border-2 border-slate-300" />
+                        <img src={activeReceiptEmployee.photoUrl} alt="Foto" className="w-12 h-12 rounded-full object-cover border-2 border-slate-300 dark:border-slate-600" />
                       ) : (
-                        <div className="w-12 h-12 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center">
                           <User className="w-6 h-6 text-slate-400" />
                         </div>
                       )}
@@ -1081,8 +1081,8 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
                     {/* Título central */}
                     <div className="flex-1 text-center">
-                      <p className="text-[11px] font-bold text-slate-500 uppercase">Portaria SIT/MTE n.º 107 — NR-06</p>
-                      <h1 className="text-base font-extrabold text-slate-900 uppercase leading-tight">
+                      <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase">Portaria SIT/MTE n.º 107 — NR-06</p>
+                      <h1 className="text-base font-extrabold text-slate-900 dark:text-white uppercase leading-tight">
                         FICHA DE FORNECIMENTO DE<br />EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL (EPI)
                       </h1>
                     </div>
@@ -1090,28 +1090,28 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                     {/* Logo da empresa */}
                     <div className="shrink-0 text-right flex flex-col items-end justify-center">
                       <img src="/logo_horizontal.png" alt="Novo Horizonte Alumínios" className="h-10 object-contain mb-1" />
-                      <p className="text-[10px] text-slate-500 font-semibold uppercase">Segurança do Trabalho</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Segurança do Trabalho</p>
                     </div>
                   </div>
 
                   {/* ── DADOS DO EMPREGADOR E EMPREGADO ── */}
                   <div className="grid grid-cols-2 gap-4 px-4 py-2 text-[10px] uppercase font-mono">
                     <div className="space-y-1">
-                      <p><span className="font-bold text-slate-900 inline-block w-24">Empresa:</span> Novo Horizonte Alumínios LTDA</p>
-                      <p><span className="font-bold text-slate-900 inline-block w-24">Colaborador:</span> <strong className="text-[11px] text-slate-800">{activeReceiptEmployee.name}</strong></p>
-                      <p><span className="font-bold text-slate-900 inline-block w-24">Cargo:</span> {activeReceiptEmployee.role}</p>
-                      <p><span className="font-bold text-slate-900 inline-block w-24">Setor:</span> {activeReceiptEmployee.sector}</p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">Empresa:</span> Novo Horizonte Alumínios LTDA</p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">Colaborador:</span> <strong className="text-[11px] text-slate-800 dark:text-slate-100">{activeReceiptEmployee.name}</strong></p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">Cargo:</span> {activeReceiptEmployee.role}</p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">Setor:</span> {activeReceiptEmployee.sector}</p>
                     </div>
                     <div className="space-y-1">
-                      <p><span className="font-bold text-slate-900 inline-block w-24">Admissão:</span> {activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR') : '-'}</p>
-                      <p><span className="font-bold text-slate-900 inline-block w-24">CNPJ:</span> 01.374.729/0001-90</p>
-                      <p><span className="font-bold text-slate-900 inline-block w-24">CPF:</span> {activeReceiptEmployee.cpf}</p>
-                      <p><span className="font-bold text-slate-900 inline-block w-24">Nº Matrícula:</span> <strong className="text-[11px] text-slate-800">{activeReceiptEmployee.matricula}</strong></p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">Admissão:</span> {activeReceiptEmployee.admissionDate ? new Date(activeReceiptEmployee.admissionDate).toLocaleDateString('pt-BR') : '-'}</p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">CNPJ:</span> 01.374.729/0001-90</p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">CPF:</span> {activeReceiptEmployee.cpf}</p>
+                      <p><span className="font-bold text-slate-900 dark:text-white inline-block w-24">Nº Matrícula:</span> <strong className="text-[11px] text-slate-800 dark:text-slate-100">{activeReceiptEmployee.matricula}</strong></p>
                     </div>
                   </div>
 
-                  <div className="border-t border-slate-300 py-1.5 text-center bg-slate-50/50">
-                    <p className="font-bold text-[9px] uppercase tracking-wider text-slate-600">Data de Emissão do Relatório: {new Date().toLocaleDateString('pt-BR')}</p>
+                  <div className="border-t border-slate-300 dark:border-slate-600 py-1.5 text-center bg-slate-50 dark:bg-slate-900/50">
+                    <p className="font-bold text-[9px] uppercase tracking-wider text-slate-600 dark:text-slate-300">Data de Emissão do Relatório: {new Date().toLocaleDateString('pt-BR')}</p>
                   </div>
 
                   {/* ── TABELA DE EQUIPAMENTOS ── */}
@@ -1136,20 +1136,20 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                           </tr>
                         ) : (
                           activeReceiptDeliveries.map((delivery, index) => (
-                            <tr key={index} className="hover:bg-slate-50">
-                              <td className="p-2 text-center font-mono font-bold text-slate-700 border-r border-slate-200">
+                            <tr key={index} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900">
+                              <td className="p-2 text-center font-mono font-bold text-slate-700 dark:text-slate-200 border-r border-slate-200 dark:border-slate-700">
                                 {String(delivery.quantity).padStart(2, '0')}
                               </td>
-                              <td className="p-2 font-bold text-slate-800 uppercase border-r border-slate-200">
+                              <td className="p-2 font-bold text-slate-800 dark:text-slate-100 uppercase border-r border-slate-200 dark:border-slate-700">
                                 {delivery.ppeName}
                               </td>
-                              <td className="p-2 text-center font-mono border-r border-slate-200">
+                              <td className="p-2 text-center font-mono border-r border-slate-200 dark:border-slate-700">
                                 {new Date(delivery.deliveryDate || '').toLocaleDateString('pt-BR')}
                               </td>
-                              <td className="p-2 text-center font-mono text-slate-600 border-r border-slate-200">
+                              <td className="p-2 text-center font-mono text-slate-600 dark:text-slate-300 border-r border-slate-200 dark:border-slate-700">
                                 {delivery.caNumber || 'N/A'}
                               </td>
-                              <td className="p-2 text-center text-slate-600 border-r border-slate-200">
+                              <td className="p-2 text-center text-slate-600 dark:text-slate-300 border-r border-slate-200 dark:border-slate-700">
                                 {delivery.reason}
                               </td>
                               <td className="p-2 text-center flex items-center justify-center">
@@ -1164,7 +1164,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                                   </div>
                                 ) : delivery.signatureData?.startsWith('Selfie') || delivery.selfieUrl ? (
                                   <div className="flex flex-col items-center">
-                                    <img src={delivery.selfieUrl || delivery.signatureData?.split('Selfie Anexa: ')[1]} alt="Selfie" className="w-7 h-7 object-cover rounded-full border border-slate-300" />
+                                    <img src={delivery.selfieUrl || delivery.signatureData?.split('Selfie Anexa: ')[1]} alt="Selfie" className="w-7 h-7 object-cover rounded-full border border-slate-300 dark:border-slate-600" />
                                     <span className="text-[7px] font-bold text-indigo-600 uppercase block mt-0.5 tracking-tighter">Reconhecimento</span>
                                   </div>
                                 ) : delivery.signatureData?.startsWith('PIN') ? (
@@ -1184,9 +1184,9 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   </div>
 
                   {/* ── TERMO DE RESPONSABILIDADE ── */}
-                  <div className="p-3 border-y border-slate-300 bg-slate-50/80">
-                    <p className="text-[8.5px] font-bold uppercase text-slate-700 mb-1">Termo de Recebimento de EPI (NR-06 / Portaria SIT/MTE n.º 107):</p>
-                    <p className="text-[8.5px] text-slate-600 leading-relaxed text-justify uppercase font-mono">
+                  <div className="p-3 border-y border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/80">
+                    <p className="text-[8.5px] font-bold uppercase text-slate-700 dark:text-slate-200 mb-1">Termo de Recebimento de EPI (NR-06 / Portaria SIT/MTE n.º 107):</p>
+                    <p className="text-[8.5px] text-slate-600 dark:text-slate-300 leading-relaxed text-justify uppercase font-mono">
                       Declaro que recebi gratuitamente os equipamentos de proteção individual relacionados acima, adequados aos riscos inerentes ao cumprimento do meu contrato de trabalho. Comprometo-me a utilizá-los apenas para a finalidade que se destinam, conservando-os adequadamente e comunicando ao empregador qualquer alteração que o torne impróprio para uso, sob penas da legislação trabalhista vigente.
                     </p>
                   </div>
@@ -1210,7 +1210,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                           </div>
                           <div className="border-b-2 border-slate-700" />
                           <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Responsável SST</p>
-                          <p className="text-slate-500 text-[10px]">{sstName}</p>
+                          <p className="text-slate-500 dark:text-slate-400 text-[10px]">{sstName}</p>
                         </div>
 
                         {/* Colaborador(a) */}
@@ -1223,7 +1223,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                           </div>
                           <div className="border-b-2 border-slate-700" />
                           <p className="font-bold uppercase mt-1.5 tracking-wider text-xs">Colaborador(a)</p>
-                          <p className="text-slate-500 text-[10px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
+                          <p className="text-slate-500 dark:text-slate-400 text-[10px]">CPF: {activeReceiptEmployee.cpf} | Mat: {activeReceiptEmployee.matricula}</p>
                         </div>
 
                       </div>
@@ -1231,22 +1231,22 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   })()}
 
                   {/* ── HASH DE INTEGRIDADE DO DOCUMENTO ── */}
-                  <div className="px-4 py-2.5 bg-slate-100 border-t border-slate-300 flex justify-between items-center text-[9px] font-mono text-slate-500">
+                  <div className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800/80 border-t border-slate-300 dark:border-slate-600 flex justify-between items-center text-[9px] font-mono text-slate-500 dark:text-slate-400">
                     <span>Sistema SST Novo Horizonte Alumínios — {new Date().toLocaleString('pt-BR')}</span>
                     <span>DOC-ID: {activeReceiptDeliveries[0]?.id?.substring(0, 16).toUpperCase()}</span>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-slate-50 mt-4 border border-dashed border-slate-200 p-12 text-center text-slate-400 rounded flex flex-col items-center justify-center gap-1.5">
-                <Eye className="w-8 h-8 text-slate-350 bg-slate-100/40" />
-                <span className="font-bold text-slate-600 uppercase text-[10px]">Ficha Vazia</span>
+              <div className="bg-slate-50 dark:bg-slate-900 mt-4 border border-dashed border-slate-200 dark:border-slate-700 p-12 text-center text-slate-400 rounded flex flex-col items-center justify-center gap-1.5">
+                <Eye className="w-8 h-8 text-slate-350 bg-slate-100 dark:bg-slate-800/80/40" />
+                <span className="font-bold text-slate-600 dark:text-slate-300 uppercase text-[10px]">Ficha Vazia</span>
                 <p className="text-[9px] max-w-[200px] mx-auto leading-relaxed text-slate-450">Selecione um colaborador no seletor acima para carregar a Ficha de EPI regulamentada para visualização, conferência ou impressão legal.</p>
               </div>
             )}
             
             {/* Action buttons at the bottom of right panel */}
-            <div className="mt-4 pt-4 border-t border-slate-200 flex justify-end gap-3 print:hidden">
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 print:hidden">
               <button
                 onClick={() => window.print()}
                 disabled={!activeReceiptEmployee}
@@ -1263,25 +1263,25 @@ function calculateSimilarity(sigA: string, sigB: string): number {
       {/* Success Modal */}
       {showSuccessModal && successModalData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm border border-safety-green/20 overflow-hidden transform animate-scale-in">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm border border-safety-green/20 overflow-hidden transform animate-scale-in">
             <div className="bg-safety-green/10 border-b border-safety-green/20 p-5 flex flex-col items-center justify-center relative">
               <button 
                 onClick={() => setShowSuccessModal(false)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:text-slate-300 transition"
               >
                 <X className="w-4 h-4" />
               </button>
-              <div className="bg-white p-3 rounded-full shadow-sm text-safety-green mb-3 ring-4 ring-safety-green/20">
+              <div className="bg-white dark:bg-slate-800 p-3 rounded-full shadow-sm text-safety-green mb-3 ring-4 ring-safety-green/20">
                 <CheckCircle className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-slate-800 tracking-tight text-center">Entrega Registrada!</h3>
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight text-center">Entrega Registrada!</h3>
             </div>
             
-            <div className="p-6 bg-white text-center">
-              <p className="text-slate-600 text-sm mb-4">
-                O EPI <strong className="text-slate-800">{successModalData.ppeName}</strong> foi entregue com sucesso para <strong className="text-slate-800">{successModalData.empName}</strong>.
+            <div className="p-6 bg-white dark:bg-slate-800 text-center">
+              <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">
+                O EPI <strong className="text-slate-800 dark:text-slate-100">{successModalData.ppeName}</strong> foi entregue com sucesso para <strong className="text-slate-800 dark:text-slate-100">{successModalData.empName}</strong>.
               </p>
-              <p className="text-slate-500 text-[11px] mb-6 italic leading-relaxed">
+              <p className="text-slate-500 dark:text-slate-400 text-[11px] mb-6 italic leading-relaxed">
                 O recibo eletrônico será processado pelo sistema e enviado em breve no WhatsApp do colaborador.
               </p>
               
@@ -1299,34 +1299,34 @@ function calculateSimilarity(sigA: string, sigB: string): number {
       {/* Biometric Mismatch Modal */}
       {showMismatchModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm border border-slate-200 overflow-hidden transform animate-scale-in">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 overflow-hidden transform animate-scale-in">
             <div className="bg-rose-50 border-b border-rose-100 p-4 flex justify-between items-start">
               <div className="flex gap-3 items-start">
                 <div className="bg-rose-100 p-2 rounded-full mt-1 text-rose-600">
                   <AlertCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800 uppercase tracking-tight">Divergência Biométrica</h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Esta digital não pertence ao colaborador selecionado.</p>
+                  <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">Divergência Biométrica</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Esta digital não pertence ao colaborador selecionado.</p>
                 </div>
               </div>
               <button 
                 onClick={() => setShowMismatchModal(false)}
-                className="text-slate-400 hover:text-slate-600 transition"
+                className="text-slate-400 hover:text-slate-600 dark:text-slate-300 transition"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div className="text-center">
-                <p className="text-[11px] text-slate-600 mb-3">Tente novamente utilizando uma das seguintes digitais cadastradas para <span className="font-bold text-slate-800">{selectedEmployeeObj?.name?.split(' ')[0]}</span>:</p>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 mb-3">Tente novamente utilizando uma das seguintes digitais cadastradas para <span className="font-bold text-slate-800 dark:text-slate-100">{selectedEmployeeObj?.name?.split(' ')[0]}</span>:</p>
                 
                 {mismatchFingers.length > 0 ? (
                   <div className="flex flex-col gap-2 max-w-[200px] mx-auto">
                     {mismatchFingers.map((f, i) => (
-                      <div key={i} className="bg-slate-50 border border-slate-200 py-2 px-3 rounded-md flex items-center justify-center gap-2">
+                      <div key={i} className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 py-2 px-3 rounded-md flex items-center justify-center gap-2">
                         <Fingerprint className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="text-xs font-bold text-slate-700">{getFingerLabel(f)}</span>
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{getFingerLabel(f)}</span>
                       </div>
                     ))}
                   </div>

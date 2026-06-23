@@ -103,7 +103,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               Nome de Usuário
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 dark:text-slate-400">
                 <User className="w-4 h-4" />
               </span>
               <input
@@ -111,7 +111,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Ex: admin ou marcos"
-                className="w-full bg-[#070b13]/80 border border-slate-800 focus:border-emerald-500/80 text-white rounded-xl py-3 pl-11 pr-4 text-xs outline-none transition-all placeholder:text-slate-600 font-medium"
+                className="w-full bg-[#070b13]/80 border border-slate-800 focus:border-emerald-500/80 text-white rounded-xl py-3 pl-11 pr-4 text-xs outline-none transition-all placeholder:text-slate-600 dark:text-slate-300 font-medium"
                 autoComplete="username"
               />
             </div>
@@ -122,7 +122,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               Senha de Acesso
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 dark:text-slate-400">
                 <Lock className="w-4 h-4" />
               </span>
               <input
@@ -130,7 +130,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full bg-[#070b13]/80 border border-slate-800 focus:border-emerald-500/80 text-white rounded-xl py-3 pl-11 pr-4 text-xs outline-none transition-all placeholder:text-slate-600 font-medium"
+                className="w-full bg-[#070b13]/80 border border-slate-800 focus:border-emerald-500/80 text-white rounded-xl py-3 pl-11 pr-4 text-xs outline-none transition-all placeholder:text-slate-600 dark:text-slate-300 font-medium"
                 autoComplete="current-password"
               />
             </div>
@@ -151,7 +151,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
         {/* Info card footer */}
         <div className="mt-8 pt-5 border-t border-slate-800/80 text-center flex flex-col items-center">
-          <p className="text-[9px] text-slate-500 font-mono tracking-tight leading-none uppercase">
+          <p className="text-[9px] text-slate-500 dark:text-slate-400 font-mono tracking-tight leading-none uppercase">
             Ambiente Seguro • NR-01 & MTE Compliance
           </p>
         </div>

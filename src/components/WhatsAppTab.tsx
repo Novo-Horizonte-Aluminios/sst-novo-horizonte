@@ -317,31 +317,31 @@ export default function WhatsAppTab({
   return (
     <div className="space-y-6">
       {/* Title Header with Connection Stats */}
-      <div className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+      <div className="bg-white dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
         <div>
-          <h2 className="text-[13px] font-black text-slate-800 uppercase tracking-tight flex items-center gap-2 matches-tab-title">
+          <h2 className="text-[13px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2 matches-tab-title">
             <div className="bg-brand-primary/10 text-brand-primary p-2 rounded-xl">
               <MessageCircle className="w-5 h-5" />
             </div>
             Integração WhatsApp Business • Módulo Evolution API &amp; n8n SESMT
           </h2>
-          <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
             Automação de eSocial &amp; Alertas de SST via WhatsApp para prevenção de passivos trabalhistas (NR-01, NR-06 &amp; NR-35).
           </p>
         </div>
 
         <div className="flex items-center gap-3 mt-1 md:mt-0 select-none">
-          <div className="bg-slate-50 border-2 border-slate-250/60 rounded-xl px-3 py-1.5 flex items-center gap-2">
+          <div className="bg-slate-50 dark:bg-slate-900 border-2 border-slate-250/60 rounded-xl px-3 py-1.5 flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <div className="text-[10.5px] font-bold text-slate-700">
+            <div className="text-[10.5px] font-bold text-slate-700 dark:text-slate-200">
               <span>Status: </span>
-              <span className="text-slate-500 font-mono">Evolution (Go) + n8n Webhook</span>
+              <span className="text-slate-500 dark:text-slate-400 font-mono">Evolution (Go) + n8n Webhook</span>
             </div>
           </div>
           <button 
             onClick={fetchLogs} 
             disabled={loadingLogs}
-            className="p-2 px-3.5 border-2 border-slate-300 hover:bg-slate-200 text-slate-700 hover:text-slate-800 rounded-xl flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all hover:border-slate-400 bg-slate-100"
+            className="p-2 px-3.5 border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-800 dark:text-slate-100 rounded-xl flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all hover:border-slate-400 bg-slate-100 dark:bg-slate-800/80"
             title="Atualizar Logs"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loadingLogs ? 'animate-spin' : ''}`} />
@@ -379,12 +379,12 @@ export default function WhatsAppTab({
       </div>
 
       {/* CONFIGURAÇÃO DE INTEGRAÇÃO */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mt-4 transition-all hover:shadow-md">
-        <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-2 flex items-center gap-2 border-b border-slate-100 pb-2">
-          <Settings className="w-4 h-4 text-slate-500" />
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm mt-4 transition-all hover:shadow-md">
+        <h3 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest mb-2 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
+          <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400" />
           Configurações de Integração (n8n)
         </h3>
-        <p className="text-[11px] text-slate-500 mb-4 leading-relaxed font-medium">
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
           Defina o endereço base do seu servidor n8n. Por padrão, o sistema utiliza a URL de ambiente configurada no servidor.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
@@ -394,7 +394,7 @@ export default function WhatsAppTab({
               value={n8nWebhookUrl}
               onChange={(e) => setN8nWebhookUrl(e.target.value)}
               placeholder="https://n8n.novohorizonte.com"
-              className="w-full text-[13px] p-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white font-mono text-slate-700 transition-all hover:border-slate-300"
+              className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 font-mono text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
             />
           </div>
           <button
@@ -406,19 +406,19 @@ export default function WhatsAppTab({
           </button>
         </div>
         {saveSettingsResult && (
-          <div className="mt-2 text-[10px] font-bold text-slate-600">
+          <div className="mt-2 text-[10px] font-bold text-slate-600 dark:text-slate-300">
             {saveSettingsResult}
           </div>
         )}
       </div>
 
       {/* FERRAMENTAS DE TESTE (N8N) */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mt-6 transition-all hover:shadow-md">
-        <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm mt-6 transition-all hover:shadow-md">
+        <h3 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
           <Activity className="w-4 h-4 text-emerald-500" />
           FERRAMENTAS DE TESTE (N8N)
         </h3>
-        <p className="text-[11px] text-slate-500 mb-4 leading-relaxed font-medium">
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
           Utilize estes botões para disparar eventos de teste diretamente para os Webhooks do n8n (modo <strong>Listen for test event</strong>).
           Você não precisa cadastrar nada real no sistema para validar a conexão.
         </p>
@@ -427,46 +427,46 @@ export default function WhatsAppTab({
           <button
             onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
           >
             <Package className="w-6 h-6 text-emerald-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Recibo EPI</span>
+            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Recibo EPI</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
           >
             <Users className="w-6 h-6 text-indigo-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Boas Vindas</span>
+            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Boas Vindas</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-training-new', { training: { employeeName: 'Colaborador Teste', trainingTitle: 'NR-35 Trabalho em Altura', issueDate: new Date().toISOString(), score: 10 } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
           >
             <GraduationCap className="w-6 h-6 text-amber-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Treinamento</span>
+            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Treinamento</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-inspection-new', { inspection: { title: 'Inspeção de Rotina (Teste)', type: 'Rotina', scheduledDate: new Date().toISOString(), responsible: 'Técnico Teste' } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
           >
             <ClipboardCheck className="w-6 h-6 text-blue-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Inspeção</span>
+            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Inspeção</span>
           </button>
 
           <button
             onClick={() => handleTestN8n('sst-accident', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
             disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-100 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50/50"
+            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
           >
             <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-tighter">Acidente</span>
+            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Acidente</span>
           </button>
         </div>
         
@@ -479,13 +479,13 @@ export default function WhatsAppTab({
       </div>
 
       {/* Primary Tab Bar */}
-      <div className="border-b border-slate-200/80 flex gap-3 pb-px">
+      <div className="border-b border-slate-200 dark:border-slate-700/80 flex gap-3 pb-px">
         <button
           onClick={() => setSubTab('alerts')}
           className={`px-4 py-2 font-black uppercase tracking-wider text-[11px] border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'alerts' 
               ? 'border-brand-primary text-brand-primary' 
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-slate-300'
           }`}
         >
           <Bell className="w-4 h-4" />
@@ -496,7 +496,7 @@ export default function WhatsAppTab({
           className={`px-4 py-2 font-black uppercase tracking-wider text-[11px] border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'history' 
               ? 'border-brand-primary text-brand-primary' 
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-slate-300'
           }`}
         >
           <History className="w-4 h-4" />
@@ -523,12 +523,12 @@ export default function WhatsAppTab({
                 <p>
                   Destinatário: <strong>{feedback.employeeName}</strong> • Telefone: <strong className="font-mono">{feedback.phone}</strong>
                 </p>
-                <p className="text-[10.5px] italic text-slate-600 border-l-2 border-slate-300 pl-2 py-1 bg-white/60 rounded">
+                <p className="text-[10.5px] italic text-slate-600 dark:text-slate-300 border-l-2 border-slate-300 dark:border-slate-600 pl-2 py-1 bg-white dark:bg-slate-800/60 rounded">
                   Status de Execução: {feedback.detailText}
                 </p>
 
                 <div className="mt-2.5">
-                  <span className="block font-bold text-[9px] uppercase text-slate-500 mb-1">Visualização do Template Enviado no WhatsApp:</span>
+                  <span className="block font-bold text-[9px] uppercase text-slate-500 dark:text-slate-400 mb-1">Visualização do Template Enviado no WhatsApp:</span>
                   <pre className="bg-[#e7f3eb] font-mono text-[10.5px] p-3 rounded text-emerald-950 whitespace-pre-wrap leading-relaxed border border-emerald-250 select-all shadow-inner">
                     {feedback.messageText}
                   </pre>
@@ -537,7 +537,7 @@ export default function WhatsAppTab({
             </div>
             <button 
               onClick={() => setFeedback(null)} 
-              className="text-slate-400 hover:text-slate-900 font-bold ml-4 cursor-pointer text-sm"
+              className="text-slate-400 hover:text-slate-900 dark:hover:text-white dark:text-white font-bold ml-4 cursor-pointer text-sm"
             >
               ✖
             </button>
@@ -548,7 +548,7 @@ export default function WhatsAppTab({
       {/* AREA 1: PENDING ALERTS QUEUE */}
       {subTab === 'alerts' && (
         <div className="space-y-4">
-          <div className="bg-white p-3 rounded border border-slate-200 flex flex-col sm:flex-row justify-between gap-2.5 items-center">
+          <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between gap-2.5 items-center">
             <div className="relative w-full sm:max-w-sm">
               <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400">
                 <Search className="w-3.5 h-3.5" />
@@ -558,7 +558,7 @@ export default function WhatsAppTab({
                 value={pendingSearch}
                 onChange={e => setPendingSearch(e.target.value)}
                 placeholder="Filtrar por trabalhador, EPI ou treinamento..."
-                className="w-full bg-slate-50 hover:bg-slate-100/50 focus:bg-white text-xs pl-8 pr-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-safety-green transition text-slate-700"
+                className="w-full bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80/50 focus:bg-white dark:bg-slate-800 text-xs pl-8 pr-3 py-1.5 rounded border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-safety-green transition text-slate-700 dark:text-slate-200"
               />
             </div>
             <p className="text-[9.5px] font-mono text-slate-400 uppercase tracking-wider text-right w-full sm:w-auto shrink-0 font-bold">
@@ -566,10 +566,10 @@ export default function WhatsAppTab({
             </p>
           </div>
 
-          <div className="bg-white rounded border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
             <table className="w-full text-left table-auto border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-50/75 text-slate-600 border-b border-slate-200 font-bold uppercase tracking-wider text-[9px]">
+                <tr className="bg-slate-50 dark:bg-slate-900/75 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-bold uppercase tracking-wider text-[9px]">
                   <th className="p-3">Colaborador / Setor</th>
                   <th className="p-3">Alerta de Inconformidade</th>
                   <th className="p-3">Ref / Detalhe Técnico</th>
@@ -583,7 +583,7 @@ export default function WhatsAppTab({
                   <tr>
                     <td colSpan={6} className="p-8 text-center text-slate-400">
                       <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2 animate-bounce" />
-                      <p className="font-bold text-[11px] text-slate-700 uppercase">Perfeito! Nenhum alerta crítico de conformidade ativo.</p>
+                      <p className="font-bold text-[11px] text-slate-700 dark:text-slate-200 uppercase">Perfeito! Nenhum alerta crítico de conformidade ativo.</p>
                       <p className="text-[10px] mt-0.5">Todos os treinamentos estão atualizados e nenhuma entrega de EPI possui CA vencido.</p>
                     </td>
                   </tr>
@@ -591,9 +591,9 @@ export default function WhatsAppTab({
                   filteredPending.map((alert) => {
                     const activePhone = getEmployeePhone(alert.employeeId);
                     return (
-                      <tr key={alert.id} className="hover:bg-slate-50/40 select-none">
+                      <tr key={alert.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/40 select-none">
                         <td className="p-3">
-                          <p className="font-bold text-slate-800">{alert.employeeName}</p>
+                          <p className="font-bold text-slate-800 dark:text-slate-100">{alert.employeeName}</p>
                           <p className="text-[9.5px] text-slate-400 mt-0.5 font-mono">ID: {alert.employeeId.toUpperCase()}</p>
                         </td>
                         <td className="p-3">
@@ -606,7 +606,7 @@ export default function WhatsAppTab({
                           </span>
                         </td>
                         <td className="p-3 leading-tight">
-                          <p className="font-semibold text-slate-700">{alert.detail}</p>
+                          <p className="font-semibold text-slate-700 dark:text-slate-200">{alert.detail}</p>
                           <p className="text-[9.5px] text-slate-400 mt-0.5 font-mono">
                             {alert.alertType === 'ca_vencimento' ? 'CA do Fornecedor' : 'Expira em'}: {alert.codeOrDate}
                           </p>
@@ -618,13 +618,13 @@ export default function WhatsAppTab({
                               type="text"
                               value={activePhone}
                               onChange={e => handlePhoneChange(alert.employeeId, e.target.value)}
-                              className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 font-mono text-[10.5px] font-bold text-slate-700 focus:outline-none focus:bg-white focus:border-safety-green transition w-28"
+                              className="bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 font-mono text-[10.5px] font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-safety-green transition w-28"
                               title="Altere o celular para disparar e receber no seu próprio celular"
                             />
                           </div>
                         </td>
                         <td className="p-3 text-center">
-                          <span className="text-[9px] font-mono font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded uppercase">
+                          <span className="text-[9px] font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded uppercase">
                             {alert.riskLevel}
                           </span>
                         </td>
@@ -634,7 +634,7 @@ export default function WhatsAppTab({
                             disabled={sendingId === alert.id}
                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-bold uppercase tracking-wider text-[9.5px] rounded border transition shadow-sm cursor-pointer ${
                               sendingId === alert.id
-                                ? 'bg-slate-100 text-slate-400 border-slate-200'
+                                ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-400 border-slate-200 dark:border-slate-700'
                                 : 'bg-brand-primary/10 hover:bg-brand-primary hover:text-white text-brand-primary border-brand-primary/20'
                             }`}
                           >
@@ -655,7 +655,7 @@ export default function WhatsAppTab({
       {/* AREA 2: PAST SEND LOGS (WHATSAPP AUDIT TRACE) */}
       {subTab === 'history' && (
         <div className="space-y-4 animate-fade-in">
-          <div className="bg-white p-3 rounded border border-slate-200 flex flex-col sm:flex-row justify-between gap-2.5 items-center">
+          <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between gap-2.5 items-center">
             <div className="relative w-full sm:max-w-sm">
               <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400">
                 <Search className="w-3.5 h-3.5" />
@@ -665,7 +665,7 @@ export default function WhatsAppTab({
                 value={logsSearch}
                 onChange={e => setLogsSearch(e.target.value)}
                 placeholder="Buscar no histórico de auditoria..."
-                className="w-full bg-slate-50 hover:bg-slate-100/50 focus:bg-white text-xs pl-8 pr-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-safety-green transition text-slate-700"
+                className="w-full bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80/50 focus:bg-white dark:bg-slate-800 text-xs pl-8 pr-3 py-1.5 rounded border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-safety-green transition text-slate-700 dark:text-slate-200"
               />
             </div>
             <p className="text-[9.5px] font-mono text-slate-400 uppercase tracking-wider text-right w-full sm:w-auto shrink-0 font-bold">
@@ -673,10 +673,10 @@ export default function WhatsAppTab({
             </p>
           </div>
 
-          <div className="bg-white rounded border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
             <table className="w-full text-left table-auto border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-50/75 text-slate-600 border-b border-slate-200 font-bold uppercase tracking-wider text-[9px]">
+                <tr className="bg-slate-50 dark:bg-slate-900/75 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-bold uppercase tracking-wider text-[9px]">
                   <th className="p-3 w-[20%]">Destinatário / Celular</th>
                   <th className="p-3 w-[15%]">Finalidade</th>
                   <th className="p-3 w-[20%]">Referência de Monitor</th>
@@ -690,15 +690,15 @@ export default function WhatsAppTab({
                   <tr>
                     <td colSpan={6} className="p-8 text-center text-slate-400">
                       <HelpCircle className="w-7 h-7 text-slate-350 mx-auto mb-1" />
-                      <p className="font-bold text-[10px] text-slate-700 uppercase">Nenhum log encontrado para a busca atual</p>
+                      <p className="font-bold text-[10px] text-slate-700 dark:text-slate-200 uppercase">Nenhum log encontrado para a busca atual</p>
                     </td>
                   </tr>
                 ) : (
                   filteredLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-slate-50/20 leading-relaxed">
+                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/20 leading-relaxed">
                       <td className="p-3">
-                        <p className="font-bold text-slate-800">{log.employeeName}</p>
-                        <p className="text-[10px] text-slate-500 font-mono mt-0.5">{log.phone}</p>
+                        <p className="font-bold text-slate-800 dark:text-slate-100">{log.employeeName}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">{log.phone}</p>
                       </td>
                       <td className="p-3">
                         <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
@@ -709,7 +709,7 @@ export default function WhatsAppTab({
                           {log.alertType}
                         </span>
                       </td>
-                      <td className="p-3 text-slate-600 font-semibold truncate max-w-xs" title={log.detail}>
+                      <td className="p-3 text-slate-600 dark:text-slate-300 font-semibold truncate max-w-xs" title={log.detail}>
                         {log.detail}
                       </td>
                       <td className="p-3 text-center">
@@ -732,7 +732,7 @@ export default function WhatsAppTab({
                               detailText: log.status === 'Erro' ? log.errorDetail : 'Consultado no histórico de auditoria local S-2240.'
                             });
                           }}
-                          className="p-1 px-2 border border-slate-200 hover:bg-slate-50 font-bold uppercase tracking-wider text-[9px] rounded text-slate-650 cursor-pointer"
+                          className="p-1 px-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 font-bold uppercase tracking-wider text-[9px] rounded text-slate-650 cursor-pointer"
                         >
                           Visualizar
                         </button>
@@ -747,10 +747,10 @@ export default function WhatsAppTab({
       )}
 
       {/* INTEGRATION DEVELOPMENT FOOTER (eSocial NR-01 GRO context notes) */}
-      <div className="bg-slate-100 p-3.5 rounded border border-slate-200 text-[10px] text-slate-500 flex items-start gap-2 max-w-4xl leading-relaxed mt-4">
-        <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+      <div className="bg-slate-100 dark:bg-slate-800/80 p-3.5 rounded border border-slate-200 dark:border-slate-700 text-[10px] text-slate-500 dark:text-slate-400 flex items-start gap-2 max-w-4xl leading-relaxed mt-4">
+        <Info className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <p className="font-bold text-slate-700 uppercase tracking-wider text-[9px]">
+          <p className="font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider text-[9px]">
             Gestão Centralizada de Automação (eSocial S-2240 Compliance via WhatsApp)
           </p>
           <p>
@@ -760,7 +760,7 @@ export default function WhatsAppTab({
             <br />
             3. Caso você perca a conexão do WhatsApp, basta abrir o painel da Evolution e ler o QR Code da instância <strong>Ti-NH</strong> novamente.
           </p>
-          <p className="mt-2 text-slate-400 border-t border-slate-200 pt-2">
+          <p className="mt-2 text-slate-400 border-t border-slate-200 dark:border-slate-700 pt-2">
             A conformidade automatizada garante que cada trabalhador seja intimado sobre vencimentos críticos e exames, reduzindo passivos PGR (NR-01) e PCMSO (NR-07).
           </p>
         </div>

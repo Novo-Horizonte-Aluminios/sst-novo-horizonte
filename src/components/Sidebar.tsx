@@ -105,16 +105,16 @@ export default function Sidebar({
 
   // Estilo Claro baseado na paleta Azul do Sistema
   const themeClasses = {
-    aside: 'bg-slate-50 text-slate-700 border-slate-200/80',
-    collapseBtn: 'bg-white border-slate-200 text-slate-400 hover:text-brand-primary hover:border-brand-primary/40',
-    textLogo: 'text-slate-800',
+    aside: 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700/80',
+    collapseBtn: 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-brand-primary hover:border-brand-primary/40',
+    textLogo: 'text-slate-800 dark:text-slate-100',
     avatarText: 'bg-brand-primary text-white',
     navGroupTitle: 'text-brand-primary-text font-black',
     itemBtnActive: 'bg-brand-primary-light text-brand-primary-text border-l-4 border-brand-primary font-extrabold shadow-sm',
-    itemBtnInactive: 'text-slate-650 hover:bg-slate-200/50 hover:text-brand-primary-dark',
+    itemBtnInactive: 'text-slate-650 hover:bg-slate-200 dark:bg-slate-700/50 hover:text-brand-primary-dark',
     itemIconActive: 'text-brand-primary',
     itemIconInactive: 'text-brand-primary/70',
-    systemInfo: 'border-slate-200/80 bg-white/40 text-slate-500'
+    systemInfo: 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-800/40 text-slate-500 dark:text-slate-400'
   };
 
   return (
@@ -128,10 +128,10 @@ export default function Sidebar({
         {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
       </button>
 
-      <div className="px-4 border-b flex flex-col items-center py-4 border-slate-200/80 transition-all">
+      <div className="px-4 border-b flex flex-col items-center py-4 border-slate-200 dark:border-slate-700/80 transition-all">
         {!isCollapsed ? (
           <>
-            <div className="w-full flex justify-center bg-white p-2 rounded-xl border border-slate-100 shadow-sm">
+            <div className="w-full flex justify-center bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
               <img 
                 src="/logo_horizontal.png" 
                 alt="Novo Horizonte Alumínios" 
@@ -209,13 +209,13 @@ export default function Sidebar({
       </nav>
 
       {/* Switcher de Tema no Rodapé do Menu */}
-      <div className={`px-4 py-2 border-t flex items-center justify-between border-slate-200/80`}>
+      <div className={`px-4 py-2 border-t flex items-center justify-between border-slate-200 dark:border-slate-700/80`}>
         {!isCollapsed && (
           <span className="text-[10px] font-bold text-slate-450 uppercase">Alternar Tema</span>
         )}
         <button
           onClick={toggleDarkMode}
-          className={`p-1.5 rounded-lg transition-all hover:bg-slate-200 text-slate-500 hover:text-slate-800`}
+          className={`p-1.5 rounded-lg transition-all hover:bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100`}
           title={isDarkMode ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro'}
         >
           {isDarkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4" />}

@@ -123,7 +123,7 @@ export default function EpiReturnTab() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-sm font-black tracking-tight text-slate-800 uppercase">Devolução e Descarte de EPI's</h3>
+          <h3 className="text-sm font-black tracking-tight text-slate-800 dark:text-slate-100 uppercase">Devolução e Descarte de EPI's</h3>
           <p className="text-slate-550 text-[11px] leading-relaxed">Registro de devolução de EPIs usados, higienização ou descarte regulamentar por desgaste</p>
         </div>
         <button
@@ -140,7 +140,7 @@ export default function EpiReturnTab() {
           <div className="w-8 h-8 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
           <table className="compact-table">
             <thead>
               <tr>
@@ -154,7 +154,7 @@ export default function EpiReturnTab() {
             <tbody>
               {returns.map(ret => (
                 <tr key={ret.id}>
-                  <td className="font-bold text-slate-800">{ret.employeeName}</td>
+                  <td className="font-bold text-slate-800 dark:text-slate-100">{ret.employeeName}</td>
                   <td>{ret.ppeName}</td>
                   <td>{ret.quantity} un</td>
                   <td>
@@ -167,7 +167,7 @@ export default function EpiReturnTab() {
                     </span>
                   </td>
                   <td>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200">
                       <Calendar className="w-3 h-3 text-slate-400" /> {ret.returnDate.slice(0, 10)}
                     </span>
                   </td>
@@ -187,7 +187,7 @@ export default function EpiReturnTab() {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base">Registrar Retorno / Devolução de EPI</h3>
@@ -198,11 +198,11 @@ export default function EpiReturnTab() {
 
             <form onSubmit={handleCreateReturn} className="p-6 space-y-4">
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Selecione o Colaborador</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Selecione o Colaborador</label>
                 <select
                   value={newReturn.employeeId}
                   onChange={(e) => setNewReturn({...newReturn, employeeId: e.target.value})}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12px]"
                   required
                 >
                   <option value="">Selecione quem está devolvendo...</option>
@@ -213,11 +213,11 @@ export default function EpiReturnTab() {
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Selecione o EPI</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Selecione o EPI</label>
                 <select
                   value={newReturn.ppeId}
                   onChange={(e) => setNewReturn({...newReturn, ppeId: e.target.value})}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12px]"
                   required
                 >
                   <option value="">Selecione qual EPI está sendo entregue de volta...</option>
@@ -229,34 +229,34 @@ export default function EpiReturnTab() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Quantidade</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Quantidade</label>
                   <input
                     type="number"
                     required
                     min={1}
                     value={newReturn.quantity}
                     onChange={(e) => setNewReturn({...newReturn, quantity: parseInt(e.target.value) || 0})}
-                    className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Data de Retorno</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Data de Retorno</label>
                   <input
                     type="date"
                     required
                     value={newReturn.returnDate}
                     onChange={(e) => setNewReturn({...newReturn, returnDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Motivo / Condição do Item</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Motivo / Condição do Item</label>
                 <select
                   value={newReturn.reason}
                   onChange={(e) => setNewReturn({...newReturn, reason: e.target.value})}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12px]"
                 >
                   <option value="Desgastado">Desgastado pelo tempo de uso</option>
                   <option value="Danificado">Danificado / Quebrado (Descarte)</option>
@@ -265,11 +265,11 @@ export default function EpiReturnTab() {
                 </select>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-655 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-655 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>

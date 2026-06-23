@@ -367,7 +367,7 @@ export default function ReportsTab({
         title="Central de Relatórios & Legal Compliance SST"
         subtitle="Exportação homologada de laudos, históricos de eSocial e fichas regulamentares para fiscalização trabalhista ativa (NR-01, NR-06 & NR-35)."
       >
-        <div className="flex items-center gap-2 text-[10px] text-slate-500">
+        <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-1.5 bg-brand-primary/5 border border-brand-primary/10 rounded-lg px-2.5 py-1.5">
             <Shield className="w-3.5 h-3.5 text-brand-primary" />
             <span className="font-semibold text-brand-primary">{activeCompanyName}</span>
@@ -388,7 +388,7 @@ export default function ReportsTab({
           return (
             <div
               key={mod.id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
             >
               <div className="h-1 bg-brand-primary shrink-0" />
               <div className="p-5 flex flex-col flex-1">
@@ -398,22 +398,22 @@ export default function ReportsTab({
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <h3 className="text-xs font-bold text-slate-800 leading-tight">{mod.title}</h3>
+                      <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">{mod.title}</h3>
                       <Badge variant={mod.badgeVariant}>{mod.badge}</Badge>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-[10.5px] text-slate-500 leading-relaxed mb-4">{mod.description}</p>
+                <p className="text-[10.5px] text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{mod.description}</p>
 
-                <div className="bg-slate-50 rounded-xl p-3 space-y-1.5 mb-4 flex-1">
+                <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-3 space-y-1.5 mb-4 flex-1">
                   {mod.stats.map((stat, i) => (
                     <div key={i} className="flex justify-between items-center text-[10px]">
-                      <span className="text-slate-500">{stat.label}:</span>
+                      <span className="text-slate-500 dark:text-slate-400">{stat.label}:</span>
                       <strong className={`font-mono text-[10px] ${
                         stat.danger ? 'text-rose-600' :
                         stat.highlight ? 'text-emerald-600' :
-                        'text-slate-800'
+                        'text-slate-800 dark:text-slate-100'
                       }`}>{stat.value}</strong>
                     </div>
                   ))}
@@ -445,18 +445,18 @@ export default function ReportsTab({
         })}
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         <button
           onClick={() => setBulkOpen(!bulkOpen)}
-          className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-brand-primary/10 text-brand-primary">
               <Archive className="w-4 h-4" />
             </div>
             <div className="text-left">
-              <h3 className="text-xs font-bold text-slate-800">Exportação em Lote (ZIP)</h3>
-              <p className="text-[10px] text-slate-500">Filtre setores, datas e tipos de relatório para gerar um pacote único</p>
+              <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100">Exportação em Lote (ZIP)</h3>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">Filtre setores, datas e tipos de relatório para gerar um pacote único</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -468,10 +468,10 @@ export default function ReportsTab({
         </button>
 
         {bulkOpen && (
-          <div className="px-4 pb-4 pt-0 border-t border-slate-100">
+          <div className="px-4 pb-4 pt-0 border-t border-slate-100 dark:border-slate-700">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-4">
               <div className="space-y-2">
-                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Filter className="w-3 h-3" />
                   Setores
                 </span>
@@ -497,7 +497,7 @@ export default function ReportsTab({
                         className={`text-[9px] text-left px-2 py-1 rounded-lg border transition cursor-pointer select-none truncate ${
                           isSelected
                             ? 'bg-brand-primary/10 border-brand-primary/30 text-brand-primary font-bold'
-                            : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700'
+                            : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         {sec}
@@ -512,7 +512,7 @@ export default function ReportsTab({
               </div>
 
               <div className="space-y-2">
-                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <CheckSquare className="w-3 h-3" />
                   Filtro Temporal
                 </span>
@@ -523,7 +523,7 @@ export default function ReportsTab({
                       type="date"
                       value={startDate}
                       onChange={e => setStartDate(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 text-[10px] focus:outline-none focus:border-brand-primary/50 font-mono"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-200 text-[10px] focus:outline-none focus:border-brand-primary/50 font-mono"
                     />
                   </div>
                   <div>
@@ -532,14 +532,14 @@ export default function ReportsTab({
                       type="date"
                       value={endDate}
                       onChange={e => setEndDate(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 text-[10px] focus:outline-none focus:border-brand-primary/50 font-mono"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-200 text-[10px] focus:outline-none focus:border-brand-primary/50 font-mono"
                     />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Columns className="w-3 h-3" />
                   Formatos de Saída
                 </span>
@@ -549,7 +549,7 @@ export default function ReportsTab({
                     className={`flex-1 py-2 rounded-xl border text-[10px] font-bold transition cursor-pointer text-center ${
                       selectedFormats.pdf
                         ? 'bg-brand-primary/10 border-brand-primary/30 text-brand-primary'
-                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700'
+                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     PDF Oficial
@@ -559,7 +559,7 @@ export default function ReportsTab({
                     className={`flex-1 py-2 rounded-xl border text-[10px] font-bold transition cursor-pointer text-center ${
                       selectedFormats.csv
                         ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
-                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700'
+                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     CSV (Excel)
@@ -568,7 +568,7 @@ export default function ReportsTab({
               </div>
 
               <div className="space-y-2">
-                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <FileText className="w-3 h-3" />
                   Relatórios
                 </span>
@@ -587,11 +587,11 @@ export default function ReportsTab({
                         className={`text-left px-2.5 py-1.5 rounded-lg border transition flex items-center gap-2 cursor-pointer ${
                           checked
                             ? 'bg-brand-primary/5 border-brand-primary/20 text-brand-primary font-semibold'
-                            : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700'
+                            : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         <span className={`w-3.5 h-3.5 rounded flex items-center justify-center border text-[7px] font-bold shrink-0 ${
-                          checked ? 'bg-brand-primary border-brand-primary text-white' : 'border-slate-300 bg-white'
+                          checked ? 'bg-brand-primary border-brand-primary text-white' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
                         }`}>
                           {checked && "✓"}
                         </span>
@@ -603,17 +603,17 @@ export default function ReportsTab({
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] text-slate-500">
-                <span className="bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 font-mono">
-                  Colaboradores: <strong className="text-slate-800">{
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] text-slate-500 dark:text-slate-400">
+                <span className="bg-slate-50 dark:bg-slate-900 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-mono">
+                  Colaboradores: <strong className="text-slate-800 dark:text-slate-100">{
                     selectedSectors.length === 0
                       ? companyEmployees.length
                       : companyEmployees.filter(e => selectedSectors.includes(e.sector)).length
                   }</strong>
                 </span>
-                <span className="bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 font-mono">
-                  Fichas EPI: <strong className="text-slate-800">{
+                <span className="bg-slate-50 dark:bg-slate-900 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-mono">
+                  Fichas EPI: <strong className="text-slate-800 dark:text-slate-100">{
                     companyDeliveries.filter(d => {
                       const emp = companyEmployees.find(e => e.id === d.employeeId);
                       const isInSet = selectedSectors.length === 0 || (emp && selectedSectors.includes(emp.sector));
@@ -622,8 +622,8 @@ export default function ReportsTab({
                     }).length
                   }</strong>
                 </span>
-                <span className="bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 font-mono">
-                  Cursos: <strong className="text-slate-800">{
+                <span className="bg-slate-50 dark:bg-slate-900 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-mono">
+                  Cursos: <strong className="text-slate-800 dark:text-slate-100">{
                     companyTrainings.filter(t => {
                       const emp = companyEmployees.find(e => e.id === t.employeeId);
                       const isInSet = selectedSectors.length === 0 || (emp && selectedSectors.includes(emp.sector));
@@ -635,7 +635,7 @@ export default function ReportsTab({
               </div>
 
               {isExporting ? (
-                <div className="bg-slate-100 border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-2.5 text-[10px] font-bold text-slate-600">
+                <div className="bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-xl flex items-center gap-2.5 text-[10px] font-bold text-slate-600 dark:text-slate-300">
                   <div className="w-3.5 h-3.5 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
                   {exportMessage}
                 </div>
@@ -653,11 +653,11 @@ export default function ReportsTab({
         )}
       </div>
 
-      <div className="bg-amber-50/50 border border-amber-200/60 p-4 rounded-2xl text-[10px] text-slate-600 flex items-start gap-3 leading-relaxed">
+      <div className="bg-amber-50/50 border border-amber-200/60 p-4 rounded-2xl text-[10px] text-slate-600 dark:text-slate-300 flex items-start gap-3 leading-relaxed">
         <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
         <div>
-          <p className="font-bold text-slate-700 mb-0.5">Responsabilidade Jurídica sobre Arquivamento Digital (Portaria SIT/MTE n.º 107)</p>
-          <p className="text-slate-500">
+          <p className="font-bold text-slate-700 dark:text-slate-200 mb-0.5">Responsabilidade Jurídica sobre Arquivamento Digital (Portaria SIT/MTE n.º 107)</p>
+          <p className="text-slate-500 dark:text-slate-400">
             A Novo Horizonte Alumínios armazena e certifica todos os logs de fornecimento e treinamentos com hash único. Em casos de inquéritos, a validade jurídica das assinaturas digitais recolhidas protege a empresa de litígios operacionais comuns.
           </p>
         </div>

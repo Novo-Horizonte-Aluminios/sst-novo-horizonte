@@ -159,7 +159,7 @@ export default function AsoCertificatesTab() {
             placeholder="Buscar por colaborador ou médico..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-slate-300 shadow-sm font-bold text-slate-800"
+            className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-slate-300 dark:border-slate-600 shadow-sm font-bold text-slate-800 dark:text-slate-100"
           />
         </div>
 
@@ -179,7 +179,7 @@ export default function AsoCertificatesTab() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAsos.map((aso) => (
-            <div key={aso.id} className="bg-white p-5 rounded-2xl border border-slate-200 hover:shadow-md transition-all hover:-translate-y-0.5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+            <div key={aso.id} className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all hover:-translate-y-0.5 flex flex-col justify-between shadow-sm relative overflow-hidden">
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
                   <div className="bg-blue-50 p-2.5 rounded-xl text-brand-primary">
@@ -193,11 +193,11 @@ export default function AsoCertificatesTab() {
                 </div>
 
                 <div>
-                  <h4 className="font-black text-[14px] text-slate-800 leading-snug tracking-tight">{aso.employeeName}</h4>
+                  <h4 className="font-black text-[14px] text-slate-800 dark:text-slate-100 leading-snug tracking-tight">{aso.employeeName}</h4>
                   <p className="text-slate-400 font-mono text-[9.5px] mt-0.5">ID Colaborador: {aso.employeeId}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5 text-[11px] bg-slate-50 p-3 rounded-xl border border-slate-100 text-slate-650 font-sans font-bold">
+                <div className="grid grid-cols-2 gap-2.5 text-[11px] bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-700 text-slate-650 font-sans font-bold">
                   <div>
                     <span className="text-slate-450 uppercase text-[8px] font-bold block mb-0.5">Realizado em</span>
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-slate-400" /> {aso.examDate.slice(0, 10)}</span>
@@ -206,9 +206,9 @@ export default function AsoCertificatesTab() {
                     <span className="text-slate-450 uppercase text-[8px] font-bold block mb-0.5">Validade/Próximo</span>
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-slate-400" /> {aso.nextExamDate.slice(0, 10)}</span>
                   </div>
-                  <div className="col-span-2 border-t border-slate-200/60 pt-2 mt-1">
+                  <div className="col-span-2 border-t border-slate-200 dark:border-slate-700/60 pt-2 mt-1">
                     <span className="text-slate-450 uppercase text-[8px] font-bold block mb-0.5">Médico Examinador</span>
-                    <span className="text-slate-700 truncate block">{aso.doctorName || 'Não especificado'} ({aso.doctorCrm || 'CRM/SP -'})</span>
+                    <span className="text-slate-700 dark:text-slate-200 truncate block">{aso.doctorName || 'Não especificado'} ({aso.doctorCrm || 'CRM/SP -'})</span>
                   </div>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export default function AsoCertificatesTab() {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-xl rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base">Registrar Atestado de Saúde Ocupacional (ASO)</h3>
@@ -239,11 +239,11 @@ export default function AsoCertificatesTab() {
 
             <form onSubmit={handleCreateAso} className="p-6 space-y-4">
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Selecione o Colaborador</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Selecione o Colaborador</label>
                 <select
                   value={newAso.employeeId}
                   onChange={(e) => setNewAso({...newAso, employeeId: e.target.value})}
-                  className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-brand-primary bg-white text-[12px] font-medium"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12px] font-medium"
                   required
                 >
                   <option value="">Selecione um funcionário...</option>
@@ -255,7 +255,7 @@ export default function AsoCertificatesTab() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Data do Exame</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Data do Exame</label>
                   <input
                     type="date"
                     required
@@ -269,50 +269,50 @@ export default function AsoCertificatesTab() {
                         nextExamDate: nextDate.toISOString().split('T')[0]
                       });
                     }}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Vencimento / Próximo Exame</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Vencimento / Próximo Exame</label>
                   <input
                     type="date"
                     required
                     value={newAso.nextExamDate}
                     onChange={(e) => setNewAso({...newAso, nextExamDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="sm:col-span-2">
-                  <label className="font-semibold block mb-1 text-slate-600">Médico Emissor</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Médico Emissor</label>
                   <input
                     type="text"
                     required
                     placeholder="Ex: Dr. Roberto Alves"
                     value={newAso.doctorName}
                     onChange={(e) => setNewAso({...newAso, doctorName: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">CRM do Médico</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">CRM do Médico</label>
                   <input
                     type="text"
                     required
                     placeholder="Ex: CRM/SP 123456"
                     value={newAso.doctorCrm}
                     onChange={(e) => setNewAso({...newAso, doctorCrm: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-brand-primary text-[12px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Resultado do ASO</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Resultado do ASO</label>
                 <div className="flex gap-4">
-                  <label className="flex items-center gap-2 font-bold text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input
                       type="radio"
                       name="status"
@@ -323,7 +323,7 @@ export default function AsoCertificatesTab() {
                     />
                     Apto
                   </label>
-                  <label className="flex items-center gap-2 font-bold text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input
                       type="radio"
                       name="status"
@@ -337,11 +337,11 @@ export default function AsoCertificatesTab() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-600 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>

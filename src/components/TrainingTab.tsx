@@ -101,11 +101,11 @@ export default function TrainingTab({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         {/* Left column: LMS Online Exam Suite */}
-        <div className="lg:col-span-1 bg-white p-4 rounded border border-slate-200 flex flex-col justify-between shadow-sm">
+        <div className="lg:col-span-1 bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 flex flex-col justify-between shadow-sm">
           <div>
             <div className="flex items-center gap-1.5 mb-2">
               <Award className="w-4 h-4 text-safety-green animate-pulse" />
-              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-tight">LMS & Prova Regulamentadora</h3>
+              <h3 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight">LMS & Prova Regulamentadora</h3>
             </div>
             <p className="text-slate-400 text-[10px] leading-relaxed mb-3">
               Portal de exames integrados para emissão automatizada de certificados conforme diretrizes de proficiência das NRs.
@@ -115,11 +115,11 @@ export default function TrainingTab({
               <div className="space-y-3">
                 {/* Select employee to take quiz */}
                 <div>
-                  <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Trabalhador Examinado</label>
+                  <label className="font-bold block mb-1 text-[10px] text-slate-500 dark:text-slate-400 uppercase">Trabalhador Examinado</label>
                   <select
                     value={activeEmpId}
                     onChange={(e) => setActiveEmpId(e.target.value)}
-                    className="w-full border border-slate-200 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white text-[11px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white dark:bg-slate-800 text-[11px]"
                   >
                     <option value="">Selecione o Colaborador...</option>
                     {companyEmployees.map((emp) => (
@@ -132,11 +132,11 @@ export default function TrainingTab({
 
                 {/* Select NR Course */}
                 <div>
-                  <label className="font-bold block mb-1 text-[10px] text-slate-500 uppercase">Curso / Norma Reguladora</label>
+                  <label className="font-bold block mb-1 text-[10px] text-slate-500 dark:text-slate-400 uppercase">Curso / Norma Reguladora</label>
                   <select
                     value={activeTrainingId}
                     onChange={(e) => setActiveTrainingId(e.target.value)}
-                    className="w-full border border-slate-200 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white text-[11px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded p-1.5 focus:outline-none focus:border-safety-green bg-white dark:bg-slate-800 text-[11px]"
                   >
                     <option value="">Selecione a NR de Formação...</option>
                     {trainings.map((t) => (
@@ -155,7 +155,7 @@ export default function TrainingTab({
                 </button>
               </div>
             ) : !quizFinished ? (
-              <div className="space-y-3 animate-fade-in text-slate-700">
+              <div className="space-y-3 animate-fade-in text-slate-700 dark:text-slate-200">
                 <div className="flex justify-between bg-safety-green/10 text-safety-green p-2 rounded border border-safety-green/20 font-bold uppercase text-[9px] tracking-wide">
                   <span>{selectedTraining?.nr} Exam Center</span>
                   <span>Questão {currentQuestionIdx + 1} de {activeQuizQuestions.length}</span>
@@ -163,7 +163,7 @@ export default function TrainingTab({
 
                 {activeQuizQuestions[currentQuestionIdx] ? (
                   <div className="space-y-2.5">
-                    <h4 className="font-bold text-slate-800 text-[11px] leading-snug">
+                    <h4 className="font-bold text-slate-800 dark:text-slate-100 text-[11px] leading-snug">
                       {activeQuizQuestions[currentQuestionIdx].question}
                     </h4>
 
@@ -176,7 +176,7 @@ export default function TrainingTab({
                           className={`w-full text-left p-2 rounded border text-[11px] transition-all leading-tight ${
                             selectedAnswer === i 
                               ? 'border-safety-green bg-safety-green/10 text-safety-green font-bold' 
-                              : 'border-slate-300 hover:bg-slate-100 text-slate-700 bg-slate-50'
+                              : 'border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900'
                           }`}
                         >
                           {opt}
@@ -203,9 +203,9 @@ export default function TrainingTab({
             ) : (
               <div className="text-center py-4 space-y-3 animate-fade-in">
                 <CheckCircle2 className="w-10 h-10 text-safety-green mx-auto animate-bounce" />
-                <h4 className="font-extrabold text-slate-800 text-xs leading-snug">Exame Concluído!</h4>
+                <h4 className="font-extrabold text-slate-800 dark:text-slate-100 text-xs leading-snug">Exame Concluído!</h4>
                 
-                <div className="bg-slate-50 p-3 rounded border border-slate-200 text-slate-600 max-w-xs mx-auto">
+                <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 max-w-xs mx-auto">
                   <p className="text-[10px]">Aproveitamento total:</p>
                   <strong className="text-lg font-bold font-mono block text-safety-green mt-0.5">
                     {Math.round((correctCount / activeQuizQuestions.length) * 100)}%
@@ -231,7 +231,7 @@ export default function TrainingTab({
             )}
           </div>
 
-          <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-400">
+          <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-[9px] text-slate-400">
             <span>Certificações autenticadas por blockchain interna</span>
             <span className="text-safety-green font-bold">Portaria SIT 231 MTE</span>
           </div>
@@ -239,18 +239,18 @@ export default function TrainingTab({
 
         {/* Right columns: Master qualification grid and certificate download links */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white p-4 rounded border border-slate-200 shadow-sm">
-            <h3 className="font-bold text-xs text-slate-700 uppercase tracking-tight mb-3 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 shadow-sm">
+            <h3 className="font-bold text-xs text-slate-700 dark:text-slate-200 uppercase tracking-tight mb-3 flex items-center gap-1.5">
               <GraduationCap className="w-4 h-4 text-safety-green" />
               Histórico de Capacitações e Certificados
             </h3>
 
             {activeCerts.length > 0 ? (
-              <div className="space-y-2 font-sans text-xs text-slate-700">
+              <div className="space-y-2 font-sans text-xs text-slate-700 dark:text-slate-200">
                 {activeCerts.map((cert) => {
                   const isExpired = cert.status === 'Vencido' || new Date(cert.expiryDate) < new Date();
                   return (
-                    <div key={cert.id} className="p-2.5 bg-slate-50 rounded border border-slate-200 hover:bg-white hover:shadow-sm transition flex justify-between items-center">
+                    <div key={cert.id} className="p-2.5 bg-slate-50 dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700 hover:bg-white dark:bg-slate-800 hover:shadow-sm transition flex justify-between items-center">
                       <div className="space-y-1">
                         <div className="flex items-center gap-1.5">
                           <span className="bg-[#1e293b] text-white font-mono font-bold px-1.5 py-0.5 rounded text-[8px]">
@@ -262,7 +262,7 @@ export default function TrainingTab({
                             {isExpired ? 'Vencido' : 'Certificado Ativo'}
                           </span>
                         </div>
-                        <h4 className="font-bold text-slate-800 text-[11px]">{cert.employeeName}</h4>
+                        <h4 className="font-bold text-slate-800 dark:text-slate-100 text-[11px]">{cert.employeeName}</h4>
                         <p className="text-slate-400 text-[9px] leading-tight">{cert.trainingTitle}</p>
                         
                         <div className="flex gap-3 text-[9px] text-slate-400 font-mono pt-0.5">
@@ -272,7 +272,7 @@ export default function TrainingTab({
                       </div>
 
                       <div className="text-right flex flex-col justify-between items-end h-14">
-                        <span className="text-slate-400 font-mono text-[9px]">Aproveitamento: <strong className="text-slate-800 font-bold">{cert.score}%</strong></span>
+                        <span className="text-slate-400 font-mono text-[9px]">Aproveitamento: <strong className="text-slate-800 dark:text-slate-100 font-bold">{cert.score}%</strong></span>
                         
                         <button
                           onClick={() => Swal.fire('Sucesso', `Certificação de ${cert.employeeName} referente à norma ${cert.nr} gerada com validade nacional em formato ABNT!`, 'success')}
@@ -287,9 +287,9 @@ export default function TrainingTab({
                 })}
               </div>
             ) : (
-              <div className="text-center py-12 text-slate-450 border border-dashed border-slate-200 rounded flex flex-col items-center justify-center gap-1.5">
-                <BookOpen className="w-8 h-8 text-slate-350 bg-slate-100/40" />
-                <span className="font-bold text-slate-600 uppercase text-[10px]">Sem Capacitações Registradas</span>
+              <div className="text-center py-12 text-slate-450 border border-dashed border-slate-200 dark:border-slate-700 rounded flex flex-col items-center justify-center gap-1.5">
+                <BookOpen className="w-8 h-8 text-slate-350 bg-slate-100 dark:bg-slate-800/80/40" />
+                <span className="font-bold text-slate-600 dark:text-slate-300 uppercase text-[10px]">Sem Capacitações Registradas</span>
                 <p className="text-[9px] max-w-[200px] mx-auto leading-relaxed text-slate-400">Emita um novo certificado realizando uma prova na ala integrada LMS à esquerda.</p>
               </div>
             )}

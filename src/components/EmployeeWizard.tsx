@@ -128,17 +128,17 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
     ];
 
     return (
-      <div className="flex flex-col items-center bg-white p-3 rounded-lg border border-slate-200 mt-2 shadow-inner w-full">
-        <span className="font-bold text-[9px] text-slate-500 uppercase tracking-wider mb-2">Selecione o dedo para cadastro</span>
+      <div className="flex flex-col items-center bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 mt-2 shadow-inner w-full">
+        <span className="font-bold text-[9px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Selecione o dedo para cadastro</span>
         <div className="flex justify-around w-full gap-4">
           {hands.map(hand => (
             <div key={hand.side} className="flex flex-col items-center">
-              <span className="text-[10px] font-semibold text-slate-600 mb-1">{hand.name}</span>
-              <div className="relative w-32 h-24 border border-slate-100 bg-slate-50 rounded-xl overflow-hidden flex items-end justify-center pb-2">
+              <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-300 mb-1">{hand.name}</span>
+              <div className="relative w-32 h-24 border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden flex items-end justify-center pb-2">
                 {/* Stylized hand illustration */}
                 <div className="absolute inset-0 flex items-center justify-center translate-y-6 opacity-20 pointer-events-none">
                   <Hand 
-                    className={`w-28 h-28 text-slate-800 ${hand.side === 'E' ? '-scale-x-100' : ''}`} 
+                    className={`w-28 h-28 text-slate-800 dark:text-slate-100 ${hand.side === 'E' ? '-scale-x-100' : ''}`} 
                     strokeWidth={1.5}
                   />
                 </div>
@@ -155,7 +155,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                           ? 'bg-safety-green text-white border-2 border-emerald-600 scale-110 z-10'
                           : registeredFingers.includes(finger.code)
                             ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500 scale-105 z-10 pointer-events-none'
-                            : 'bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 hover:scale-105'
+                            : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-200 dark:bg-slate-700 hover:scale-105'
                       } ${finger.class}`}
                     >
                       {finger.abbrev}
@@ -167,7 +167,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
           ))}
         </div>
         {selectedFinger && (
-          <span className="text-[10px] font-bold text-slate-700 mt-2 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200 mt-2 bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
             Dedo Selecionado: <span className="text-safety-green">{getFingerLabel(selectedFinger)}</span>
           </span>
         )}
@@ -177,7 +177,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
+      <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
         {/* Header */}
         <div className="bg-slate-900 p-5 text-white flex justify-between items-center shrink-0 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-safety-green/20 blur-3xl rounded-full translate-x-10 -translate-y-10"></div>
@@ -188,15 +188,15 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
             </h3>
             <p className="text-[10px] text-slate-400 mt-1">Conformidade com o eSocial e NR-01</p>
           </div>
-          <button onClick={onCancel} className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer z-10 p-2 bg-white/5 rounded-full hover:bg-white/10 transition">
+          <button onClick={onCancel} className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer z-10 p-2 bg-white dark:bg-slate-800/5 rounded-full hover:bg-white dark:bg-slate-800/10 transition">
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Stepper Indicator */}
-        <div className="bg-slate-50 border-b border-slate-200 px-6 py-4 shrink-0">
+        <div className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-6 py-4 shrink-0">
           <div className="flex items-center justify-between relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full z-0"></div>
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-full z-0"></div>
             <div 
               className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-safety-green rounded-full z-0 transition-all duration-300"
               style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
@@ -212,11 +212,11 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                       ? 'bg-safety-green text-white scale-110 ring-4 ring-safety-green/20' 
                       : isCompleted
                       ? 'bg-emerald-500 text-white'
-                      : 'bg-white border-2 border-slate-200 text-slate-400'
+                      : 'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-400'
                   }`}>
                     {s.icon}
                   </div>
-                  <span className={`text-[9px] font-bold uppercase tracking-wider ${isActive ? 'text-slate-800' : 'text-slate-400'}`}>
+                  <span className={`text-[9px] font-bold uppercase tracking-wider ${isActive ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400'}`}>
                     {s.title}
                   </span>
                 </div>
@@ -226,7 +226,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
         </div>
 
         {/* Form Content Area */}
-        <div className="p-6 overflow-y-auto flex-1 bg-white relative min-h-[350px]">
+        <div className="p-6 overflow-y-auto flex-1 bg-white dark:bg-slate-800 relative min-h-[350px]">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div
@@ -237,7 +237,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                 transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
-                <div className="flex flex-col md:flex-row gap-6 items-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div className="flex flex-col md:flex-row gap-6 items-center bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                   <PhotoSelector
                     photoUrl={empData.photoUrl || ''}
                     onPhotoSelected={(url) => setEmpData({ ...empData, photoUrl: url })}
@@ -257,42 +257,42 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">Nome Completo</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Nome Completo</label>
                     <input
                       type="text"
                       value={empData.name || ''}
                       onChange={(e) => setEmpData({...empData, name: e.target.value})}
                       placeholder="Ex: João da Silva Santos"
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">Data de Nascimento</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Data de Nascimento</label>
                     <input
                       type="date"
                       value={empData.birthDate || ''}
                       onChange={(e) => setEmpData({...empData, birthDate: e.target.value})}
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">CPF</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">CPF</label>
                     <input
                       type="text"
                       value={empData.cpf || ''}
                       onChange={(e) => setEmpData({...empData, cpf: maskCPF(e.target.value)})}
                       placeholder="000.000.000-00"
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">RG</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">RG</label>
                     <input
                       type="text"
                       value={empData.rg || ''}
                       onChange={(e) => setEmpData({...empData, rg: maskRG(e.target.value)})}
                       placeholder="0.000.000"
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                 </div>
@@ -307,7 +307,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                       value={empData.phone || ''}
                       onChange={(e) => setEmpData({...empData, phone: maskPhone(e.target.value)})}
                       placeholder="(00) 00000-0000"
-                      className="w-full border-2 border-emerald-200 rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-xs font-semibold bg-white"
+                      className="w-full border-2 border-emerald-200 rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-xs font-semibold bg-white dark:bg-slate-800"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -319,7 +319,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                       value={empData.email || ''}
                       onChange={(e) => setEmpData({...empData, email: e.target.value})}
                       placeholder="email@empresa.com"
-                      className="w-full border-2 border-emerald-200 rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-xs font-semibold bg-white"
+                      className="w-full border-2 border-emerald-200 rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-xs font-semibold bg-white dark:bg-slate-800"
                     />
                   </div>
                 </div>
@@ -337,33 +337,33 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">Matrícula Interna</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Matrícula Interna</label>
                     <input
                       type="text"
                       value={empData.matricula || ''}
                       onChange={(e) => setEmpData({...empData, matricula: e.target.value})}
                       placeholder="Ex: MAT-123"
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">Data de Admissão</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Data de Admissão</label>
                     <input
                       type="date"
                       value={empData.admissionDate || ''}
                       onChange={(e) => setEmpData({...empData, admissionDate: e.target.value})}
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">Setor</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Setor</label>
                     <select
                       value={empData.sector || 'Usinagem'}
                       onChange={(e) => setEmpData({...empData, sector: e.target.value})}
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold cursor-pointer"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold cursor-pointer"
                     >
                       <option value="Usinagem">Usinagem</option>
                       <option value="Soldagem">Soldagem</option>
@@ -373,22 +373,22 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">Cargo</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Cargo</label>
                     <input
                       type="text"
                       value={empData.role || ''}
                       onChange={(e) => setEmpData({...empData, role: e.target.value})}
                       placeholder="Ex: Operador I"
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                   <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-[10px] font-bold uppercase text-slate-500">Gestor Direto</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Gestor Direto</label>
                     <input
                       type="text"
                       value={empData.manager || ''}
                       onChange={(e) => setEmpData({...empData, manager: e.target.value})}
-                      className="w-full border-2 border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
                     />
                   </div>
                 </div>
@@ -432,11 +432,11 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                 </div>
 
                 {/* Biometria */}
-                <div className="bg-slate-50 p-5 rounded-xl border border-slate-200/80">
+                <div className="bg-slate-50 dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700/80">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div className="space-y-1">
-                      <h4 className="font-bold text-slate-800 text-sm">Biometria Digital</h4>
-                      <p className="text-slate-500 text-[10px]">Captura biométrica para conformidade jurídica máxima.</p>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Biometria Digital</h4>
+                      <p className="text-slate-500 dark:text-slate-400 text-[10px]">Captura biométrica para conformidade jurídica máxima.</p>
                       {biometricError && (
                         <span className="text-rose-600 font-bold block text-[10px] bg-rose-50 px-2 py-1 rounded inline-block mt-1">{biometricError}</span>
                       )}
@@ -452,7 +452,7 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                         <button
                           type="button"
                           onClick={handleClearBiometrics}
-                          className="px-4 py-2 bg-white text-rose-600 font-bold rounded-xl hover:bg-rose-50 transition text-[10px] uppercase tracking-wider border-2 border-rose-100 flex items-center gap-2"
+                          className="px-4 py-2 bg-white dark:bg-slate-800 text-rose-600 font-bold rounded-xl hover:bg-rose-50 transition text-[10px] uppercase tracking-wider border-2 border-rose-100 flex items-center gap-2"
                         >
                           <Trash2 className="w-3.5 h-3.5" /> Excluir
                         </button>
@@ -481,10 +481,10 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
         </div>
 
         {/* Footer Navigation */}
-        <div className="bg-slate-50 p-5 border-t border-slate-200 flex justify-between items-center shrink-0">
+        <div className="bg-slate-50 dark:bg-slate-900 p-5 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center shrink-0">
           <button
             onClick={step === 1 ? onCancel : handlePrev}
-            className="px-5 py-2.5 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-bold rounded-xl transition text-[11px] uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition text-[11px] uppercase tracking-wider flex items-center gap-2 cursor-pointer"
           >
             {step === 1 ? 'Cancelar' : <><ChevronLeft className="w-4 h-4" /> Voltar</>}
           </button>

@@ -758,9 +758,9 @@ export default function RiskMapTab() {
     if (val.includes('fís')) return 'bg-emerald-600 ring-emerald-300 hover:bg-emerald-700 text-white';
     if (val.includes('quí')) return 'bg-rose-600 ring-rose-300 hover:bg-rose-700 text-white';
     if (val.includes('biol')) return 'bg-[#78350f] ring-amber-850 hover:bg-amber-900 text-white';
-    if (val.includes('erg')) return 'bg-amber-400 ring-amber-200 hover:bg-amber-500 text-slate-900';
+    if (val.includes('erg')) return 'bg-amber-400 ring-amber-200 hover:bg-amber-500 text-slate-900 dark:text-white';
     if (val.includes('mec')) return 'bg-blue-600 ring-blue-300 hover:bg-blue-700 text-white';
-    return 'bg-slate-500 text-white';
+    return 'bg-slate-50 dark:bg-slate-9000 text-white';
   };
 
   const getBadgeColors = (color: string) => {
@@ -780,7 +780,7 @@ export default function RiskMapTab() {
     if (val.includes('azul') || val.includes('mec')) {
       return 'bg-blue-50 text-blue-700 border border-blue-250 font-bold';
     }
-    return 'bg-slate-100 text-slate-700 border border-slate-200';
+    return 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700';
   };
 
   const getMarkerBgColor = (color: string) => {
@@ -795,7 +795,7 @@ export default function RiskMapTab() {
       return 'bg-[#78350f] ring-amber-700 text-white';
     }
     if (val.includes('amar') || val.includes('erg')) {
-      return 'bg-amber-500 ring-amber-300 text-slate-900';
+      return 'bg-amber-500 ring-amber-300 text-slate-900 dark:text-white';
     }
     if (val.includes('azul') || val.includes('mec')) {
       return 'bg-blue-600 ring-blue-300 text-white';
@@ -822,7 +822,7 @@ export default function RiskMapTab() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-sm font-sans flex-1 flex flex-col min-w-0" id="mapa-riscos-tab">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm font-sans flex-1 flex flex-col min-w-0" id="mapa-riscos-tab">
       
       {/* Upper Navigation Tabs - Toggle Mode */}
       <div className="bg-slate-900 px-4 pt-3 pb-0 flex border-b border-slate-800 justify-between items-center flex-wrap gap-2">
@@ -832,7 +832,7 @@ export default function RiskMapTab() {
             onClick={() => setActiveMode('blueprint')}
             className={`px-4 py-2 text-[11px] font-extrabold uppercase rounded-t tracking-wider flex items-center gap-1.5 transition ${
               activeMode === 'blueprint' 
-                ? 'bg-white text-slate-900 border border-b-white font-black' 
+                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-b-white font-black' 
                 : 'text-slate-350 hover:bg-slate-805 hover:text-white'
             }`}
           >
@@ -844,7 +844,7 @@ export default function RiskMapTab() {
             onClick={() => setActiveMode('vision')}
             className={`px-4 py-2 text-[11px] font-extrabold uppercase rounded-t tracking-wider flex items-center gap-1.5 transition ${
               activeMode === 'vision' 
-                ? 'bg-white text-slate-900 border border-b-white font-black' 
+                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-b-white font-black' 
                 : 'text-slate-350 hover:bg-slate-805 hover:text-white'
             }`}
           >
@@ -863,9 +863,9 @@ export default function RiskMapTab() {
         <div className="flex-1 flex flex-col">
           
           {/* Internal Title Area */}
-          <div className="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <div>
-              <h2 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+              <h2 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-1.5">
                 <Map className="w-5 h-5 text-indigo-600" />
                 Criador Manual de Plantas de Riscos (SST CIPA)
               </h2>
@@ -913,10 +913,10 @@ export default function RiskMapTab() {
               <button
                 type="button"
                 onClick={() => blueprintFileRef.current?.click()}
-                className="px-2.5 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-[10.5px] text-slate-700 font-bold uppercase tracking-wider rounded transition flex items-center gap-1.5 cursor-pointer"
+                className="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 text-[10.5px] text-slate-700 dark:text-slate-200 font-bold uppercase tracking-wider rounded transition flex items-center gap-1.5 cursor-pointer"
                 title="Subir sua própria planta de fábrica ou setor"
               >
-                <UploadCloud className="w-3.5 h-3.5 text-slate-500" />
+                <UploadCloud className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                 Carregar Minha Planta
               </button>
               <input
@@ -930,7 +930,7 @@ export default function RiskMapTab() {
               <button
                 type="button"
                 onClick={handlePrintMap}
-                className="px-2.5 py-1.5 bg-slate-100 border border-slate-250 hover:bg-slate-200 text-[10.5px] text-slate-800 font-bold uppercase tracking-wider rounded transition flex items-center gap-1.5 cursor-pointer"
+                className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-250 hover:bg-slate-200 dark:bg-slate-700 text-[10.5px] text-slate-800 dark:text-slate-100 font-bold uppercase tracking-wider rounded transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5 text-slate-650" />
                 Imprimir Mapa
@@ -953,18 +953,18 @@ export default function RiskMapTab() {
               <div className="xl:col-span-3 space-y-4">
                 
                 {/* Legenda Clássica Frame */}
-                <div className="bg-white border-2 border-slate-800/80 p-3 rounded shadow-sm bg-stone-50/50">
+                <div className="bg-white dark:bg-slate-800 border-2 border-slate-800/80 p-3 rounded shadow-sm bg-stone-50/50">
                   <div className="bg-slate-800 text-white text-center p-1.5 py-1 text-[10.5px] font-black uppercase tracking-wider rounded-sm mb-3">
                     LEGENDA DA NR-05
                   </div>
 
                   {/* Section: Circle colors / Categories */}
-                  <div className="space-y-2 mb-4 border-b border-slate-200 pb-3">
-                    <span className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest block mb-1">
+                  <div className="space-y-2 mb-4 border-b border-slate-200 dark:border-slate-700 pb-3">
+                    <span className="text-[9px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-1">
                       Grupo por Cores (SST)
                     </span>
                     
-                    <div className="space-y-1 text-[11px] font-semibold text-slate-700">
+                    <div className="space-y-1 text-[11px] font-semibold text-slate-700 dark:text-slate-200">
                       <div className="flex items-center gap-2.5">
                         <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white shrink-0 shadow-sm" />
                         <span>Risco Físico</span>
@@ -990,13 +990,13 @@ export default function RiskMapTab() {
 
                   {/* Section: Circle sizes / Intensities */}
                   <div className="space-y-3 pb-1">
-                    <span className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest block mb-1">
+                    <span className="text-[9px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-1">
                       Dimensões da Intensidade
                     </span>
 
-                    <div className="space-y-2 text-[10.5px] font-semibold text-slate-700">
+                    <div className="space-y-2 text-[10.5px] font-semibold text-slate-700 dark:text-slate-200">
                       <div className="flex items-center gap-3">
-                        <span className="w-5 h-5 rounded-full border border-slate-700 bg-white shadow-inner flex items-center justify-center font-bold text-[8px] text-slate-550 shrink-0">
+                        <span className="w-5 h-5 rounded-full border border-slate-700 bg-white dark:bg-slate-800 shadow-inner flex items-center justify-center font-bold text-[8px] text-slate-550 shrink-0">
                           P
                         </span>
                         <div>
@@ -1005,7 +1005,7 @@ export default function RiskMapTab() {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-full border border-slate-700 bg-white shadow-inner flex items-center justify-center font-bold text-[9px] text-slate-550 shrink-0">
+                        <span className="w-8 h-8 rounded-full border border-slate-700 bg-white dark:bg-slate-800 shadow-inner flex items-center justify-center font-bold text-[9px] text-slate-550 shrink-0">
                           M
                         </span>
                         <div>
@@ -1014,7 +1014,7 @@ export default function RiskMapTab() {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <span className="w-12 h-12 rounded-full border border-slate-700 bg-white shadow-inner flex items-center justify-center font-bold text-[10px] text-slate-550 shrink-0">
+                        <span className="w-12 h-12 rounded-full border border-slate-700 bg-white dark:bg-slate-800 shadow-inner flex items-center justify-center font-bold text-[10px] text-slate-550 shrink-0">
                           G
                         </span>
                         <div>
@@ -1165,7 +1165,7 @@ export default function RiskMapTab() {
                         {/* Tipo de parede info */}
                         <div className="flex items-center justify-between text-[11px] text-slate-350 bg-slate-950 p-2 rounded border border-slate-800 font-mono">
                           <span>Esquema: <strong>{wall.tipo === 'horizontal' ? 'Horizontal ▬▬' : 'Vertical ▮▮'}</strong></span>
-                          <span>ID: <strong className="text-[9px] text-slate-500">{wall.id.split('-')[1] || wall.id}</strong></span>
+                          <span>ID: <strong className="text-[9px] text-slate-500 dark:text-slate-400">{wall.id.split('-')[1] || wall.id}</strong></span>
                         </div>
 
                         {/* Adjust length (Tamanho / Comprimento) */}
@@ -1561,8 +1561,8 @@ export default function RiskMapTab() {
               {/* CENTER COMPONENT: Floor Plan Canvas area (where elements are rendered) */}
               <div className="xl:col-span-9 flex flex-col gap-4">
 
-                <div className="bg-slate-100 p-2 border border-slate-205 rounded flex justify-between items-center bg-stone-50">
-                  <span className="text-[10.5px] font-mono text-slate-500 font-bold uppercase tracking-wider">
+                <div className="bg-slate-100 dark:bg-slate-800/80 p-2 border border-slate-205 rounded flex justify-between items-center bg-stone-50">
+                  <span className="text-[10.5px] font-mono text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
                     Planta Baixa: {blueprintBackgroundType === 'default' ? 'MODELO ESQUEMÁTICO INTEGRADO (NR-05 DE FÁBRICA)' : 'SUA IMAGEM CUSTOMIZADA'}
                   </span>
                   <span className="text-[9px] bg-slate-900 text-white px-2 py-0.5 rounded uppercase font-black tracking-widest font-mono">
@@ -1571,14 +1571,14 @@ export default function RiskMapTab() {
                 </div>
 
                 {/* THE CORE DRAWING SHEET */}
-                <div className="bg-slate-200 border-4 border-slate-950 rounded-lg p-1.5 shadow-md overflow-x-auto">
+                <div className="bg-slate-200 dark:bg-slate-700 border-4 border-slate-950 rounded-lg p-1.5 shadow-md overflow-x-auto">
                   <div className="min-w-[700px]">
                     <div 
                       onClick={handleBlueprintCanvasClick}
                       onMouseMove={handleCanvasMouseMove}
                       onMouseUp={handleCanvasMouseUp}
                       onMouseLeave={handleCanvasMouseUp}
-                      className="relative w-full aspect-[2/1] bg-white border border-slate-300 select-none overflow-hidden cursor-crosshair rounded"
+                      className="relative w-full aspect-[2/1] bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 select-none overflow-hidden cursor-crosshair rounded"
                     >
                       {autogeneratingBlueprint && (
                         <div className="absolute inset-0 bg-slate-900/95 z-50 flex flex-col items-center justify-center text-white p-6" onClick={(e) => e.stopPropagation()}>
@@ -1600,18 +1600,18 @@ export default function RiskMapTab() {
                         <img 
                           src={customBlueprintImage} 
                           alt="Custom industrial blueprint" 
-                          className="w-full h-full object-contain bg-white"
+                          className="w-full h-full object-contain bg-white dark:bg-slate-800"
                           referrerPolicy="no-referrer"
                         />
                       ) : blueprintBackgroundType === 'scratch' ? (
                         /* Case: Canva Draft Grid Space from Scratch */
-                        <div className="absolute inset-0 bg-[#f8fafc] bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:20.5px_20.5px] border-2 border-slate-900 flex flex-col justify-between p-4 font-sans text-slate-800">
+                        <div className="absolute inset-0 bg-[#f8fafc] bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:20.5px_20.5px] border-2 border-slate-900 flex flex-col justify-between p-4 font-sans text-slate-800 dark:text-slate-100">
                           <div className="text-[9px] font-mono text-slate-400 font-bold uppercase tracking-wider select-none pointer-events-none">
                             Draft Canva Workspace 100x100
                           </div>
                           {customWalls.length === 0 && customTexts.length === 0 && (
-                            <div className="m-auto text-center font-mono max-w-sm pointer-events-none select-none bg-white p-4 rounded border border-slate-200 shadow-sm">
-                              <p className="text-[11px] font-black text-slate-700 uppercase tracking-wider flex items-center justify-center gap-1">
+                            <div className="m-auto text-center font-mono max-w-sm pointer-events-none select-none bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 shadow-sm">
+                              <p className="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center justify-center gap-1">
                                 <Sparkles className="w-4 h-4 text-amber-500" />
                                 Planta Baixa Do Zero
                               </p>
@@ -1626,14 +1626,14 @@ export default function RiskMapTab() {
                         </div>
                       ) : (
                         /* Case: Default Schematic Architectural Floor Plan exactly like the request image! */
-                        <div className="absolute inset-0 w-full h-full p-2 grid grid-cols-12 grid-rows-6 gap-0 bg-white font-sans text-slate-900 border-2 border-slate-900">
+                        <div className="absolute inset-0 w-full h-full p-2 grid grid-cols-12 grid-rows-6 gap-0 bg-white dark:bg-slate-800 font-sans text-slate-900 dark:text-white border-2 border-slate-900">
                           
                           {/* Room: Depósito (Left Tall area) */}
                           <div className="col-span-3 row-span-6 border-r-3 border-slate-900 flex flex-col justify-between p-2.5 bg-stone-50/10">
-                            <span className="text-[9px] font-mono uppercase bg-slate-150 p-1 font-bold text-center border border-slate-200 block rounded self-start">
+                            <span className="text-[9px] font-mono uppercase bg-slate-150 p-1 font-bold text-center border border-slate-200 dark:border-slate-700 block rounded self-start">
                               S-01
                             </span>
-                            <span className="text-[14px] font-black uppercase text-slate-900 text-center tracking-widest font-mono self-center">
+                            <span className="text-[14px] font-black uppercase text-slate-900 dark:text-white text-center tracking-widest font-mono self-center">
                               Depósito
                             </span>
                             <span />
@@ -1641,21 +1641,21 @@ export default function RiskMapTab() {
 
                           {/* Room: Cozinha */}
                           <div className="col-span-2 row-span-3 border-r-3 border-b-3 border-slate-900 flex flex-col justify-between p-2">
-                            <span className="text-[14px] font-black uppercase text-slate-900 text-center tracking-widest self-center m-auto font-mono">
+                            <span className="text-[14px] font-black uppercase text-slate-900 dark:text-white text-center tracking-widest self-center m-auto font-mono">
                               Cozinha
                             </span>
                           </div>
 
                           {/* Room: Contabilidade (Cont.) */}
                           <div className="col-span-1 row-span-2 border-r-2 border-b-3 border-slate-900 flex p-1.5 bg-[#fef08a]/5">
-                            <span className="text-[11px] font-extrabold uppercase text-slate-900 text-center self-end m-auto font-mono">
+                            <span className="text-[11px] font-extrabold uppercase text-slate-900 dark:text-white text-center self-end m-auto font-mono">
                               Cont.
                             </span>
                           </div>
 
                           {/* Room: Recursos Humanos (RH) */}
                           <div className="col-span-1 row-span-2 border-r-3 border-b-3 border-slate-900 flex p-1.5 justify-center">
-                            <span className="text-[11px] font-extrabold uppercase text-slate-900 text-center self-end m-auto font-mono">
+                            <span className="text-[11px] font-extrabold uppercase text-slate-900 dark:text-white text-center self-end m-auto font-mono">
                               RH
                             </span>
                           </div>
@@ -1663,65 +1663,65 @@ export default function RiskMapTab() {
                           {/* Room: Sanitários Masc / Fem */}
                           <div className="col-span-1 row-span-2 border-r-3 border-b-3 border-slate-950 grid grid-cols-1 sm:grid-cols-2">
                             <div className="border-r border-slate-900 flex items-center justify-center p-1 bg-stone-50">
-                              <span className="text-[9px] font-extrabold text-slate-700 font-mono text-center">Masc</span>
+                              <span className="text-[9px] font-extrabold text-slate-700 dark:text-slate-200 font-mono text-center">Masc</span>
                             </div>
                             <div className="flex items-center justify-center p-1 bg-stone-50">
-                              <span className="text-[9px] font-extrabold text-slate-700 font-mono text-center">Fem</span>
+                              <span className="text-[9px] font-extrabold text-slate-700 dark:text-slate-200 font-mono text-center">Fem</span>
                             </div>
                           </div>
 
                           {/* Room: Diretoria */}
                           <div className="col-span-2 row-span-3 border-r-3 border-b-3 border-slate-900 flex p-2">
-                            <span className="text-[13px] font-black uppercase text-slate-900 text-center tracking-widest m-auto font-mono">
+                            <span className="text-[13px] font-black uppercase text-slate-900 dark:text-white text-center tracking-widest m-auto font-mono">
                               Diretoria
                             </span>
                           </div>
 
                           {/* Room: Telemarketing (Telemark.) */}
                           <div className="col-span-2 row-span-1.5 border-b-2 border-slate-905 flex p-1 justify-center items-center">
-                            <span className="text-[11px] font-extrabold uppercase text-slate-900 text-center font-mono">
+                            <span className="text-[11px] font-extrabold uppercase text-slate-900 dark:text-white text-center font-mono">
                               Telemark.
                             </span>
                           </div>
 
                           {/* Lower Right: Recepção */}
                           <div className="col-span-1 row-span-3 border-l-3 border-b-3 border-slate-900 flex p-2 bg-stone-50/20">
-                            <span className="text-[11px] font-extrabold uppercase text-slate-900 text-center tracking-widest leading-snug m-auto font-mono">
+                            <span className="text-[11px] font-extrabold uppercase text-slate-900 dark:text-white text-center tracking-widest leading-snug m-auto font-mono">
                               Recepção
                             </span>
                           </div>
 
                           {/* Room: T.I. */}
                           <div className="col-span-2 row-span-1.5 border-b-3 border-slate-900 flex p-1 bg-stone-100 flex-col items-center justify-center">
-                            <span className="text-[11px] font-black uppercase text-slate-900 text-center font-mono">
+                            <span className="text-[11px] font-black uppercase text-slate-900 dark:text-white text-center font-mono">
                               T.I.
                             </span>
                           </div>
 
                           {/* Room: Vestuário / V.C. (Lower layout corridor boundary) */}
                           <div className="col-span-2 row-span-1.5 border-t-3 border-r-3 border-slate-900 flex p-1 items-end justify-center">
-                            <span className="text-[10px] font-extrabold uppercase text-slate-900 font-mono">
+                            <span className="text-[10px] font-extrabold uppercase text-slate-900 dark:text-white font-mono">
                               Vestiário & WC
                             </span>
                           </div>
 
                           {/* Room: Produção (Grande área industrial) */}
                           <div className="col-span-4 row-span-3 border-t-3 border-r-3 border-slate-900 flex items-center justify-center bg-stone-50/5 p-4">
-                            <span className="text-[16px] font-black uppercase text-slate-900 tracking-widest font-mono">
+                            <span className="text-[16px] font-black uppercase text-slate-900 dark:text-white tracking-widest font-mono">
                               Produção
                             </span>
                           </div>
 
                           {/* Room: C.Q (Controle de Qualidade) */}
                           <div className="col-span-1 row-span-1.5 border-t-3 border-r-3 border-slate-900 flex items-center justify-center">
-                            <span className="text-[11px] font-bold text-slate-800 text-center uppercase leading-none font-mono">
+                            <span className="text-[11px] font-bold text-slate-800 dark:text-slate-100 text-center uppercase leading-none font-mono">
                               C.Q
                             </span>
                           </div>
 
                           {/* Room: Logística */}
                           <div className="col-span-1 row-span-1.5 border-t-3 border-b-3 border-slate-900 flex items-center justify-center">
-                            <span className="text-[11px] font-bold text-slate-800 text-center uppercase leading-none font-mono">
+                            <span className="text-[11px] font-bold text-slate-800 dark:text-slate-100 text-center uppercase leading-none font-mono">
                               Logística
                             </span>
                           </div>
@@ -1766,7 +1766,7 @@ export default function RiskMapTab() {
                                 ? 'cursor-grabbing bg-indigo-500/10 ring-2 ring-indigo-400 rounded-sm shadow-[0_0_12px_rgba(99,102,241,0.4)]' 
                                 : isSelected 
                                   ? 'cursor-grab bg-amber-400/15 ring-2 ring-amber-400 rounded-sm' 
-                                  : 'cursor-grab hover:bg-slate-500/10 rounded-sm'
+                                  : 'cursor-grab hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-9000/10 rounded-sm'
                             }`}
                             title="Arraste para mover, ou clique para selecionar"
                           >
@@ -1801,7 +1801,7 @@ export default function RiskMapTab() {
                             className={`absolute -translate-x-1/2 -translate-y-1/2 z-10 group px-2 py-0.5 rounded border text-[10.5px] font-black uppercase font-mono tracking-tight cursor-pointer shadow-sm transition ${
                               isEditing 
                                 ? 'bg-amber-400 border-amber-500 text-slate-950 scale-105' 
-                                : 'bg-amber-50 border-amber-300 text-amber-900 hover:bg-white hover:text-amber-950 hover:scale-105'
+                                : 'bg-amber-50 border-amber-300 text-amber-900 hover:bg-white dark:bg-slate-800 hover:text-amber-950 hover:scale-105'
                             }`}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1860,7 +1860,7 @@ export default function RiskMapTab() {
                             }`}
                             title={`${item.setor} - Risco ${item.categoria} (${item.intensidade})`}
                           >
-                            <span className={item.categoria === 'Ergonômico' ? 'text-slate-900' : 'text-white'}>
+                            <span className={item.categoria === 'Ergonômico' ? 'text-slate-900 dark:text-white' : 'text-white'}>
                               {refAbbrev}
                             </span>
                           </div>
@@ -2044,15 +2044,15 @@ export default function RiskMapTab() {
                 )}
 
                 {/* CHRONOLOGY TABLE OF CORRECTION ACTIONS AND RISKS BY SECTOR */}
-                <div className="bg-white border border-slate-200 rounded-lg p-3">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1 bg-slate-50 p-1.5 rounded pr-3 border-l-4 border-l-indigo-650">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-2 flex items-center gap-1 bg-slate-50 dark:bg-slate-900 p-1.5 rounded pr-3 border-l-4 border-l-indigo-650">
                     <UserCheck className="w-4 h-4 text-indigo-605" />
                     Cronograma Regulatório e Mapeamentos Registrados (NR-05)
                   </h3>
 
                   <div className="border border-slate-205 rounded overflow-hidden mt-2">
                     <table className="w-full text-left text-xs divide-y divide-slate-100">
-                      <thead className="bg-slate-50 text-[10px] font-bold text-slate-550 uppercase tracking-wider col-header">
+                      <thead className="bg-slate-50 dark:bg-slate-900 text-[10px] font-bold text-slate-550 uppercase tracking-wider col-header">
                         <tr>
                           <th className="p-2 w-12 text-center">Ref</th>
                           <th className="p-2">Setor da Planta</th>
@@ -2066,7 +2066,7 @@ export default function RiskMapTab() {
                       <tbody className="divide-y divide-slate-150 align-top text-slate-650">
                         {manualRisks.length === 0 ? (
                           <tr>
-                            <td colSpan={7} className="p-8 text-center text-slate-500 font-bold uppercase text-[10.5px]">
+                            <td colSpan={7} className="p-8 text-center text-slate-500 dark:text-slate-400 font-bold uppercase text-[10.5px]">
                               Sem riscos afixados na planta regulamentar. Selecione valores e clique em qualquer parte do desenho para registrar um desvio.
                             </td>
                           </tr>
@@ -2080,18 +2080,18 @@ export default function RiskMapTab() {
                                 className={`cursor-pointer transition duration-150 ${
                                   isSelected 
                                     ? 'bg-amber-50 border-l-4 border-l-amber-500 font-medium' 
-                                    : 'hover:bg-slate-50/50'
+                                    : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50'
                                 }`}
                               >
                                 <td className="p-2 text-center font-bold">
                                   <span className={`inline-flex items-center justify-center w-5.5 h-5.5 rounded-full text-[10px] ${
-                                    isSelected ? 'bg-amber-500 text-slate-900' : 'bg-slate-100 text-slate-700'
+                                    isSelected ? 'bg-amber-500 text-slate-900 dark:text-white' : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200'
                                   }`}>
                                     {index + 1}
                                   </span>
                                 </td>
 
-                                <td className="p-2 font-bold text-slate-900">
+                                <td className="p-2 font-bold text-slate-900 dark:text-white">
                                   {item.setor}
                                   <span className="block text-[8.5px] text-slate-400 font-mono mt-0.5">X:{item.x_pct}% Y:{item.y_pct}%</span>
                                 </td>
@@ -2108,11 +2108,11 @@ export default function RiskMapTab() {
                                   </span>
                                 </td>
 
-                                <td className="p-2 text-[11px] leading-snug font-semibold text-slate-800 max-w-xs truncate" title={item.descricao_perigo}>
+                                <td className="p-2 text-[11px] leading-snug font-semibold text-slate-800 dark:text-slate-100 max-w-xs truncate" title={item.descricao_perigo}>
                                   {item.descricao_perigo}
                                 </td>
 
-                                <td className="p-2 text-right text-[10.5px] text-slate-600 leading-snug font-medium max-w-sm">
+                                <td className="p-2 text-right text-[10.5px] text-slate-600 dark:text-slate-300 leading-snug font-medium max-w-sm">
                                   {item.recomendacao_nr}
                                 </td>
 
@@ -2154,8 +2154,8 @@ export default function RiskMapTab() {
         <div className="flex-1 flex flex-col">
           
           {/* Header Vision description Area */}
-          <div className="p-4 bg-slate-50 border-b border-slate-200">
-            <h2 className="text-sm font-extrabold text-slate-800 flex items-center gap-2 uppercase tracking-tight">
+          <div className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+            <h2 className="text-sm font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2 uppercase tracking-tight">
               <Camera className="w-5 h-5 text-safety-green animate-pulse" />
               Verificação IA Multimodal de Fotografias Operacionais
             </h2>
@@ -2169,17 +2169,17 @@ export default function RiskMapTab() {
               
               {/* Left Column - Image & Interactive Plotting (5 cols) */}
               <div className="lg:col-span-5 flex flex-col gap-4">
-                <div className="bg-white border border-slate-200 rounded-lg p-3 flex-1 flex flex-col justify-between">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex-1 flex flex-col justify-between">
                   <div>
                     
                     {/* Mode Selector Tabs (only visible when result exists) */}
                     {result && (
-                      <div className="bg-slate-100/80 p-1 rounded border border-slate-200 flex gap-1 mb-2.5">
+                      <div className="bg-slate-100 dark:bg-slate-800/80/80 p-1 rounded border border-slate-200 dark:border-slate-700 flex gap-1 mb-2.5">
                         <button
                           type="button"
                           onClick={() => { setInteractMode('select'); setIsCreatingNew(false); }}
                           className={`flex-1 text-center text-[10px] font-bold py-1.5 uppercase rounded tracking-wider transition ${
-                            interactMode === 'select' && !isCreatingNew ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                            interactMode === 'select' && !isCreatingNew ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100'
                           }`}
                         >
                           Ver Detalhes
@@ -2188,7 +2188,7 @@ export default function RiskMapTab() {
                           type="button"
                           onClick={() => { setInteractMode('adjust'); setIsCreatingNew(false); }}
                           className={`flex-1 text-center text-[10px] font-bold py-1.5 uppercase rounded tracking-wider transition ${
-                            interactMode === 'adjust' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                            interactMode === 'adjust' ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100'
                           }`}
                           title="Mova marcadores clicando no novo ponto da imagem"
                         >
@@ -2198,7 +2198,7 @@ export default function RiskMapTab() {
                           type="button"
                           onClick={() => { setInteractMode('create'); }}
                           className={`flex-1 text-center text-[10px] font-bold py-1.5 uppercase rounded tracking-wider transition ${
-                            interactMode === 'create' || isCreatingNew ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                            interactMode === 'create' || isCreatingNew ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100'
                           }`}
                         >
                           + Novo Ponto
@@ -2206,7 +2206,7 @@ export default function RiskMapTab() {
                       </div>
                     )}
 
-                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center justify-between border-b border-slate-100 pb-1.5 font-mono">
+                    <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-1.5 font-mono">
                       <span className="flex items-center gap-1.5">
                         <Compass className="w-3.5 h-3.5 text-indigo-505" />
                         {result ? 'MAPA E PLOTS INTERATIVOS' : 'Cenário de Análise'}
@@ -2223,14 +2223,14 @@ export default function RiskMapTab() {
                         className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[260px] ${
                           isDragging 
                             ? 'border-safety-green bg-emerald-50/30' 
-                            : 'border-slate-300 hover:border-slate-450 hover:bg-slate-50/50'
+                            : 'border-slate-300 dark:border-slate-600 hover:border-slate-450 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50'
                         }`}
                       >
                         <UploadCloud className="w-10 h-10 text-slate-400 mb-2.5" />
-                        <span className="text-xs font-extrabold text-slate-700 block">
+                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-200 block">
                           Arraste imagens ou clique aqui
                         </span>
-                        <p className="text-[10.5px] text-slate-500 max-w-xs mt-1.5 leading-relaxed">
+                        <p className="text-[10.5px] text-slate-500 dark:text-slate-400 max-w-xs mt-1.5 leading-relaxed">
                           Faça o upload ou tire uma foto em tempo real da sala, setor ou galpão para mapeamento imediato de riscos.
                         </p>
                         <input
@@ -2339,8 +2339,8 @@ export default function RiskMapTab() {
                   </div>
 
                   {/* Demo presets picker list */}
-                  <div className="mt-4 pt-3 border-t border-slate-100">
-                    <span className="text-[9.5px] font-mono text-slate-500 uppercase tracking-wider block mb-1.5 font-bold">
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
+                    <span className="text-[9.5px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5 font-bold">
                       Testar com cenários de demonstração da fábrica:
                     </span>
                     <div className="space-y-1.5">
@@ -2352,13 +2352,13 @@ export default function RiskMapTab() {
                             type="button"
                             disabled={analyzing}
                             onClick={() => handlePresetSelect(preset.id)}
-                            className="w-full text-left p-2 rounded border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition text-[11px] flex gap-2.5 items-center disabled:opacity-50"
+                            className="w-full text-left p-2 rounded border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 hover:border-slate-300 dark:border-slate-600 transition text-[11px] flex gap-2.5 items-center disabled:opacity-50"
                           >
-                            <div className="p-1 px-1.5 bg-slate-100 group-hover:bg-white rounded border border-slate-200 text-slate-600">
+                            <div className="p-1 px-1.5 bg-slate-100 dark:bg-slate-800/80 group-hover:bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">
                               <PresetIcon className="w-3.5 h-3.5 font-bold" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <span className="font-bold text-slate-700 block truncate">{preset.name}</span>
+                              <span className="font-bold text-slate-700 dark:text-slate-200 block truncate">{preset.name}</span>
                               <span className="text-[9px] text-[#64748b] truncate block mt-0.5">{preset.description}</span>
                             </div>
                           </button>
@@ -2375,14 +2375,14 @@ export default function RiskMapTab() {
                 
                 {/* Conditional Manual Creation Form */}
                 {isCreatingNew && newRiskCoords ? (
-                  <form onSubmit={handleSaveCustomRisk} className="bg-white border border-slate-200 rounded-lg p-4 flex-1 flex flex-col justify-between min-h-[350px]">
+                  <form onSubmit={handleSaveCustomRisk} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex-1 flex flex-col justify-between min-h-[350px]">
                     <div>
-                      <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-3">
+                      <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-2 mb-3">
                         <h3 className="text-xs font-black uppercase text-slate-855 flex items-center gap-1.5 font-mono">
                           <Plus className="w-4 h-4 text-safety-green" />
                           Registrar Ponto Manual de SST
                         </h3>
-                        <span className="bg-slate-100 p-1 px-2 border border-slate-200 text-[9.5px] font-mono font-bold rounded">
+                        <span className="bg-slate-100 dark:bg-slate-800/80 p-1 px-2 border border-slate-200 dark:border-slate-700 text-[9.5px] font-mono font-bold rounded">
                           Coordenadas: X:{newRiskCoords.x}%, Y:{newRiskCoords.y}%
                         </span>
                       </div>
@@ -2393,7 +2393,7 @@ export default function RiskMapTab() {
                           <select
                             value={newRiskData.categoria}
                             onChange={(e) => setNewRiskData({ ...newRiskData, categoria: e.target.value })}
-                            className="w-full bg-white border border-slate-250 rounded px-2.5 py-1.5 text-[11px] focus:outline-none focus:border-safety-green font-semibold text-slate-700 font-mono"
+                            className="w-full bg-white dark:bg-slate-800 border border-slate-250 rounded px-2.5 py-1.5 text-[11px] focus:outline-none focus:border-safety-green font-semibold text-slate-700 dark:text-slate-200 font-mono"
                           >
                             <option value="Físico">Físico (Cor: Verde)</option>
                             <option value="Químico">Químico (Cor: Vermelho)</option>
@@ -2411,7 +2411,7 @@ export default function RiskMapTab() {
                             placeholder="Ex: Fiação viva desprotegida exposta na base do misturador sob risco de indução elétrica..."
                             value={newRiskData.descricao_perigo}
                             onChange={(e) => setNewRiskData({ ...newRiskData, descricao_perigo: e.target.value })}
-                            className="w-full bg-white border border-slate-250 rounded px-2.5 py-1.5 text-[11px] focus:outline-none focus:border-safety-green text-slate-705 leading-snug"
+                            className="w-full bg-white dark:bg-slate-800 border border-slate-250 rounded px-2.5 py-1.5 text-[11px] focus:outline-none focus:border-safety-green text-slate-705 leading-snug"
                           />
                         </div>
 
@@ -2421,7 +2421,7 @@ export default function RiskMapTab() {
                             <select
                               value={newRiskData.probabilidade}
                               onChange={(e) => setNewRiskData({ ...newRiskData, probabilidade: e.target.value })}
-                              className="w-full bg-white border border-slate-250 rounded px-2.5 py-1 text-[11px] focus:outline-none focus:border-safety-green text-slate-705 font-semibold"
+                              className="w-full bg-white dark:bg-slate-800 border border-slate-250 rounded px-2.5 py-1 text-[11px] focus:outline-none focus:border-safety-green text-slate-705 font-semibold"
                             >
                               <option value="Baixa">Baixa</option>
                               <option value="Média">Média</option>
@@ -2434,7 +2434,7 @@ export default function RiskMapTab() {
                             <select
                               value={newRiskData.impacto}
                               onChange={(e) => setNewRiskData({ ...newRiskData, impacto: e.target.value })}
-                              className="w-full bg-white border border-slate-250 rounded px-2.5 py-1 text-[11px] focus:outline-none focus:border-safety-green text-slate-705 font-semibold"
+                              className="w-full bg-white dark:bg-slate-800 border border-slate-250 rounded px-2.5 py-1 text-[11px] focus:outline-none focus:border-safety-green text-slate-705 font-semibold"
                             >
                               <option value="Leve">Leve</option>
                               <option value="Moderado">Moderado</option>
@@ -2451,17 +2451,17 @@ export default function RiskMapTab() {
                             placeholder="Ex: Enclausurar painel, efetuar aterramento elétrico imediato e rotular sob a NR-10..."
                             value={newRiskData.recomendacao_nr}
                             onChange={(e) => setNewRiskData({ ...newRiskData, recomendacao_nr: e.target.value })}
-                            className="w-full bg-white border border-slate-250 rounded px-2.5 py-1.5 text-[11px] focus:outline-none focus:border-safety-green text-slate-705"
+                            className="w-full bg-white dark:bg-slate-800 border border-slate-250 rounded px-2.5 py-1.5 text-[11px] focus:outline-none focus:border-safety-green text-slate-705"
                           />
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-100 flex justify-end gap-2 shrink-0">
+                    <div className="pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 shrink-0">
                       <button
                         type="button"
                         onClick={() => { setIsCreatingNew(false); setNewRiskCoords(null); }}
-                        className="px-3.5 py-1.5 border border-slate-300 hover:bg-slate-50 text-slate-600 rounded font-bold text-[10.5px] uppercase tracking-wider cursor-pointer"
+                        className="px-3.5 py-1.5 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 text-slate-600 dark:text-slate-300 rounded font-bold text-[10.5px] uppercase tracking-wider cursor-pointer"
                       >
                         Descartar
                       </button>
@@ -2476,10 +2476,10 @@ export default function RiskMapTab() {
                   </form>
                 ) : (
                   // Default view showing the table results
-                  <div className="bg-white border border-slate-200 rounded-lg p-3 flex-1 flex flex-col justify-between min-h-[350px]">
+                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex-1 flex flex-col justify-between min-h-[350px]">
                     <div className="flex-1 flex flex-col">
                       
-                      <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2.5 flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-2.5 flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-1.5">
                         <span className="flex items-center gap-1.5">
                           <Shield className="w-3.5 h-3.5 text-safety-green" />
                           Laudo e Classificação de Riscos NR-05
@@ -2494,9 +2494,9 @@ export default function RiskMapTab() {
 
                       {/* State: No photo / Not started */}
                       {!selectedImage && !analyzing && (
-                        <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-50/50 rounded-lg border border-dashed border-slate-210">
+                        <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-210">
                           <Radar className="w-10 h-10 text-slate-350 mb-2 animate-pulse" />
-                          <h4 className="text-xs font-bold text-slate-700 uppercase">Aguardando Captura Industrial</h4>
+                          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase">Aguardando Captura Industrial</h4>
                           <p className="text-[10.5px] text-slate-450 max-w-sm mt-1 leading-relaxed">
                             Faça o upload de uma imagem ou escolha um cenário piloto do cadastro à esquerda. O sistema processará o mapeamento identificando coordenadas {`{x,y}`} relativas de riscos e sincronizará os desvios.
                           </p>
@@ -2507,7 +2507,7 @@ export default function RiskMapTab() {
                       {analyzing && !result && (
                         <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
                           <Loader2 className="w-8 h-8 text-safety-green animate-spin mb-2" />
-                          <h4 className="text-xs font-bold text-slate-700 uppercase animate-pulse">Analisando Ambiente com IA...</h4>
+                          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase animate-pulse">Analisando Ambiente com IA...</h4>
                           <p className="text-[11px] text-slate-450 max-w-sm mt-1 leading-relaxed font-mono">
                             [Gemini Multi-Modal Vision integrando diretrizes estritas NR-05, NR-06, NR-12 e NHO para determinar as coordenadas x/y relativas e gerar laudo de conformidade preventiva...]
                           </p>
@@ -2536,7 +2536,7 @@ export default function RiskMapTab() {
                           {/* Table View */}
                           <div className="border border-slate-205 rounded overflow-hidden">
                             <table className="w-full text-left text-xs divide-y divide-slate-100">
-                              <thead className="bg-slate-50 text-[10px] font-bold text-slate-550 uppercase tracking-wider col-header">
+                              <thead className="bg-slate-50 dark:bg-slate-900 text-[10px] font-bold text-slate-550 uppercase tracking-wider col-header">
                                 <tr>
                                   <th className="p-2.5 w-12 text-center font-mono">Ref</th>
                                   <th className="p-2.5 font-mono">Categoria (NR-05)</th>
@@ -2555,15 +2555,15 @@ export default function RiskMapTab() {
                                       className={`cursor-pointer transition duration-150 ${
                                         isSelected 
                                           ? 'bg-amber-50 border-l-4 border-l-amber-500 font-medium' 
-                                          : 'hover:bg-slate-50/50'
+                                          : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50'
                                       }`}
                                     >
                                       {/* Ref Pin Counter */}
                                       <td className="p-2.5 text-center font-bold font-mono">
                                         <span className={`inline-flex items-center justify-center w-5.5 h-5.5 rounded-full text-[10px] font-bold border ${
                                           isSelected 
-                                            ? 'bg-amber-500 text-slate-900 border-amber-600 animate-pulseScale' 
-                                            : 'bg-slate-200 text-slate-700 border-slate-300'
+                                            ? 'bg-amber-500 text-slate-900 dark:text-white border-amber-600 animate-pulseScale' 
+                                            : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600'
                                         }`}>
                                           {index + 1}
                                         </span>
@@ -2582,12 +2582,12 @@ export default function RiskMapTab() {
                                       </td>
 
                                       {/* Description of hazards */}
-                                      <td className="p-2.5 text-[11px] leading-relaxed font-semibold text-slate-800">
+                                      <td className="p-2.5 text-[11px] leading-relaxed font-semibold text-slate-800 dark:text-slate-100">
                                         <p className="line-clamp-2 md:line-clamp-none font-sans" title={item.descricao_perigo}>
                                           {item.descricao_perigo}
                                         </p>
-                                        <div className="mt-1 text-[10px] font-medium text-slate-500 md:hidden bg-slate-100 p-1.5 rounded">
-                                          <strong className="block text-[8px] text-slate-700 uppercase font-mono">Recomendação:</strong>
+                                        <div className="mt-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 md:hidden bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded">
+                                          <strong className="block text-[8px] text-slate-700 dark:text-slate-200 uppercase font-mono">Recomendação:</strong>
                                           {item.recomendacao_nr}
                                         </div>
                                       </td>
@@ -2637,7 +2637,7 @@ export default function RiskMapTab() {
 
                     {/* Reset analyzer */}
                     {result && (
-                      <div className="pt-3 border-t border-slate-100 flex justify-between items-center shrink-0">
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
                         <span className="text-[10px] text-[#64748b] font-mono leading-none">
                           {interactMode === 'adjust' ? (
                             <strong className="text-indigo-600 animate-pulse block uppercase text-[9px]">
@@ -2654,9 +2654,9 @@ export default function RiskMapTab() {
                         
                         <button
                           onClick={clearSelection}
-                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10.5px] font-bold uppercase tracking-wider rounded border border-slate-210 flex items-center gap-1.5 transition cursor-pointer shrink-0"
+                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10.5px] font-bold uppercase tracking-wider rounded border border-slate-210 flex items-center gap-1.5 transition cursor-pointer shrink-0"
                         >
-                          <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+                          <RefreshCw className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                           Analisar Novo Cenário
                         </button>
                       </div>

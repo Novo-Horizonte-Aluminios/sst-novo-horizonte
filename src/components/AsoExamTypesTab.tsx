@@ -98,7 +98,7 @@ export default function AsoExamTypesTab() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-sm font-black tracking-tight text-slate-800 uppercase">Tipos de Exames Complementares</h3>
+          <h3 className="text-sm font-black tracking-tight text-slate-800 dark:text-slate-100 uppercase">Tipos de Exames Complementares</h3>
           <p className="text-slate-550 text-[11px] leading-relaxed">Configuração da matriz de exames de acordo com os riscos de cada função (PCMSO)</p>
         </div>
         <button
@@ -115,7 +115,7 @@ export default function AsoExamTypesTab() {
           <div className="w-8 h-8 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
           <table className="compact-table">
             <thead>
               <tr>
@@ -128,10 +128,10 @@ export default function AsoExamTypesTab() {
             <tbody>
               {exams.map(exam => (
                 <tr key={exam.id}>
-                  <td className="font-bold text-slate-800">{exam.name}</td>
-                  <td className="text-slate-500 max-w-md truncate">{exam.description || 'Nenhuma descrição adicionada'}</td>
+                  <td className="font-bold text-slate-800 dark:text-slate-100">{exam.name}</td>
+                  <td className="text-slate-500 dark:text-slate-400 max-w-md truncate">{exam.description || 'Nenhuma descrição adicionada'}</td>
                   <td>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200">
                       <Calendar className="w-3 h-3" /> {exam.periodicityMonths} meses
                     </span>
                   </td>
@@ -159,7 +159,7 @@ export default function AsoExamTypesTab() {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base">Novo Exame Clínico Complementar</h3>
@@ -170,44 +170,44 @@ export default function AsoExamTypesTab() {
 
             <form onSubmit={handleCreateExam} className="p-6 space-y-4">
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Nome do Exame</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Nome do Exame</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Audiometria tonal e vocal"
                   value={newExam.name}
                   onChange={(e) => setNewExam({...newExam, name: e.target.value})}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
                 />
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Descrição / Instruções do Exame</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Descrição / Instruções do Exame</label>
                 <textarea
                   placeholder="Ex: Realização de audiometria para avaliação de perda auditiva induzida por ruído ocupacional..."
                   value={newExam.description}
                   onChange={(e) => setNewExam({...newExam, description: e.target.value})}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px] h-20 resize-none"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px] h-20 resize-none"
                 />
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Periodicidade (Meses)</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Periodicidade (Meses)</label>
                 <input
                   type="number"
                   required
                   min={1}
                   value={newExam.periodicityMonths}
                   onChange={(e) => setNewExam({...newExam, periodicityMonths: parseInt(e.target.value) || 12})}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary text-[12px]"
                 />
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-650 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-650 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>

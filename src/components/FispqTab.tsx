@@ -129,15 +129,15 @@ export default function FispqTab() {
   );
 
   return (
-    <div className="space-y-4 text-xs text-slate-700 font-sans">
+    <div className="space-y-4 text-xs text-slate-700 dark:text-slate-200 font-sans">
       {/* Header */}
-      <div className="bg-white p-4 rounded border border-slate-200 flex flex-col sm:flex-row justify-between gap-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between gap-3">
         <div>
-          <h2 className="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+          <h2 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-1.5">
             <Flame className="w-4 h-4 text-amber-500 animate-pulse" />
             Fichas de Segurança de Produtos Químicos (FISPQ / SDS)
           </h2>
-          <p className="text-[10px] text-slate-500 mt-0.5">
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
             Catalogação conforme GHS e ABNT NBR 14725. Obrigatório por NR-20 e NR-26.
           </p>
         </div>
@@ -149,17 +149,17 @@ export default function FispqTab() {
 
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white p-3 rounded border border-slate-200">
+        <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700">
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total de Produtos</span>
-          <span className="text-xl font-extrabold text-slate-800 block mt-1">{fispqDocs.length}</span>
+          <span className="text-xl font-extrabold text-slate-800 dark:text-slate-100 block mt-1">{fispqDocs.length}</span>
           <span className="text-[9px] text-slate-400">substâncias cadastradas</span>
         </div>
-        <div className="bg-white p-3 rounded border border-slate-200">
+        <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700">
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Classificação GHS</span>
           <span className="text-xl font-extrabold text-amber-600 block mt-1">{fispqDocs.filter(f => f.ghsClassification).length}</span>
           <span className="text-[9px] text-slate-400">fichas com GHS</span>
         </div>
-        <div className="bg-white p-3 rounded border border-slate-200">
+        <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700">
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Conformidade NR-26</span>
           <span className="text-xl font-extrabold text-emerald-600 block mt-1">
             {fispqDocs.length > 0 ? Math.round((fispqDocs.filter(f => f.ghsClassification && f.epcMeasures?.length).length / fispqDocs.length) * 100) : 0}%
@@ -172,40 +172,40 @@ export default function FispqTab() {
       <div className="relative">
         <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
         <input type="text" placeholder="Buscar por produto, fabricante, CAS..." value={search} onChange={e => setSearch(e.target.value)}
-          className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded focus:outline-none focus:border-amber-500" />
+          className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-amber-500" />
       </div>
 
       {/* Form */}
       {showForm && (
-        <div className="bg-white border border-amber-200 rounded p-4 space-y-3">
+        <div className="bg-white dark:bg-slate-800 border border-amber-200 rounded p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight">
+            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">
               {editingDoc ? 'Editar FISPQ' : 'Nova Ficha de Segurança'}
             </h3>
-            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-4 h-4" /></button>
+            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Nome do Produto Químico *</label>
               <input type="text" value={form.chemicalName} onChange={e => setForm(f => ({ ...f, chemicalName: e.target.value }))}
                 placeholder="Ex: Alumínio em Pó (Pó Metálico)"
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-amber-500" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-amber-500" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Fabricante *</label>
               <input type="text" value={form.manufacturer} onChange={e => setForm(f => ({ ...f, manufacturer: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-amber-500" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-amber-500" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Número CAS</label>
               <input type="text" value={form.casNumber} onChange={e => setForm(f => ({ ...f, casNumber: e.target.value }))}
                 placeholder="Ex: 7429-90-5"
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Estado Físico</label>
               <select value={form.physicalState} onChange={e => setForm(f => ({ ...f, physicalState: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none">
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none">
                 <option value="">Selecione...</option>
                 {['Sólido','Líquido','Gasoso','Pó','Pastoso','Aerossol'].map(s => <option key={s}>{s}</option>)}
               </select>
@@ -213,25 +213,25 @@ export default function FispqTab() {
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Data de Revisão</label>
               <input type="date" value={form.revisionDate} onChange={e => setForm(f => ({ ...f, revisionDate: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Versão</label>
               <input type="text" value={form.version} onChange={e => setForm(f => ({ ...f, version: e.target.value }))}
                 placeholder="Ex: 01, 02..."
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Classificação GHS (Seção 2)</label>
               <textarea value={form.ghsClassification} onChange={e => setForm(f => ({ ...f, ghsClassification: e.target.value }))} rows={2}
                 placeholder="Ex: Perigo: Inflamável (Cat.2); Tóxico (Cat.4)..."
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none resize-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none resize-none" />
             </div>
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-1">Frases de Risco (H-Phrases)</label>
               <div className="flex gap-1.5 mb-1.5">
                 <input type="text" value={phraseInput} onChange={e => setPhraseInput(e.target.value)} placeholder="Ex: H228 - Sólido inflamável"
-                  className="flex-1 px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none"
+                  className="flex-1 px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none"
                   onKeyDown={e => { if (e.key === 'Enter' && phraseInput) { setForm(f => ({ ...f, riskPhrases: [...f.riskPhrases, phraseInput] })); setPhraseInput(''); } }} />
                 <button onClick={() => { if (phraseInput) { setForm(f => ({ ...f, riskPhrases: [...f.riskPhrases, phraseInput] })); setPhraseInput(''); } }}
                   className="px-3 py-1.5 text-[10px] bg-red-50 text-red-700 font-bold rounded hover:bg-red-100 cursor-pointer">+</button>
@@ -249,7 +249,7 @@ export default function FispqTab() {
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-1">Medidas de Proteção (EPC/EPI)</label>
               <div className="flex gap-1.5 mb-1.5">
                 <input type="text" value={epcInput} onChange={e => setEpcInput(e.target.value)} placeholder="Ex: Luvas de nitrila (NR-06/CA)"
-                  className="flex-1 px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none"
+                  className="flex-1 px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none"
                   onKeyDown={e => { if (e.key === 'Enter' && epcInput) { setForm(f => ({ ...f, epcMeasures: [...f.epcMeasures, epcInput] })); setEpcInput(''); } }} />
                 <button onClick={() => { if (epcInput) { setForm(f => ({ ...f, epcMeasures: [...f.epcMeasures, epcInput] })); setEpcInput(''); } }}
                   className="px-3 py-1.5 text-[10px] bg-emerald-50 text-emerald-700 font-bold rounded hover:bg-emerald-100 cursor-pointer">+</button>
@@ -267,7 +267,7 @@ export default function FispqTab() {
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">URL da Ficha PDF (opcional)</label>
               <input type="text" value={form.fileUrl} onChange={e => setForm(f => ({ ...f, fileUrl: e.target.value }))}
                 placeholder="https://..."
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
           </div>
           <div className="flex gap-2 pt-1">
@@ -276,7 +276,7 @@ export default function FispqTab() {
               <Save className="w-3.5 h-3.5" /> {editingDoc ? 'Salvar Alterações' : 'Cadastrar FISPQ'}
             </button>
             <button onClick={() => setShowForm(false)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 border border-slate-300 text-slate-700 rounded hover:bg-slate-200 cursor-pointer">
+              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded hover:bg-slate-200 dark:bg-slate-700 cursor-pointer">
               Cancelar
             </button>
           </div>
@@ -287,7 +287,7 @@ export default function FispqTab() {
       {loading ? (
         <div className="text-center py-10 text-slate-400 text-xs">Carregando fichas de segurança...</div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded border border-slate-200 p-8 text-center">
+        <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-8 text-center">
           <FlaskConical className="w-8 h-8 text-slate-300 mx-auto mb-2" />
           <p className="text-slate-400 text-xs">Nenhuma FISPQ cadastrada. Adicione a primeira ficha!</p>
         </div>
@@ -297,13 +297,13 @@ export default function FispqTab() {
             const pictograms = detectPictograms(doc.ghsClassification || '');
             const isExpanded = expandedId === doc.id;
             return (
-              <div key={doc.id} className="bg-white rounded border border-slate-200 shadow-sm overflow-hidden">
+              <div key={doc.id} className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div className="p-4">
                   <div className="flex justify-between items-start gap-2 mb-2">
                     <div className="flex items-start gap-1.5">
                       <FlaskConical className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-bold text-xs text-slate-800 leading-snug">{doc.chemicalName}</h4>
+                        <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100 leading-snug">{doc.chemicalName}</h4>
                         <p className="text-[10px] text-slate-400">{doc.manufacturer}</p>
                         {doc.casNumber && <p className="text-[9px] text-slate-400 font-mono">CAS: {doc.casNumber}</p>}
                       </div>
@@ -316,18 +316,18 @@ export default function FispqTab() {
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 p-2 rounded border border-slate-100 mb-2">
+                  <div className="bg-slate-50 dark:bg-slate-900 p-2 rounded border border-slate-100 dark:border-slate-700 mb-2">
                     <div className="flex items-center gap-1 mb-1">
                       <Shield className="w-3 h-3 text-amber-500" />
-                      <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider">Classificação GHS</span>
+                      <span className="text-[8px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Classificação GHS</span>
                     </div>
-                    <p className="text-[10px] text-slate-600 italic leading-relaxed">{doc.ghsClassification}</p>
+                    <p className="text-[10px] text-slate-600 dark:text-slate-300 italic leading-relaxed">{doc.ghsClassification}</p>
                   </div>
 
                   {isExpanded && (
                     <div className="space-y-2">
                       {doc.physicalState && (
-                        <p className="text-[10px] text-slate-500"><span className="font-bold">Estado físico:</span> {doc.physicalState}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400"><span className="font-bold">Estado físico:</span> {doc.physicalState}</p>
                       )}
                       {(doc.riskPhrases || []).length > 0 && (
                         <div>
@@ -356,11 +356,11 @@ export default function FispqTab() {
                     </div>
                   )}
 
-                  <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-slate-400 font-mono text-[9px]">Rev: {doc.revisionDate || 'N/D'}</span>
                       <button onClick={() => setExpandedId(isExpanded ? null : doc.id)}
-                        className="text-[9px] text-slate-400 hover:text-slate-600 flex items-center gap-0.5 cursor-pointer">
+                        className="text-[9px] text-slate-400 hover:text-slate-600 dark:text-slate-300 flex items-center gap-0.5 cursor-pointer">
                         {isExpanded ? <><ChevronDown className="w-3 h-3" />Recolher</> : <><ChevronRight className="w-3 h-3" />Ver detalhes</>}
                       </button>
                     </div>
@@ -371,7 +371,7 @@ export default function FispqTab() {
                           <Download className="w-3.5 h-3.5" />PDF
                         </a>
                       )}
-                      <button onClick={() => openEdit(doc)} className="p-1 text-slate-400 hover:bg-slate-100 rounded cursor-pointer">
+                      <button onClick={() => openEdit(doc)} className="p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 rounded cursor-pointer">
                         <Edit3 className="w-3.5 h-3.5" />
                       </button>
                       <button onClick={() => handleDelete(doc.id)} className="p-1 text-red-400 hover:bg-red-50 rounded cursor-pointer">

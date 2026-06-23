@@ -153,9 +153,9 @@ export default function PhotoSelector({
   const initialSeed = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(employeeName)}`;
 
   return (
-    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-2.5 font-sans">
+    <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 space-y-2.5 font-sans">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest block">
+        <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">
           Foto de Cadastro (eSocial)
         </span>
         {photoUrl && (
@@ -173,7 +173,7 @@ export default function PhotoSelector({
       <div className="flex flex-col sm:flex-row items-center gap-4">
         {/* Profile Circular Preview */}
         <div className="relative group">
-          <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-slate-300 bg-white flex items-center justify-center shadow-inner shrink-0">
+          <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 flex items-center justify-center shadow-inner shrink-0">
             <img 
               src={photoUrl || initialSeed} 
               alt="Foto do colaborador" 
@@ -194,14 +194,14 @@ export default function PhotoSelector({
         {/* Options Screen (When camera and upload tabs are closed) */}
         {!activeTab && (
           <div className="flex-1 w-full space-y-1.5 text-center sm:text-left">
-            <p className="text-[10px] text-slate-500 leading-tight">
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
               Selecione uma opção para carregar a imagem oficial do crachá e laudos de SST.
             </p>
             <div className="flex flex-wrap gap-2 justify-center sm:justify-start pt-1">
               <button
                 type="button"
                 onClick={() => setActiveTab('upload')}
-                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300 hover:border-slate-400 rounded text-[10px] uppercase flex items-center gap-1.5 cursor-pointer shadow-sm transition active:scale-[0.98]"
+                className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-300 dark:border-slate-600 hover:border-slate-400 rounded text-[10px] uppercase flex items-center gap-1.5 cursor-pointer shadow-sm transition active:scale-[0.98]"
               >
                 <Upload className="w-3.5 h-3.5 text-slate-650" />
                 Upload do Computador
@@ -230,7 +230,7 @@ export default function PhotoSelector({
               className={`border-2 border-dashed rounded-lg p-3 text-center cursor-pointer transition ${
                 dragActive 
                   ? 'border-emerald-500 bg-emerald-50/50' 
-                  : 'border-slate-300 hover:border-slate-400 bg-white'
+                  : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 bg-white dark:bg-slate-800'
               }`}
             >
               <input 
@@ -241,14 +241,14 @@ export default function PhotoSelector({
                 className="hidden" 
               />
               <Upload className="w-5 h-5 mx-auto text-slate-400 mb-1" />
-              <p className="text-[10px] font-bold text-slate-700">Arraste a imagem aqui ou clique para buscar</p>
+              <p className="text-[10px] font-bold text-slate-700 dark:text-slate-200">Arraste a imagem aqui ou clique para buscar</p>
               <p className="text-[8.5px] text-slate-400 mt-0.5">PNG, JPG, WEBP até 5MB</p>
             </div>
             <div className="flex justify-end">
               <button 
                 type="button"
                 onClick={() => setActiveTab(null)}
-                className="text-[9px] text-slate-500 hover:text-slate-750 font-bold uppercase cursor-pointer"
+                className="text-[9px] text-slate-500 dark:text-slate-400 hover:text-slate-750 font-bold uppercase cursor-pointer"
               >
                 Voltar para opções
               </button>
@@ -260,7 +260,7 @@ export default function PhotoSelector({
         {activeTab === 'webcam' && (
           <div className="flex-1 w-full space-y-2">
             {cameraLoading && (
-              <div className="flex flex-col items-center justify-center p-3 text-slate-500 gap-1.5">
+              <div className="flex flex-col items-center justify-center p-3 text-slate-500 dark:text-slate-400 gap-1.5">
                 <RefreshCw className="w-5 h-5 text-indigo-600 animate-spin" />
                 <span className="text-[9.5px]">Ativando dispositivo de vídeo...</span>
               </div>
@@ -284,7 +284,7 @@ export default function PhotoSelector({
                   <button 
                     type="button"
                     onClick={stopCamera}
-                    className="px-2 py-0.5 text-slate-500 font-bold text-[8px] uppercase cursor-pointer hover:text-slate-750"
+                    className="px-2 py-0.5 text-slate-500 dark:text-slate-400 font-bold text-[8px] uppercase cursor-pointer hover:text-slate-750"
                   >
                     Cancelar
                   </button>
@@ -319,7 +319,7 @@ export default function PhotoSelector({
                   <button
                     type="button"
                     onClick={stopCamera}
-                    className="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-755 font-bold rounded text-[9px] uppercase tracking-wide cursor-pointer transition active:scale-95 border border-slate-300"
+                    className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-755 font-bold rounded text-[9px] uppercase tracking-wide cursor-pointer transition active:scale-95 border border-slate-300 dark:border-slate-600"
                   >
                     Encerrar
                   </button>

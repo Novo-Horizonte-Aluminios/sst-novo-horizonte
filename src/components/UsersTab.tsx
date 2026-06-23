@@ -22,7 +22,7 @@ const ROLE_COLORS: Record<string, string> = {
   GestorRH:    'bg-pink-50 text-pink-600 border border-pink-100',
   Almoxarife:  'bg-amber-50 text-amber-600 border border-amber-100',
   Gestor:      'bg-violet-50 text-violet-600 border border-violet-100',
-  Colaborador: 'bg-slate-100 text-slate-600 border border-slate-200',
+  Colaborador: 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700',
 };
 
 
@@ -171,11 +171,11 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Title */}
       <div>
-        <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
           <Users className="w-5 h-5 text-safety-green" />
           Usuários do Sistema
         </h1>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           {isAdmin
             ? 'Gerenciamento completo de credenciais e permissões. Você pode editar e remover qualquer usuário.'
             : 'Você pode visualizar a equipe e editar apenas o seu próprio perfil.'}
@@ -199,7 +199,7 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* ── Create User Form (Admin only) ── */}
         {isAdmin && (
-          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4">
             <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
               <UserPlus className="w-4 h-4 text-safety-green" />
               Cadastrar Novo Usuário
@@ -208,64 +208,64 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
             <form onSubmit={handleCreateUser} className="space-y-3">
               {/* Nome */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">Nome Completo *</label>
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Nome Completo *</label>
                 <div className="relative">
                   <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
                     placeholder="Ex: Dr. Pedro Silva"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
                 </div>
               </div>
 
               {/* Login */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">Login (Username) *</label>
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Login (Username) *</label>
                 <div className="relative">
                   <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input type="text" value={newUsername} onChange={e => setNewUsername(e.target.value)}
                     placeholder="Ex: pedrosilva"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
                 </div>
               </div>
 
               {/* Senha */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">Senha Inicial *</label>
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Senha Inicial *</label>
                 <div className="relative">
                   <Key className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
                     placeholder="Mínimo 4 caracteres"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
                 </div>
               </div>
 
               {/* Email */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">E-mail (recuperação)</label>
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">E-mail (recuperação)</label>
                 <div className="relative">
                   <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)}
                     placeholder="usuario@empresa.com"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
                 </div>
               </div>
 
               {/* WhatsApp */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">WhatsApp (recuperação)</label>
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">WhatsApp (recuperação)</label>
                 <div className="relative">
                   <Phone className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input type="tel" value={newWhatsapp} onChange={e => setNewWhatsapp(e.target.value)}
                     placeholder="+55 11 99999-9999"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none transition-all placeholder:text-slate-400" />
                 </div>
               </div>
 
               {/* Perfil */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">Perfil / Nível *</label>
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Perfil / Nível *</label>
                 <select value={newRole} onChange={e => setNewRole(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 px-2.5 text-xs outline-none transition-all">
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 px-2.5 text-xs outline-none transition-all">
                   <option value="SST">Técnico de Segurança (SST)</option>
                   <option value="Admin">Administrador do Sistema</option>
                   <option value="GestorRH">Gestor de RH</option>
@@ -286,7 +286,7 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
         )}
 
         {/* ── Users Table ── */}
-        <div className={`bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4 ${isAdmin ? 'md:col-span-2' : 'md:col-span-3'}`}>
+        <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4 ${isAdmin ? 'md:col-span-2' : 'md:col-span-3'}`}>
           <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
             <Users className="w-4 h-4 text-safety-green" />
             Usuários Cadastrados ({users.length})
@@ -299,9 +299,9 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-[11px] text-slate-600">
+              <table className="w-full text-[11px] text-slate-600 dark:text-slate-300">
                 <thead>
-                  <tr className="border-b border-slate-100 text-[10px] font-mono text-slate-400 uppercase text-left">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-[10px] font-mono text-slate-400 uppercase text-left">
                     <th className="pb-2 font-bold">Nome</th>
                     <th className="pb-2 font-bold">Username</th>
                     <th className="pb-2 font-bold">Nível</th>
@@ -315,10 +315,10 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
                     const canEdit   = isAdmin || u.id === currentUser.id;
                     const canDelete = isAdmin && u.id !== 'u_admin' && u.id !== currentUser.id;
                     return (
-                      <tr key={u.id} className="hover:bg-slate-50/50">
-                        <td className="py-2.5 font-bold text-slate-800">
+                      <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50">
+                        <td className="py-2.5 font-bold text-slate-800 dark:text-slate-100">
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-mono text-[10px] shrink-0">
+                            <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-500 dark:text-slate-400 font-mono text-[10px] shrink-0">
                               {u.name.substring(0, 2).toUpperCase()}
                             </div>
                             <div>
@@ -329,7 +329,7 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
                             </div>
                           </div>
                         </td>
-                        <td className="py-2.5 font-mono text-slate-500">{u.username}</td>
+                        <td className="py-2.5 font-mono text-slate-500 dark:text-slate-400">{u.username}</td>
                         <td className="py-2.5">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase ${ROLE_COLORS[u.role] || ROLE_COLORS['Colaborador']}`}>
                             {u.role}
@@ -372,16 +372,16 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
       {/* ── Edit User Modal ── */}
       {editUser && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
                   <Pencil className="w-4 h-4 text-safety-green" />
                   Editar Usuário
                 </h3>
                 <p className="text-[10px] text-slate-400 font-mono mt-0.5">@{editUser.username}</p>
               </div>
-              <button onClick={() => setEditUser(null)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+              <button onClick={() => setEditUser(null)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -389,43 +389,43 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
             <form onSubmit={handleSaveEdit} className="space-y-3">
               {/* Nome */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">Nome Completo *</label>
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Nome Completo *</label>
                 <div className="relative">
                   <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input type="text" value={editName} onChange={e => setEditName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none" />
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none" />
                 </div>
               </div>
 
               {/* E-mail */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">
                   <Mail className="inline w-3 h-3 mr-1" />E-mail (recuperação de senha)
                 </label>
                 <input type="email" value={editEmail} onChange={e => setEditEmail(e.target.value)}
                   placeholder="usuario@empresa.com"
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 px-3 text-xs outline-none" />
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 px-3 text-xs outline-none" />
               </div>
 
               {/* WhatsApp */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">
                   <Phone className="inline w-3 h-3 mr-1" />WhatsApp (recuperação de senha)
                 </label>
                 <input type="tel" value={editWhatsapp} onChange={e => setEditWhatsapp(e.target.value)}
                   placeholder="+55 11 99999-9999"
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 px-3 text-xs outline-none" />
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 px-3 text-xs outline-none" />
               </div>
 
               {/* Perfil (somente admin pode alterar) */}
               {isAdmin && (
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">
+                  <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">
                     <Shield className="inline w-3 h-3 mr-1" />Perfil / Nível
                   </label>
                   <select value={editRole} onChange={e => setEditRole(e.target.value)}
                     disabled={editUser.id === 'u_admin'}
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 px-2.5 text-xs outline-none disabled:opacity-50">
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 px-2.5 text-xs outline-none disabled:opacity-50">
                     <option value="SST">Técnico de Segurança (SST)</option>
                     <option value="Admin">Administrador do Sistema</option>
                     <option value="GestorRH">Gestor de RH</option>
@@ -438,20 +438,20 @@ export default function UsersTab({ currentUser }: UsersTabProps) {
 
               {/* Nova Senha */}
               <div className="space-y-1">
-                <label className="text-[10px] font-mono text-slate-500 uppercase font-bold">
+                <label className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">
                   <Lock className="inline w-3 h-3 mr-1" />Nova Senha <span className="text-slate-400 normal-case">(deixe em branco para manter)</span>
                 </label>
                 <div className="relative">
                   <Key className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input type="password" value={editPassword} onChange={e => setEditPassword(e.target.value)}
                     placeholder="Nova senha (mínimo 4 caracteres)"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none" />
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-safety-green/80 rounded-lg py-1.5 pl-8 pr-3 text-xs outline-none" />
                 </div>
               </div>
 
               <div className="flex gap-2 pt-1">
                 <button type="button" onClick={() => setEditUser(null)}
-                  className="flex-1 border border-slate-200 text-slate-600 rounded-lg py-2 text-xs font-semibold hover:bg-slate-50 transition-all">
+                  className="flex-1 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-lg py-2 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition-all">
                   Cancelar
                 </button>
                 <button type="submit" disabled={submitting}

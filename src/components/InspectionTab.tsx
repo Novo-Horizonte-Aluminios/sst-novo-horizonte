@@ -72,7 +72,7 @@ const statusColor: Record<string, string> = {
   'Agendada': 'bg-blue-50 text-blue-700 border-blue-200',
   'Em Andamento': 'bg-amber-50 text-amber-700 border-amber-200',
   'Concluída': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  'Cancelada': 'bg-slate-100 text-slate-500 border-slate-200',
+  'Cancelada': 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700',
 };
 
 const resultColor: Record<string, string> = {
@@ -239,15 +239,15 @@ export default function InspectionTab() {
     (inspections.filter(i => i.score != null).length || 1);
 
   return (
-    <div className="space-y-4 text-xs text-slate-700 font-sans">
+    <div className="space-y-4 text-xs text-slate-700 dark:text-slate-200 font-sans">
       {/* Header */}
-      <div className="bg-white p-4 rounded border border-slate-200 flex flex-col sm:flex-row justify-between gap-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between gap-3">
         <div>
-          <h2 className="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+          <h2 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-1.5">
             <ClipboardCheck className="w-4 h-4 text-safety-green" />
             Inspeções e Checklists de Segurança
           </h2>
-          <p className="text-[10px] text-slate-500 mt-0.5">Registro e controle de inspeções periódicas com checklists padronizados por NR.</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Registro e controle de inspeções periódicas com checklists padronizados por NR.</p>
         </div>
         <button
           onClick={() => setShowNewForm(true)}
@@ -261,12 +261,12 @@ export default function InspectionTab() {
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total de Inspeções', value: inspections.length, color: 'text-slate-800', sub: 'registradas' },
+          { label: 'Total de Inspeções', value: inspections.length, color: 'text-slate-800 dark:text-slate-100', sub: 'registradas' },
           { label: 'Concluídas', value: totalConcluidas, color: 'text-emerald-600', sub: 'finalizadas' },
           { label: 'Não Conformidades', value: totalNC, color: totalNC > 0 ? 'text-red-600' : 'text-emerald-600', sub: 'pendentes de ação' },
           { label: 'Pontuação Média', value: `${Math.round(avgScore)}%`, color: avgScore >= 80 ? 'text-emerald-600' : avgScore >= 60 ? 'text-amber-600' : 'text-red-600', sub: 'conformidade média' },
         ].map((k, i) => (
-          <div key={i} className="bg-white p-3 rounded border border-slate-200">
+          <div key={i} className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700">
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">{k.label}</span>
             <span className={`text-xl font-extrabold block mt-1 ${k.color}`}>{k.value}</span>
             <span className="text-[9px] text-slate-400">{k.sub}</span>
@@ -279,10 +279,10 @@ export default function InspectionTab() {
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
           <input type="text" placeholder="Buscar por título, setor, responsável..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded focus:outline-none focus:border-safety-green" />
+            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green" />
         </div>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-          className="px-2 py-1.5 text-xs bg-white border border-slate-200 rounded focus:outline-none focus:border-safety-green">
+          className="px-2 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green">
           <option value="">Todos os Status</option>
           {['Agendada', 'Em Andamento', 'Concluída', 'Cancelada'].map(s => <option key={s}>{s}</option>)}
         </select>
@@ -290,29 +290,29 @@ export default function InspectionTab() {
 
       {/* New Inspection Form */}
       {showNewForm && (
-        <div className="bg-white border border-safety-green/30 rounded p-4 space-y-3">
+        <div className="bg-white dark:bg-slate-800 border border-safety-green/30 rounded p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight">Nova Inspeção</h3>
-            <button onClick={() => setShowNewForm(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-4 h-4" /></button>
+            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">Nova Inspeção</h3>
+            <button onClick={() => setShowNewForm(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Título da Inspeção *</label>
               <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                 placeholder="Ex: Inspeção Mensal de EPI - Usinagem"
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-safety-green" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Tipo / NR de Referência</label>
               <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-safety-green">
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green">
                 {INSPECTION_TYPES.map(t => <option key={t}>{t}</option>)}
               </select>
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Setor *</label>
               <select value={form.sector} onChange={e => setForm(f => ({ ...f, sector: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-safety-green">
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green">
                 <option value="">Selecione...</option>
                 {SECTORS_LIST.map(s => <option key={s}>{s}</option>)}
               </select>
@@ -321,12 +321,12 @@ export default function InspectionTab() {
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Responsável *</label>
               <input type="text" value={form.responsible} onChange={e => setForm(f => ({ ...f, responsible: e.target.value }))}
                 placeholder="Nome do responsável"
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-safety-green" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Data Agendada</label>
               <input type="date" value={form.scheduledDate} onChange={e => setForm(f => ({ ...f, scheduledDate: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-safety-green" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green" />
             </div>
           </div>
           <div className="flex gap-2 pt-1">
@@ -335,7 +335,7 @@ export default function InspectionTab() {
               <Save className="w-3.5 h-3.5" /> Criar e Auto-preencher Checklist
             </button>
             <button onClick={() => setShowNewForm(false)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 border border-slate-300 text-slate-700 rounded hover:bg-slate-200 cursor-pointer">
+              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded hover:bg-slate-200 dark:bg-slate-700 cursor-pointer">
               Cancelar
             </button>
           </div>
@@ -346,7 +346,7 @@ export default function InspectionTab() {
       {loading ? (
         <div className="text-center py-10 text-slate-400 text-xs">Carregando inspeções...</div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded border border-slate-200 p-8 text-center">
+        <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-8 text-center">
           <ClipboardCheck className="w-8 h-8 text-slate-300 mx-auto mb-2" />
           <p className="text-slate-400 text-xs">Nenhuma inspeção encontrada. Crie a primeira!</p>
         </div>
@@ -359,12 +359,12 @@ export default function InspectionTab() {
             const ncs = inspItems.filter(i => i.result === 'Não Conforme').length;
 
             return (
-              <div key={insp.id} className="bg-white rounded border border-slate-200 overflow-hidden">
+              <div key={insp.id} className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div className="p-3 flex items-center justify-between gap-2">
                   <button onClick={() => handleExpand(insp.id)} className="flex items-center gap-2 flex-1 text-left cursor-pointer min-w-0">
                     {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />}
                     <div className="min-w-0">
-                      <p className="font-bold text-xs text-slate-800 truncate">{insp.title}</p>
+                      <p className="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">{insp.title}</p>
                       <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5 flex-wrap">
                         <span className="flex items-center gap-0.5"><Building2 className="w-3 h-3" />{insp.sector}</span>
                         <span className="flex items-center gap-0.5"><User className="w-3 h-3" />{insp.responsible}</span>
@@ -384,7 +384,7 @@ export default function InspectionTab() {
                   </button>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${statusColor[insp.status]}`}>{insp.status}</span>
-                    <span className="text-[9px] text-slate-400 font-mono bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{insp.type}</span>
+                    <span className="text-[9px] text-slate-400 font-mono bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded border border-slate-100 dark:border-slate-700">{insp.type}</span>
                     {insp.status === 'Em Andamento' && (
                       <button onClick={() => handleFinalize(insp)} title="Finalizar inspeção"
                         className="p-1 text-emerald-600 hover:bg-emerald-50 rounded cursor-pointer" >
@@ -399,7 +399,7 @@ export default function InspectionTab() {
 
                 {/* Expanded Checklist */}
                 {isExpanded && (
-                  <div className="border-t border-slate-100 bg-slate-50 p-3">
+                  <div className="border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3">
                     {loadingItems === insp.id ? (
                       <p className="text-[10px] text-slate-400 text-center py-3">Carregando checklist...</p>
                     ) : inspItems.length === 0 ? (
@@ -407,7 +407,7 @@ export default function InspectionTab() {
                     ) : (
                       <div className="space-y-2">
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+                          <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                             Checklist ({conformes}/{inspItems.filter(i => i.result !== 'Não Aplicável').length} conformes)
                           </span>
                           {insp.status !== 'Concluída' && (
@@ -418,11 +418,11 @@ export default function InspectionTab() {
                           )}
                         </div>
                         {inspItems.map(item => (
-                          <div key={item.id} className="bg-white rounded border border-slate-200 p-2.5 flex flex-col sm:flex-row sm:items-start gap-2">
+                          <div key={item.id} className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-2.5 flex flex-col sm:flex-row sm:items-start gap-2">
                             <div className="flex-1">
-                              <p className="text-[10px] font-medium text-slate-700 leading-snug">{item.description}</p>
+                              <p className="text-[10px] font-medium text-slate-700 dark:text-slate-200 leading-snug">{item.description}</p>
                               <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-[9px] text-slate-400 bg-slate-50 px-1 py-0.5 rounded font-mono">{item.nrReference}</span>
+                                <span className="text-[9px] text-slate-400 bg-slate-50 dark:bg-slate-900 px-1 py-0.5 rounded font-mono">{item.nrReference}</span>
                                 <span className="text-[9px] text-slate-400">{item.category}</span>
                               </div>
                               {item.result === 'Não Conforme' && (
@@ -440,8 +440,8 @@ export default function InspectionTab() {
                                     className={`text-[9px] font-bold px-1.5 py-0.5 rounded border cursor-pointer transition ${item.result === r
                                       ? r === 'Conforme' ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
                                         : r === 'Não Conforme' ? 'bg-red-100 text-red-700 border-red-300'
-                                          : 'bg-slate-200 text-slate-700 border-slate-300'
-                                      : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'}`}>
+                                          : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600'
+                                      : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600 hover:bg-slate-200 dark:bg-slate-700'}`}>
                                     {r === 'Conforme' ? '✓ C' : r === 'Não Conforme' ? '✗ NC' : r === 'Não Aplicável' ? 'N/A' : '⏳'}
                                   </button>
                                 ))}

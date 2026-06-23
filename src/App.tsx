@@ -449,7 +449,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-surface-page overflow-hidden font-sans antialiased text-slate-800 dark:text-slate-100 selection:bg-brand-primary selection:text-white">
+    <div className="flex h-screen bg-surface-page overflow-hidden font-sans antialiased text-slate-800 dark:text-slate-100 dark:text-slate-100 selection:bg-brand-primary selection:text-white">
       
       <Sidebar 
         activeTab={activeTab} 
@@ -464,13 +464,13 @@ export default function App() {
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         
-        <header className="h-[72px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800 px-8 flex justify-between items-center shrink-0 z-10 shadow-sm">
+        <header className="h-[72px] bg-white dark:bg-slate-800/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700/60 dark:border-slate-800 px-8 flex justify-between items-center shrink-0 z-10 shadow-sm">
           <div className="flex items-center gap-6">
             <div>
               <h2 className="text-[9px] font-black tracking-[0.18em] text-brand-primary dark:text-brand-primary uppercase leading-relaxed">
                 Painel de Gestão SST
               </h2>
-              <h1 className="text-[1.35rem] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+              <h1 className="text-[1.35rem] font-black text-slate-900 dark:text-white dark:text-white tracking-tight leading-tight">
                 Olá, {currentUser.name.split(' ')[0]}
               </h1>
             </div>
@@ -483,7 +483,7 @@ export default function App() {
             <div className="relative">
               <button 
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2.5 bg-slate-100 hover:bg-brand-primary/10 text-slate-500 hover:text-brand-primary rounded-xl transition-all cursor-pointer shadow-sm hover:shadow active:scale-95"
+                className="relative p-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-primary/10 text-slate-500 dark:text-slate-400 hover:text-brand-primary rounded-xl transition-all cursor-pointer shadow-sm hover:shadow active:scale-95"
               >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
@@ -496,25 +496,25 @@ export default function App() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-3 w-80 bg-white border border-slate-200 shadow-xl rounded-2xl overflow-hidden z-50 origin-top-right"
+                    className="absolute right-0 mt-3 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl rounded-2xl overflow-hidden z-50 origin-top-right"
                   >
-                    <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                      <h3 className="font-black text-[13px] text-slate-800 uppercase tracking-tight">Notificações</h3>
+                    <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center">
+                      <h3 className="font-black text-[13px] text-slate-800 dark:text-slate-100 uppercase tracking-tight">Notificações</h3>
                       <span className="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full">2 Novas</span>
                     </div>
                     <div className="max-h-[300px] overflow-y-auto">
-                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group">
-                        <p className="text-[12px] font-bold text-slate-700 group-hover:text-brand-primary transition-colors">EPI com CA Vencido detectado</p>
-                        <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">Luva de Vaqueta está com CA 12345 vencido. Atualize o estoque.</p>
+                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition-colors cursor-pointer group">
+                        <p className="text-[12px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-primary transition-colors">EPI com CA Vencido detectado</p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Luva de Vaqueta está com CA 12345 vencido. Atualize o estoque.</p>
                         <span className="text-[9px] font-bold text-slate-400 uppercase mt-2 block">Há 5 minutos</span>
                       </div>
-                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group">
-                        <p className="text-[12px] font-bold text-slate-700 group-hover:text-brand-primary transition-colors">Scanner Biométrico Desconectado</p>
-                        <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">A ponte local do Futronic parou de responder. Verifique a porta USB.</p>
+                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition-colors cursor-pointer group">
+                        <p className="text-[12px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-primary transition-colors">Scanner Biométrico Desconectado</p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">A ponte local do Futronic parou de responder. Verifique a porta USB.</p>
                         <span className="text-[9px] font-bold text-slate-400 uppercase mt-2 block">Há 1 hora</span>
                       </div>
                     </div>
-                    <div className="p-3 bg-slate-50 border-t border-slate-100 text-center">
+                    <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 text-center">
                       <button className="text-[11px] font-bold text-brand-primary hover:text-brand-primary-dark transition-colors uppercase tracking-wider">
                         Ver todas as notificações
                       </button>
@@ -524,14 +524,14 @@ export default function App() {
               </AnimatePresence>
             </div>
 
-            <div className="w-px h-8 bg-slate-200 mx-1"></div>
+            <div className="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
             <span className="px-3 py-1.5 bg-brand-primary/10 text-brand-primary border border-brand-primary/20 rounded-xl text-[10.5px] font-bold uppercase tracking-wider shadow-sm">
               {currentUser.role}
             </span>
             <button
               onClick={handleLogout}
-              className="px-5 py-2 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 hover:text-rose-600 rounded-xl text-[12px] font-black text-slate-600 transition-all shadow-sm cursor-pointer hover:shadow-md active:scale-95 uppercase tracking-wide"
+              className="px-5 py-2 bg-white dark:bg-slate-800 hover:bg-rose-50 border border-slate-200 dark:border-slate-700 hover:border-rose-200 hover:text-rose-600 rounded-xl text-[12px] font-black text-slate-600 dark:text-slate-300 transition-all shadow-sm cursor-pointer hover:shadow-md active:scale-95 uppercase tracking-wide"
             >
               Sair
             </button>
@@ -546,8 +546,8 @@ export default function App() {
                 <div className="absolute inset-0 bg-brand-primary/5 blur-xl rounded-full"></div>
               </div>
               <div className="text-center">
-                <p className="text-[15px] font-black text-slate-700">Carregando Sistema SST</p>
-                <p className="text-[12px] text-slate-500 mt-1 font-medium">Sincronizando módulos e banco de dados...</p>
+                <p className="text-[15px] font-black text-slate-700 dark:text-slate-200">Carregando Sistema SST</p>
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 font-medium">Sincronizando módulos e banco de dados...</p>
               </div>
             </div>
           ) : (

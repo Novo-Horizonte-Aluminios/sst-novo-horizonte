@@ -9,7 +9,7 @@ interface StatCardProps {
 }
 
 const variantStyles = {
-  default: { icon: 'bg-brand-primary/10 text-brand-primary', value: 'text-slate-900' },
+  default: { icon: 'bg-brand-primary/10 text-brand-primary', value: 'text-slate-900 dark:text-white' },
   danger: { icon: 'bg-rose-50 text-rose-700', value: 'text-rose-600' },
   warning: { icon: 'bg-amber-50 text-amber-600', value: 'text-amber-600' },
   success: { icon: 'bg-emerald-50 text-emerald-600', value: 'text-emerald-600' },
@@ -21,7 +21,7 @@ export default function StatCard({ label, value, icon, variant = 'default', onCl
   return (
     <div
       onClick={onClick}
-      className={`bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all duration-200 ${
+      className={`bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-200 ${
         onClick ? 'hover:shadow-md hover:border-brand-primary/30 cursor-pointer hover:-translate-y-0.5' : ''
       }`}
     >

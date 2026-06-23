@@ -30,7 +30,7 @@ const statusStyles: Record<string, string> = {
   'Vigente': 'bg-emerald-50 text-emerald-700 border-emerald-200',
   'Vencido': 'bg-red-50 text-red-700 border-red-200',
   'Em Revisão': 'bg-amber-50 text-amber-700 border-amber-200',
-  'Arquivado': 'bg-slate-100 text-slate-500 border-slate-200',
+  'Arquivado': 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700',
 };
 
 const typeIcon: Record<string, string> = {
@@ -138,15 +138,15 @@ export default function DocumentsTab() {
   const expired = docs.filter(d => d.status === 'Vencido' || getDaysUntilExpiry(d.expiryDate) < 0);
 
   return (
-    <div className="space-y-4 text-xs text-slate-700 font-sans">
+    <div className="space-y-4 text-xs text-slate-700 dark:text-slate-200 font-sans">
       {/* Header */}
-      <div className="bg-white p-4 rounded border border-slate-200 flex flex-col sm:flex-row justify-between gap-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between gap-3">
         <div>
-          <h2 className="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+          <h2 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-1.5">
             <BookOpen className="w-4 h-4 text-indigo-600" />
             Gestão Documental SST
           </h2>
-          <p className="text-[10px] text-slate-500 mt-0.5">PGR, LTCAT, PCMSO, APR, DDS e demais documentos legais com controle de validade.</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">PGR, LTCAT, PCMSO, APR, DDS e demais documentos legais com controle de validade.</p>
         </div>
         <button onClick={openNew}
           className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 bg-indigo-600 text-white rounded transition hover:bg-indigo-700 cursor-pointer shrink-0 h-8">
@@ -181,12 +181,12 @@ export default function DocumentsTab() {
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total de Documentos', value: docs.length, color: 'text-slate-800' },
+          { label: 'Total de Documentos', value: docs.length, color: 'text-slate-800 dark:text-slate-100' },
           { label: 'Vigentes', value: docs.filter(d => d.status === 'Vigente').length, color: 'text-emerald-600' },
           { label: 'Vencidos', value: expired.length, color: expired.length > 0 ? 'text-red-600' : 'text-slate-400' },
           { label: 'Vence em 30d', value: expiring30.length, color: expiring30.length > 0 ? 'text-amber-600' : 'text-slate-400' },
         ].map((k, i) => (
-          <div key={i} className="bg-white p-3 rounded border border-slate-200">
+          <div key={i} className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700">
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">{k.label}</span>
             <span className={`text-xl font-extrabold block mt-1 ${k.color}`}>{k.value}</span>
           </div>
@@ -198,15 +198,15 @@ export default function DocumentsTab() {
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
           <input type="text" placeholder="Buscar por título, número, responsável..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded focus:outline-none focus:border-indigo-500" />
+            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-indigo-500" />
         </div>
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
-          className="px-2 py-1.5 text-xs bg-white border border-slate-200 rounded focus:outline-none">
+          className="px-2 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded focus:outline-none">
           <option value="">Todos os Tipos</option>
           {DOC_TYPES.map(t => <option key={t}>{t}</option>)}
         </select>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-          className="px-2 py-1.5 text-xs bg-white border border-slate-200 rounded focus:outline-none">
+          className="px-2 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded focus:outline-none">
           <option value="">Todos os Status</option>
           {['Vigente','Vencido','Em Revisão','Arquivado'].map(s => <option key={s}>{s}</option>)}
         </select>
@@ -214,24 +214,24 @@ export default function DocumentsTab() {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="bg-white border border-indigo-200 rounded p-4 space-y-3">
+        <div className="bg-white dark:bg-slate-800 border border-indigo-200 rounded p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight">
+            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">
               {editingDoc ? 'Editar Documento' : 'Novo Documento SST'}
             </h3>
-            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-4 h-4" /></button>
+            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Título *</label>
               <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                 placeholder="Ex: PGR - Programa de Gerenciamento de Riscos"
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-indigo-500" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-indigo-500" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Tipo *</label>
               <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none">
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none">
                 {DOC_TYPES.map(t => <option key={t}>{t}</option>)}
               </select>
             </div>
@@ -239,50 +239,50 @@ export default function DocumentsTab() {
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Número do Documento</label>
               <input type="text" value={form.documentNumber} onChange={e => setForm(f => ({ ...f, documentNumber: e.target.value }))}
                 placeholder="Ex: PGR-NH-2024-001"
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Responsável Técnico *</label>
               <input type="text" value={form.responsible} onChange={e => setForm(f => ({ ...f, responsible: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Elaboração</label>
               <input type="date" value={form.elaborationDate} onChange={e => setForm(f => ({ ...f, elaborationDate: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Revisão</label>
               <input type="date" value={form.revisionDate} onChange={e => setForm(f => ({ ...f, revisionDate: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Vencimento</label>
               <input type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Validade (meses)</label>
               <input type="number" value={form.validityMonths} onChange={e => setForm(f => ({ ...f, validityMonths: +e.target.value }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
             <div>
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Status</label>
               <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as any }))}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none">
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none">
                 {['Vigente','Em Revisão','Arquivado','Vencido'].map(s => <option key={s}>{s}</option>)}
               </select>
             </div>
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">Descrição / Escopo</label>
               <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2}
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none resize-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none resize-none" />
             </div>
             <div className="sm:col-span-2">
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-1">NRs de Referência</label>
               <div className="flex gap-1.5 mb-1.5">
                 <select value={nrInput} onChange={e => setNrInput(e.target.value)}
-                  className="flex-1 px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none">
+                  className="flex-1 px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none">
                   <option value="">Selecione uma NR...</option>
                   {NR_OPTIONS.map(n => <option key={n}>{n}</option>)}
                 </select>
@@ -301,7 +301,7 @@ export default function DocumentsTab() {
               <label className="text-[9px] font-bold uppercase text-slate-400 block mb-0.5">URL do Arquivo (opcional)</label>
               <input type="text" value={form.fileUrl} onChange={e => setForm(f => ({ ...f, fileUrl: e.target.value }))}
                 placeholder="https://drive.google.com/..."
-                className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded focus:outline-none" />
+                className="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded focus:outline-none" />
             </div>
           </div>
           <div className="flex gap-2 pt-1">
@@ -310,7 +310,7 @@ export default function DocumentsTab() {
               <Save className="w-3.5 h-3.5" /> {editingDoc ? 'Salvar Alterações' : 'Criar Documento'}
             </button>
             <button onClick={() => setShowForm(false)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 border border-slate-300 text-slate-700 rounded hover:bg-slate-200 cursor-pointer">
+              className="px-3 py-1.5 text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded hover:bg-slate-200 dark:bg-slate-700 cursor-pointer">
               Cancelar
             </button>
           </div>
@@ -321,21 +321,21 @@ export default function DocumentsTab() {
       {loading ? (
         <div className="text-center py-10 text-slate-400 text-xs">Carregando documentos...</div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded border border-slate-200 p-8 text-center">
+        <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-8 text-center">
           <BookOpen className="w-8 h-8 text-slate-300 mx-auto mb-2" />
           <p className="text-slate-400 text-xs">Nenhum documento encontrado.</p>
         </div>
       ) : (
-        <div className="bg-white rounded border border-slate-200 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
           <table className="w-full text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
               <tr>
-                <th className="text-left text-[9px] font-bold text-slate-500 uppercase tracking-wider px-3 py-2">Documento</th>
-                <th className="text-left text-[9px] font-bold text-slate-500 uppercase tracking-wider px-3 py-2 hidden sm:table-cell">Tipo</th>
-                <th className="text-left text-[9px] font-bold text-slate-500 uppercase tracking-wider px-3 py-2 hidden md:table-cell">Responsável</th>
-                <th className="text-left text-[9px] font-bold text-slate-500 uppercase tracking-wider px-3 py-2">Vencimento</th>
-                <th className="text-left text-[9px] font-bold text-slate-500 uppercase tracking-wider px-3 py-2">Status</th>
-                <th className="text-left text-[9px] font-bold text-slate-500 uppercase tracking-wider px-3 py-2">NRs</th>
+                <th className="text-left text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 py-2">Documento</th>
+                <th className="text-left text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 py-2 hidden sm:table-cell">Tipo</th>
+                <th className="text-left text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 py-2 hidden md:table-cell">Responsável</th>
+                <th className="text-left text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 py-2">Vencimento</th>
+                <th className="text-left text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 py-2">Status</th>
+                <th className="text-left text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 py-2">NRs</th>
                 <th className="px-3 py-2"></th>
               </tr>
             </thead>
@@ -345,12 +345,12 @@ export default function DocumentsTab() {
                 const expiryWarning = days <= 30 && days > 0;
                 const expired = days <= 0;
                 return (
-                  <tr key={doc.id} className="hover:bg-slate-50 transition">
+                  <tr key={doc.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition">
                     <td className="px-3 py-2.5">
                       <div className="flex items-start gap-1.5">
                         <span className="text-sm">{typeIcon[doc.type] || '📄'}</span>
                         <div>
-                          <p className="font-bold text-slate-800 leading-snug">{doc.title}</p>
+                          <p className="font-bold text-slate-800 dark:text-slate-100 leading-snug">{doc.title}</p>
                           {doc.documentNumber && <p className="text-[9px] text-slate-400 font-mono">{doc.documentNumber}</p>}
                         </div>
                       </div>
@@ -358,11 +358,11 @@ export default function DocumentsTab() {
                     <td className="px-3 py-2.5 hidden sm:table-cell">
                       <span className="text-[9px] font-bold bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded border border-indigo-100">{doc.type}</span>
                     </td>
-                    <td className="px-3 py-2.5 hidden md:table-cell text-slate-600">{doc.responsible}</td>
+                    <td className="px-3 py-2.5 hidden md:table-cell text-slate-600 dark:text-slate-300">{doc.responsible}</td>
                     <td className="px-3 py-2.5">
                       {doc.expiryDate ? (
                         <div>
-                          <p className={`font-mono font-bold text-[10px] ${expired ? 'text-red-600' : expiryWarning ? 'text-amber-600' : 'text-slate-700'}`}>
+                          <p className={`font-mono font-bold text-[10px] ${expired ? 'text-red-600' : expiryWarning ? 'text-amber-600' : 'text-slate-700 dark:text-slate-200'}`}>
                             {doc.expiryDate}
                           </p>
                           <p className={`text-[9px] ${expired ? 'text-red-500' : expiryWarning ? 'text-amber-500' : 'text-slate-400'}`}>
@@ -377,7 +377,7 @@ export default function DocumentsTab() {
                     <td className="px-3 py-2.5">
                       <div className="flex flex-wrap gap-0.5">
                         {(doc.nrReferences || []).map(nr => (
-                          <span key={nr} className="text-[8px] font-bold bg-slate-100 text-slate-600 px-1 py-0.5 rounded font-mono">{nr}</span>
+                          <span key={nr} className="text-[8px] font-bold bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 px-1 py-0.5 rounded font-mono">{nr}</span>
                         ))}
                       </div>
                     </td>
@@ -389,7 +389,7 @@ export default function DocumentsTab() {
                             <Download className="w-3.5 h-3.5" />
                           </a>
                         )}
-                        <button onClick={() => openEdit(doc)} className="p-1 text-slate-400 hover:bg-slate-50 rounded cursor-pointer">
+                        <button onClick={() => openEdit(doc)} className="p-1 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 rounded cursor-pointer">
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={() => handleDelete(doc.id)} className="p-1 text-red-400 hover:bg-red-50 rounded cursor-pointer">

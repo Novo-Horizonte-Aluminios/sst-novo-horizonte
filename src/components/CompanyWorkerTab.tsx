@@ -365,20 +365,20 @@ export default function CompanyWorkerTab({
   return (
     <div className="space-y-6">
       {/* Header Info Card */}
-      <div className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+      <div className="bg-white dark:bg-slate-800/90 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
         <div>
-          <h2 className="text-[13px] font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+          <h2 className="text-[13px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
             <div className="bg-brand-primary/10 text-brand-primary p-2 rounded-xl">
               <Building2 className="w-5 h-5" />
             </div>
             Controle de Colaboradores — {activeCompany?.tradingName || 'Novo Horizonte Alumínios'}
           </h2>
-          <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
             Diretório oficial de colaboradores da empresa. Alinhado com as diretrizes da NR-01 (GRO) e NR-06 (EPI).
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="px-3 py-1.5 bg-slate-50 text-slate-700 border border-slate-200 rounded-xl font-mono text-[10px] font-bold">
+          <div className="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-[10px] font-bold">
             CNPJ: {activeCompany?.cnpj || '34.892.455/0001-38'}
           </div>
           {onUpdateCompany && (
@@ -408,7 +408,7 @@ export default function CompanyWorkerTab({
               placeholder="Buscar por Nome, CPF ou Matrícula..."
               value={employeeSearch}
               onChange={(e) => setEmployeeSearch(e.target.value)}
-              className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-slate-300 shadow-sm font-bold text-slate-800"
+              className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all hover:border-slate-300 dark:border-slate-600 shadow-sm font-bold text-slate-800 dark:text-slate-100"
             />
           </div>
 
@@ -423,7 +423,7 @@ export default function CompanyWorkerTab({
               className={`flex items-center gap-2 text-[11px] font-bold px-4 py-2.5 border-2 rounded-xl transition-all cursor-pointer shadow-sm hover:-translate-y-0.5 ${
                 showBulkImport 
                   ? 'bg-slate-900 text-white border-slate-900' 
-                  : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800 hover:border-slate-400'
+                  : 'bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 hover:border-slate-400'
               }`}
             >
               <FileSpreadsheet className={`w-4 h-4 ${showBulkImport ? 'text-amber-400' : 'text-emerald-600'}`} />
@@ -433,7 +433,7 @@ export default function CompanyWorkerTab({
             <button
               onClick={handleSimulateCSVImport}
               disabled={importStatus !== null}
-              className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-2.5 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 shadow-sm text-slate-700 rounded-xl transition-all hover:border-slate-400 cursor-pointer disabled:opacity-50 disabled:pointer-events-none hover:-translate-y-0.5"
+              className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 shadow-sm text-slate-700 dark:text-slate-200 rounded-xl transition-all hover:border-slate-400 cursor-pointer disabled:opacity-50 disabled:pointer-events-none hover:-translate-y-0.5"
               title="Simular uma importação rápida com dados de demonstração"
             >
               <span>Demo Import</span>
@@ -451,14 +451,14 @@ export default function CompanyWorkerTab({
 
         {/* Bulk CSV Import Panel */}
         {showBulkImport && (
-          <div className="bg-slate-50 border border-slate-200 rounded p-4 text-xs space-y-4 animate-fade-in">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-4 text-xs space-y-4 animate-fade-in">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5 uppercase">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5 uppercase">
                   <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
                   Importação de Colaboradores em Lote (CSV)
                 </h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                   Baixe o modelo, preencha os dados e envie a planilha. O sistema irá ler o formato automaticamente e carregar os colaboradores no eSocial.
                 </p>
               </div>
@@ -469,7 +469,7 @@ export default function CompanyWorkerTab({
                   setParsedRows([]);
                   setParseError(null);
                 }}
-                className="text-slate-500 hover:text-slate-700 p-1 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded transition cursor-pointer font-bold"
+                className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200 p-1 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded transition cursor-pointer font-bold"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -477,20 +477,20 @@ export default function CompanyWorkerTab({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Left Column: Template download instruction */}
-              <div className="bg-white p-3 rounded border border-slate-200 flex flex-col justify-between">
+              <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-slate-700 mb-1 flex items-center gap-1">
+                  <h4 className="font-bold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-1">
                     <Info className="w-3.5 h-3.5 text-blue-500 font-bold shrink-0" />
                     1. Baixe o Modelo
                   </h4>
-                  <p className="text-[11px] text-slate-500 leading-relaxed mb-3">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
                     Use o modelo padrão pré-configurado contendo as colunas corretas (Nome, CPF, RG, Data Nascimento, Matricula, Setor, Cargo, Gestor Direto, Data Admissao, WhatsApp e Email).
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={handleDownloadTemplate}
-                  className="w-full flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 hover:text-slate-900 rounded transition shadow-sm cursor-pointer"
+                  className="w-full flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider py-2 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 hover:text-slate-900 dark:hover:text-white dark:text-white rounded transition shadow-sm cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-emerald-600" />
                   <span>Baixar Modelo CSV</span>
@@ -498,7 +498,7 @@ export default function CompanyWorkerTab({
               </div>
 
               {/* Middle/Right Column: File drop zone */}
-              <div className="col-span-2 bg-white rounded border border-slate-200 overflow-hidden">
+              <div className="col-span-2 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div
                   onDragEnter={handleDrag}
                   onDragOver={handleDrag}
@@ -508,7 +508,7 @@ export default function CompanyWorkerTab({
                   className={`border-2 border-dashed rounded-lg p-5 flex flex-col items-center justify-center cursor-pointer transition m-3 ${
                     dragActive 
                       ? 'border-safety-green bg-safety-green/5' 
-                      : 'border-slate-300 hover:border-safety-green bg-slate-50/50 hover:bg-slate-50'
+                      : 'border-slate-300 dark:border-slate-600 hover:border-safety-green bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900'
                   }`}
                 >
                   <input
@@ -519,7 +519,7 @@ export default function CompanyWorkerTab({
                     className="hidden"
                   />
                   <UploadCloud className={`w-8 h-8 mb-2 ${dragActive ? 'text-safety-green animate-bounce' : 'text-slate-400'}`} />
-                  <p className="font-bold text-slate-700 text-center mb-1 text-[11.5px]">
+                  <p className="font-bold text-slate-700 dark:text-slate-200 text-center mb-1 text-[11.5px]">
                     Arraste o arquivo CSV aqui ou clique para selecionar
                   </p>
                   <p className="text-[10px] text-slate-450 text-center">
@@ -539,8 +539,8 @@ export default function CompanyWorkerTab({
 
             {/* Parse result list preview */}
             {parsedRows.length > 0 && (
-              <div className="bg-white border border-slate-200 rounded overflow-hidden">
-                <div className="bg-slate-100 p-2 text-slate-700 flex justify-between items-center font-bold text-[10px] uppercase tracking-wider border-b border-slate-200">
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded overflow-hidden">
+                <div className="bg-slate-100 dark:bg-slate-800/80 p-2 text-slate-700 dark:text-slate-200 flex justify-between items-center font-bold text-[10px] uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
                   <span>Visualização dos dados ({parsedRows.length} registros encontrados)</span>
                   <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
                     parsedRows.filter(r => r.isValid).length === parsedRows.length
@@ -553,10 +553,10 @@ export default function CompanyWorkerTab({
 
                 <div className="max-h-48 overflow-y-auto divide-y divide-slate-100">
                   {parsedRows.map((row, index) => (
-                    <div key={index} className="p-2.5 flex justify-between items-center gap-4 hover:bg-slate-50 transition text-[11px]">
+                    <div key={index} className="p-2.5 flex justify-between items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition text-[11px]">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-slate-800 truncate">{row.data.name || <em className="text-rose-600 font-semibold">Falta o Nome</em>}</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-100 truncate">{row.data.name || <em className="text-rose-600 font-semibold">Falta o Nome</em>}</span>
                           <span className="text-slate-450 text-[9px] font-mono shrink-0">Matrícula: {row.data.matricula}</span>
                         </div>
                         <div className="flex flex-wrap gap-x-2 text-[10px] text-slate-450 mt-0.5">
@@ -598,11 +598,11 @@ export default function CompanyWorkerTab({
                   ))}
                 </div>
 
-                <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+                <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setParsedRows([])}
-                    className="px-3 py-1.5 border border-slate-200 hover:bg-slate-100 text-slate-600 font-bold rounded transition cursor-pointer"
+                    className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-bold rounded transition cursor-pointer"
                   >
                     Limpar
                   </button>
@@ -638,12 +638,12 @@ export default function CompanyWorkerTab({
         )}
 
         {/* Directory Listings Grid */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden text-[12px]">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden text-[12px]">
           {filteredEmployees.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="compact-table w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 text-[10px] uppercase font-bold tracking-wider">
+                  <tr className="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 text-[10px] uppercase font-bold tracking-wider">
                     <th className="p-4 pl-6">Colaborador</th>
                     <th className="p-4">Matrícula</th>
                     <th className="p-4">CPF / RG</th>
@@ -657,7 +657,7 @@ export default function CompanyWorkerTab({
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredEmployees.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-slate-50/50 transition">
+                    <tr key={emp.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition">
                       <td className="p-4 pl-6 flex items-center gap-3">
                         <img 
                           src={emp.photoUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} 
@@ -668,13 +668,13 @@ export default function CompanyWorkerTab({
                           className="w-8 h-8 rounded-full border-2 border-slate-150 block shadow-sm" 
                         />
                         <div>
-                          <p className="font-bold text-slate-800 text-[13px] leading-tight">{emp.name}</p>
+                          <p className="font-bold text-slate-800 dark:text-slate-100 text-[13px] leading-tight">{emp.name}</p>
                           <p className="text-slate-400 text-[10px] mt-0.5">D.N: {emp.birthDate}</p>
                         </div>
                       </td>
-                      <td className="p-4 font-mono font-bold text-slate-700">{emp.matricula}</td>
+                      <td className="p-4 font-mono font-bold text-slate-700 dark:text-slate-200">{emp.matricula}</td>
                       <td className="p-4">
-                        <p className="font-mono font-medium text-slate-800">{emp.cpf}</p>
+                        <p className="font-mono font-medium text-slate-800 dark:text-slate-100">{emp.cpf}</p>
                         <p className="text-slate-400 text-[10px] font-mono mt-0.5">{emp.rg}</p>
                       </td>
                       <td className="p-4">
@@ -683,18 +683,18 @@ export default function CompanyWorkerTab({
                       </td>
                       <td className="p-4">
                         <div className="space-y-1">
-                          <p className="flex items-center gap-1.5 text-[11px] text-slate-700 font-bold">
+                          <p className="flex items-center gap-1.5 text-[11px] text-slate-700 dark:text-slate-200 font-bold">
                             <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                             <span>{emp.phone || <em className="text-slate-450 text-[10px] font-normal">Não Cadastrado</em>}</span>
                           </p>
-                          <p className="flex items-center gap-1.5 text-[10.5px] text-slate-500">
+                          <p className="flex items-center gap-1.5 text-[10.5px] text-slate-500 dark:text-slate-400">
                             <Mail className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                             <span className="truncate max-w-[150px]">{emp.email || <em className="text-slate-450 text-[10px]">Não Cadastrado</em>}</span>
                           </p>
                         </div>
                       </td>
-                      <td className="p-4 text-slate-600 font-medium">{emp.manager}</td>
-                      <td className="p-4 font-mono text-slate-600">{emp.admissionDate}</td>
+                      <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">{emp.manager}</td>
+                      <td className="p-4 font-mono text-slate-600 dark:text-slate-300">{emp.admissionDate}</td>
                       <td className="p-4">
                         <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase ${
                           emp.status === 'Ativo' 
@@ -715,7 +715,7 @@ export default function CompanyWorkerTab({
                               admissionDate: normalizeDate(emp.admissionDate)
                             })}
                             title="Editar dados do colaborador"
-                            className="bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 hover:border-slate-400 p-2 rounded-xl text-slate-700 transition cursor-pointer hover:scale-105 shadow-sm"
+                            className="bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 p-2 rounded-xl text-slate-700 dark:text-slate-200 transition cursor-pointer hover:scale-105 shadow-sm"
                           >
                             <Edit2 className="w-3.5 h-3.5 text-blue-650 font-black" />
                           </button>
@@ -723,7 +723,7 @@ export default function CompanyWorkerTab({
                           <button
                             onClick={() => setDeletingEmp(emp)}
                             title="Excluir colaborador"
-                            className="bg-slate-100 hover:bg-rose-100 border-2 border-slate-300 hover:border-rose-300 p-2 rounded-xl text-slate-700 transition cursor-pointer hover:scale-105 shadow-sm"
+                            className="bg-slate-100 dark:bg-slate-800/80 hover:bg-rose-100 border-2 border-slate-300 dark:border-slate-600 hover:border-rose-300 p-2 rounded-xl text-slate-700 dark:text-slate-200 transition cursor-pointer hover:scale-105 shadow-sm"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-rose-600 font-black" />
                           </button>
@@ -770,7 +770,7 @@ export default function CompanyWorkerTab({
       {/* --- CONFIRM DELETE MODAL DIALOG --- */}
       {deletingEmp && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-205">
             <div className="bg-rose-950 p-4 text-white flex justify-between items-center">
               <div className="flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-rose-450" />
@@ -782,19 +782,19 @@ export default function CompanyWorkerTab({
             </div>
 
             <div className="p-4 space-y-3">
-              <p className="text-slate-700 leading-relaxed">
+              <p className="text-slate-700 dark:text-slate-200 leading-relaxed">
                 Você está prestes a excluir permanentemente o cadastro do colaborador 
-                <strong className="text-slate-900"> {deletingEmp.name}</strong> (Matrícula: {deletingEmp.matricula}).
+                <strong className="text-slate-900 dark:text-white"> {deletingEmp.name}</strong> (Matrícula: {deletingEmp.matricula}).
               </p>
               <p className="p-2.5 bg-rose-50 border border-rose-100 rounded text-[10.5px] text-rose-700 leading-normal">
                 <strong>Aviso Legal de SST:</strong> Excluir um colaborador ativo ou inativo remove o registro imediato dele no diretório. Certifique-se de que não existem fichas de entrega pendentes para este trabalhador no histórico regulatório.
               </p>
 
-              <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-3.5 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setDeletingEmp(null)}
-                  className="px-3.5 py-1.5 hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded cursor-pointer"
+                  className="px-3.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -813,7 +813,7 @@ export default function CompanyWorkerTab({
       {/* --- EDIT COMPANY MODAL DIALOG --- */}
       {showCompanyModal && editingCompany && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-lg rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-200 font-sans">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-lg rounded shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-200 dark:border-slate-700 font-sans">
             <div className="bg-slate-950 p-4 text-white flex justify-between items-center">
               <div className="flex items-center gap-1.5">
                 <Building2 className="w-4 h-4 text-safety-green" />
@@ -827,50 +827,50 @@ export default function CompanyWorkerTab({
             <form onSubmit={handleUpdateCompanySubmit} className="p-4 space-y-3.5">
               <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Razão Social</label>
+                  <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Razão Social</label>
                   <input
                     type="text"
                     required
                     value={editingCompany.name}
                     onChange={(e) => setEditingCompany({ ...editingCompany, name: e.target.value })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Nome Fantasia</label>
+                  <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Nome Fantasia</label>
                   <input
                     type="text"
                     required
                     value={editingCompany.tradingName || ''}
                     onChange={(e) => setEditingCompany({ ...editingCompany, tradingName: e.target.value })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">CNPJ</label>
+                  <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">CNPJ</label>
                   <input
                     type="text"
                     required
                     value={editingCompany.cnpj}
                     onChange={(e) => setEditingCompany({ ...editingCompany, cnpj: maskCNPJ(e.target.value) })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green font-mono"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green font-mono"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">CNAE</label>
+                  <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">CNAE</label>
                   <input
                     type="text"
                     value={editingCompany.cnae || ''}
                     onChange={(e) => setEditingCompany({ ...editingCompany, cnae: e.target.value })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Grau de Risco (NR-04)</label>
+                  <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Grau de Risco (NR-04)</label>
                   <select
                     value={editingCompany.riskDegree || 1}
                     onChange={(e) => setEditingCompany({ ...editingCompany, riskDegree: parseInt(e.target.value) })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green"
                   >
                     <option value={1}>Grau 1 (Leve)</option>
                     <option value={2}>Grau 2 (Moderado)</option>
@@ -879,40 +879,40 @@ export default function CompanyWorkerTab({
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Responsável SST</label>
+                  <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Responsável SST</label>
                   <input
                     type="text"
                     value={editingCompany.sstResponsible || ''}
                     onChange={(e) => setEditingCompany({ ...editingCompany, sstResponsible: e.target.value })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Responsável RH</label>
+                  <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Responsável RH</label>
                   <input
                     type="text"
                     value={editingCompany.rhResponsible || ''}
                     onChange={(e) => setEditingCompany({ ...editingCompany, rhResponsible: e.target.value })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                    className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-slate-500">Endereço Completo</label>
+                <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Endereço Completo</label>
                 <input
                   type="text"
                   value={editingCompany.address || ''}
                   onChange={(e) => setEditingCompany({ ...editingCompany, address: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded focus:outline-none focus:border-safety-green"
+                  className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded focus:outline-none focus:border-safety-green"
                 />
               </div>
 
-              <div className="pt-3.5 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-3.5 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowCompanyModal(false)}
-                  className="px-3.5 py-1.5 hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded cursor-pointer"
+                  className="px-3.5 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded cursor-pointer"
                 >
                   Cancelar
                 </button>

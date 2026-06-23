@@ -248,15 +248,15 @@ export default function DashboardTab({
   return (
     <div className="space-y-6">
       {/* Fluxos de Operação Rápidos */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-        <h3 className="text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+        <h3 className="text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-700 pb-2">
           <Workflow className="w-3.5 h-3.5 text-slate-450" />
           Ações e Atalhos Rápidos
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <button 
             onClick={() => onNavigate('delivery')}
-            className="p-4 bg-slate-50/50 hover:bg-slate-100 hover:text-safety-green border-2 border-slate-200 hover:border-safety-green/50 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:text-safety-green border-2 border-slate-200 dark:border-slate-700 hover:border-safety-green/50 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 dark:text-slate-200 flex flex-col items-center gap-2 cursor-pointer"
           >
             <div className="bg-safety-green/10 p-2 rounded-lg">
               <CheckCircle2 className="w-5 h-5 text-safety-green animate-pulse" />
@@ -265,7 +265,7 @@ export default function DashboardTab({
           </button>
           <button 
             onClick={() => onNavigate('ppes')}
-            className="p-4 bg-slate-50/50 hover:bg-slate-100 hover:text-blue-600 border-2 border-slate-200 hover:border-blue-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:text-blue-600 border-2 border-slate-200 dark:border-slate-700 hover:border-blue-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 dark:text-slate-200 flex flex-col items-center gap-2 cursor-pointer"
           >
             <div className="bg-blue-50 p-2 rounded-lg">
               <Shield className="w-5 h-5 text-[#0369a1]" />
@@ -274,7 +274,7 @@ export default function DashboardTab({
           </button>
           <button 
             onClick={() => onNavigate('incidents')}
-            className="p-4 bg-slate-50/50 hover:bg-rose-50 hover:text-rose-700 border-2 border-slate-200 hover:border-rose-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-rose-50 hover:text-rose-700 border-2 border-slate-200 dark:border-slate-700 hover:border-rose-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 dark:text-slate-200 flex flex-col items-center gap-2 cursor-pointer"
           >
             <div className="bg-rose-50 p-2 rounded-lg">
               <AlertTriangle className="w-5 h-5 text-rose-600" />
@@ -283,7 +283,7 @@ export default function DashboardTab({
           </button>
           <button 
             onClick={() => onNavigate('ai')}
-            className="p-4 bg-slate-50/50 hover:bg-slate-100 hover:text-amber-600 border-2 border-slate-200 hover:border-amber-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 flex flex-col items-center gap-2 cursor-pointer"
+            className="p-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:text-amber-600 border-2 border-slate-200 dark:border-slate-700 hover:border-amber-300 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-[12px] font-bold text-slate-700 dark:text-slate-200 flex flex-col items-center gap-2 cursor-pointer"
           >
             <div className="bg-amber-50 p-2 rounded-lg">
               <Sparkles className="w-5 h-5 text-amber-500" />
@@ -294,33 +294,33 @@ export default function DashboardTab({
       </div>
 
       {/* Tab Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:shadow-md gap-4">
         <div>
-          <h2 className="text-sm font-black text-slate-800 uppercase tracking-tight">Painel Operacional (SST & Legal Compliance)</h2>
-          <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+          <h2 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Painel Operacional (SST & Legal Compliance)</h2>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
             Métricas de conformidade NR-01, NR-06, NR-12, NR-35 e controle estratégico.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {/* Pequeno painel de status das integrações reais */}
-          <div className="flex items-center gap-3 bg-slate-50 border-2 border-slate-200/60 rounded-xl px-3 py-1.5 text-[10px] select-none font-bold text-slate-650">
+          <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700/60 rounded-xl px-3 py-1.5 text-[10px] select-none font-bold text-slate-650">
             <span className="text-[9px] uppercase font-black text-slate-400 font-mono tracking-wider">Integrações:</span>
             
             {/* Evolution API Gateway */}
             <div className="flex items-center gap-1.5" title="WhatsApp Gateway (Evolution API)">
               <Cpu className={`w-4 h-4 ${integrations?.evolution?.status === 'online' ? 'text-emerald-600' : 'text-red-500'}`} />
-              <span className="text-slate-800">WhatsApp</span>
+              <span className="text-slate-800 dark:text-slate-100">WhatsApp</span>
               <span className={`h-2.5 w-2.5 rounded-full border border-white ${
                 integrations?.evolution?.status === 'online' ? 'bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]' : 'bg-red-500 animate-pulse'
               }`} />
             </div>
 
-            <div className="h-3 w-px bg-slate-200" />
+            <div className="h-3 w-px bg-slate-200 dark:bg-slate-700" />
 
             {/* n8n Engine */}
             <div className="flex items-center gap-1.5" title="SST Webhook Automation (n8n)">
               <Workflow className={`w-4 h-4 ${integrations?.n8n?.status === 'online' ? 'text-indigo-600' : 'text-red-500'}`} />
-              <span className="text-slate-800">n8n Engine</span>
+              <span className="text-slate-800 dark:text-slate-100">n8n Engine</span>
               <span className={`h-2.5 w-2.5 rounded-full border border-white ${
                 integrations?.n8n?.status === 'online' ? 'bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]' : 'bg-red-500 animate-pulse'
               }`} />
@@ -366,13 +366,13 @@ export default function DashboardTab({
 
 
       {/* Exportação de Relatórios Executivos */}
-      <div className="bg-slate-50 border border-slate-200 rounded p-3 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-3 flex flex-col sm:flex-row justify-between items-center gap-2">
         <div className="flex items-center gap-2">
           <div className="bg-slate-900 text-white p-1.5 rounded shrink-0">
             <FileSpreadsheet className="w-3.5 h-3.5 text-safety-green" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight">Exportação de Relatórios de Conformidade</h3>
+            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">Exportação de Relatórios de Conformidade</h3>
             <p className="text-[10px] text-slate-400 mt-0.5 leading-tight">
               Gere planilhas consolidadas e relatórios em PDF formatados conforme os requisitos de auditoria do Ministério do Trabalho.
             </p>
@@ -381,14 +381,14 @@ export default function DashboardTab({
         <div className="flex gap-2 shrink-0">
           <button
             onClick={handleExportExcel}
-            className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 rounded transition cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded transition cursor-pointer shadow-sm"
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
             <span>Exportar Excel</span>
           </button>
           <button
             onClick={handleExportPdf}
-            className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 rounded transition cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded transition cursor-pointer shadow-sm"
           >
             <FileText className="w-3.5 h-3.5 text-indigo-600" />
             <span>Baixar PDF</span>
@@ -406,10 +406,10 @@ export default function DashboardTab({
       {/* Indicadores Executivos de Desempenho (SST Recharts Section) */}
       <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Card 1: Taxa de Entrega de EPI (Bar Chart) */}
-        <div className="bg-white p-4 rounded border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-1">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+              <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-1.5">
                 <BarChart2 className="w-3.5 h-3.5 text-safety-green" />
                 Taxa de Entrega de EPI (%)
               </h3>
@@ -482,10 +482,10 @@ export default function DashboardTab({
         </div>
 
         {/* Card 2: Evolução de Acidentes e Desvios (Line Chart) */}
-        <div className="bg-white p-4 rounded border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-1">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+              <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-1.5">
                 <TrendingDown className="w-3.5 h-3.5 text-amber-655 text-amber-600" />
                 Evolução de Incidentes & Desvios
               </h3>
@@ -562,8 +562,8 @@ export default function DashboardTab({
         
         {/* Left column: Visual Compliance and Alerts */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white p-4 rounded border border-slate-200">
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-tight mb-3 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700">
+            <h3 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight mb-3 flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5 text-safety-green" />
               Conformidade Legal por Setor
             </h3>
@@ -572,47 +572,47 @@ export default function DashboardTab({
             <div className="space-y-3 font-sans text-[11px]">
               <div>
                 <div className="flex justify-between mb-0.5">
-                  <span className="font-medium text-slate-600">Usinagem de Peças (NR-12)</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">Usinagem de Peças (NR-12)</span>
                   <span className="font-bold text-safety-green">100% em Ordem</span>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800/80 h-1.5 rounded overflow-hidden">
                   <div className="bg-safety-green h-full rounded" style={{ width: '100%' }}></div>
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between mb-0.5">
-                  <span className="font-medium text-slate-600">Soldagem e Montagem Química (NR-06 & NR-15)</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">Soldagem e Montagem Química (NR-06 & NR-15)</span>
                   <span className="font-bold text-safety-green">94% Adequado</span>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800/80 h-1.5 rounded overflow-hidden">
                   <div className="bg-safety-green h-full rounded" style={{ width: '94%' }}></div>
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between mb-0.5">
-                  <span className="font-medium text-slate-600">Montagem Mecânica (Pendência de CAs)</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">Montagem Mecânica (Pendência de CAs)</span>
                   <span className="font-bold text-red-500">65% Requer Regularização</span>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800/80 h-1.5 rounded overflow-hidden">
                   <div className="bg-red-550 bg-red-600 h-full rounded" style={{ width: '65%' }}></div>
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between mb-0.5">
-                  <span className="font-medium text-slate-600">Trabalho em Altura e Logística (NR-35)</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">Trabalho em Altura e Logística (NR-35)</span>
                   <span className="font-bold text-amber-500">82% Reciclagem Pendente</span>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800/80 h-1.5 rounded overflow-hidden">
                   <div className="bg-amber-500 h-full rounded" style={{ width: '82%' }}></div>
                 </div>
               </div>
             </div>
             
             {/* Legend info */}
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-[10px] text-slate-400">
               <span>Metodologia: Fórmulas de GRO integradas com base no PGR e NR-01</span>
               <button 
                 onClick={() => onNavigate('ppes')}
@@ -625,8 +625,8 @@ export default function DashboardTab({
         </div>
 
         {/* Right column: Regulatory notices and checklist overview */}
-        <div className="bg-white p-4 rounded border border-slate-200 flex flex-col">
-          <h3 className="text-xs font-bold text-slate-700 uppercase tracking-tight mb-3 flex items-center gap-1.5">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700 flex flex-col">
+          <h3 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight mb-3 flex items-center gap-1.5">
             <FlameKindling className="w-3.5 h-3.5 text-amber-500" />
             Alertas Críticos de Fiscalização
           </h3>
@@ -655,11 +655,11 @@ export default function DashboardTab({
             ))}
 
             {expiredTrainings.map((cert) => (
-              <div key={cert.id} className="p-2.5 bg-slate-50 rounded border border-slate-100 text-[11px] flex gap-2">
-                <span className="text-slate-600 p-1 bg-slate-100 rounded h-6 w-6 flex items-center justify-center font-bold text-[9px] shrink-0 font-mono">NR</span>
+              <div key={cert.id} className="p-2.5 bg-slate-50 dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-700 text-[11px] flex gap-2">
+                <span className="text-slate-600 dark:text-slate-300 p-1 bg-slate-100 dark:bg-slate-800/80 rounded h-6 w-6 flex items-center justify-center font-bold text-[9px] shrink-0 font-mono">NR</span>
                 <div>
                   <h4 className="font-semibold text-slate-850 leading-tight">{cert.employeeName}</h4>
-                  <p className="text-slate-700 font-bold mt-0.5">Treinamento Vencido: {cert.nr}</p>
+                  <p className="text-slate-700 dark:text-slate-200 font-bold mt-0.5">Treinamento Vencido: {cert.nr}</p>
                   <p className="text-slate-400 text-[9px] leading-tight mt-0.5 text-red-500">Bloquear operação direta até reciclagem.</p>
                 </div>
               </div>
@@ -699,13 +699,13 @@ export default function DashboardTab({
             {expiredCAs.length === 0 && criticalStockItems.length === 0 && expiredTrainings.length === 0 && ppeExpirations.length === 0 && (
               <div className="flex flex-col items-center justify-center text-center py-10 text-slate-400 gap-1.5">
                 <CheckCircle2 className="w-8 h-8 text-safety-green" />
-                <span className="text-[11px] font-bold text-slate-700">SESMT 100% REGULADO</span>
+                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200">SESMT 100% REGULADO</span>
                 <p className="text-[9px] max-w-[180px] text-slate-400">Total conformidade NR-01, NR-06 e NR-35 registrada.</p>
               </div>
             )}
           </div>
 
-          <div className="mt-3 pt-3 border-t border-slate-100 bg-safety-green/5 p-2 rounded flex items-center justify-between text-[11px]">
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 bg-safety-green/5 p-2 rounded flex items-center justify-between text-[11px]">
             <span className="font-mono font-bold text-safety-green text-[9px]">SST COMPLIANCE RATING</span>
             <span className="font-bold text-safety-green bg-safety-green/10 px-2 py-0.5 rounded text-[10px]">A+ EXCELENTE</span>
           </div>
@@ -715,7 +715,7 @@ export default function DashboardTab({
       {/* PDF Export Modal (Printable Dossier Setup) */}
       {showPdfModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-2xl rounded shadow-2xl overflow-hidden animate-fade-in text-xs border border-slate-205 flex flex-col max-h-[90vh]">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded shadow-2xl overflow-hidden animate-fade-in text-xs border border-slate-205 flex flex-col max-h-[90vh]">
             {/* Modal Actions Header */}
             <div className="bg-slate-950 p-4 text-white flex justify-between items-center shrink-0">
               <div>
@@ -754,7 +754,7 @@ export default function DashboardTab({
                                 .sig-line { border-top: 1px solid #475569; text-align: center; padding-top: 8px; font-size: 10px; }
                                 .text-right { text-align: right; }
                                 .text-center { text-align: center; }
-                                .text-slate-500 { color: #64748b; }
+                                .text-slate-500 dark:text-slate-400 { color: #64748b; }
                                 .font-mono { font-family: 'JetBrains Mono', monospace; }
                                 .text-success { color: #15803d; font-weight: bold; }
                                 .text-danger { color: #b91c1c; font-weight: bold; }
@@ -785,10 +785,10 @@ export default function DashboardTab({
             </div>
 
             {/* Document Preview Container */}
-            <div className="flex-1 p-6 overflow-y-auto bg-slate-100 min-h-0">
+            <div className="flex-1 p-6 overflow-y-auto bg-slate-100 dark:bg-slate-800/80 min-h-0">
               <div 
                 id="printable-area-sst" 
-                className="bg-white p-8 rounded shadow-sm border border-slate-200 font-sans relative text-slate-800 select-all"
+                className="bg-white dark:bg-slate-800 p-8 rounded shadow-sm border border-slate-200 dark:border-slate-700 font-sans relative text-slate-800 dark:text-slate-100 select-all"
               >
                 {/* PDF Banner Header */}
                 <div className="header flex justify-between items-start border-b-2 border-slate-905 pb-4 mb-6">
@@ -797,7 +797,7 @@ export default function DashboardTab({
                     <span className="logo-sub font-bold text-[10px] text-emerald-700 uppercase tracking-widest font-mono">SST INTERNO &amp; AUDITORIA</span>
                   </div>
                   <div className="text-right">
-                    <span className="doc-badge inline-block bg-slate-100 text-slate-700 border border-slate-200 rounded px-2 py-0.5 font-mono text-[9px] font-bold">
+                    <span className="doc-badge inline-block bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 font-mono text-[9px] font-bold">
                       REF: SST-DOSSIER-2026-06
                     </span>
                     <p className="text-[8.5px] text-slate-400 mt-1 font-mono">Última atualização: Jun/2026</p>
@@ -806,44 +806,44 @@ export default function DashboardTab({
 
                 {/* Subtitle Info */}
                 <div className="mb-4">
-                  <h1 className="text-sm font-black text-slate-900 uppercase tracking-tight">Dossiê Executivo de Indicadores de SST</h1>
-                  <p className="text-[10px] text-slate-500 mt-0.5">
+                  <h1 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Dossiê Executivo de Indicadores de SST</h1>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                     Relatório oficial emitido de acordo com a NR-01 (Gerenciamento de Riscos) e em observância ao eSocial S-2240.
                   </p>
                 </div>
 
                 {/* Grid metadata */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-y border-slate-100 py-3 mb-6 text-[10px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-y border-slate-100 dark:border-slate-700 py-3 mb-6 text-[10px]">
                   <div className="space-y-1">
-                    <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">Unidade Operativa:</span> Distrito Industrial, POA - RS</p>
-                    <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">CNAE Principal:</span> 24.41-5-02 (Produção de alumínio)</p>
-                    <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">Grau de Risco:</span> Grau 3 (Conforme NR-04)</p>
+                    <p><span className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[8.5px]">Unidade Operativa:</span> Distrito Industrial, POA - RS</p>
+                    <p><span className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[8.5px]">CNAE Principal:</span> 24.41-5-02 (Produção de alumínio)</p>
+                    <p><span className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[8.5px]">Grau de Risco:</span> Grau 3 (Conforme NR-04)</p>
                   </div>
                   <div className="space-y-1">
-                    <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">Responsável Administrativo:</span> Ana Clara Lima (RH)</p>
-                    <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">Responsável Técnico:</span> Eng. Roberto Santos (CREA: 8741-9)</p>
-                    <p><span className="font-bold text-slate-500 uppercase text-[8.5px]">Data de Emissão:</span> {new Date().toLocaleDateString('pt-BR')}</p>
+                    <p><span className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[8.5px]">Responsável Administrativo:</span> Ana Clara Lima (RH)</p>
+                    <p><span className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[8.5px]">Responsável Técnico:</span> Eng. Roberto Santos (CREA: 8741-9)</p>
+                    <p><span className="font-bold text-slate-500 dark:text-slate-400 uppercase text-[8.5px]">Data de Emissão:</span> {new Date().toLocaleDateString('pt-BR')}</p>
                   </div>
                 </div>
 
                 {/* Section titles */}
-                <div className="section-title bg-slate-50 border-l-2 border-emerald-600 px-3 py-1.5 font-bold uppercase text-[10px] text-slate-800 mb-3 tracking-wider">
+                <div className="section-title bg-slate-50 dark:bg-slate-900 border-l-2 border-emerald-600 px-3 py-1.5 font-bold uppercase text-[10px] text-slate-800 dark:text-slate-100 mb-3 tracking-wider">
                   1. Indicadores de Desempenho Operacional (I-SST)
                 </div>
 
                 {/* Interactive numerical snapshot cards inside printable document */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
-                  <div className="border border-slate-200 p-2.5 rounded bg-slate-50/50 text-center">
+                  <div className="border border-slate-200 dark:border-slate-700 p-2.5 rounded bg-slate-50 dark:bg-slate-900/50 text-center">
                     <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Adesão a Entregas de EPI</p>
-                    <p className="text-base font-black text-slate-900 mt-1">{currentDeliveryRate}%</p>
+                    <p className="text-base font-black text-slate-900 dark:text-white mt-1">{currentDeliveryRate}%</p>
                     <span className="text-[8px] font-mono text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 mt-1.5 inline-block">Meta: 95%</span>
                   </div>
-                  <div className="border border-slate-200 p-2.5 rounded bg-slate-50/50 text-center">
+                  <div className="border border-slate-200 dark:border-slate-700 p-2.5 rounded bg-slate-50 dark:bg-slate-900/50 text-center">
                     <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Integridade Física (Jun/26)</p>
                     <p className="text-base font-black text-emerald-700 mt-1">100%</p>
                     <span className="text-[8px] font-mono text-slate-400 rounded px-1 mt-1 inline-block">Zero Acidentes Graves</span>
                   </div>
-                  <div className="border border-slate-200 p-2.5 rounded bg-slate-50/50 text-center">
+                  <div className="border border-slate-200 dark:border-slate-700 p-2.5 rounded bg-slate-50 dark:bg-slate-900/50 text-center">
                     <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Desvios Operacionais</p>
                     <p className="text-base font-black text-amber-600 mt-1">1 Caso</p>
                     <span className="text-[8px] font-mono text-slate-400 rounded px-1 mt-1 inline-block">Sob controle SESMT</span>
@@ -851,12 +851,12 @@ export default function DashboardTab({
                 </div>
 
                 {/* Deliveries evolution data log */}
-                <div className="section-title bg-slate-50 border-l-2 border-emerald-600 px-3 py-1.5 font-bold uppercase text-[10px] text-slate-800 mb-3 tracking-wider">
+                <div className="section-title bg-slate-50 dark:bg-slate-900 border-l-2 border-emerald-600 px-3 py-1.5 font-bold uppercase text-[10px] text-slate-800 dark:text-slate-100 mb-3 tracking-wider">
                   2. Histórico Mensal de Entrega de EPI &amp; Gestão de Risto
                 </div>
                 <table className="w-full text-left table-auto border-collapse text-[10px] mb-6">
                   <thead>
-                    <tr className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                    <tr className="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                       <th className="p-2 text-[8.5px] uppercase font-bold">Período Fiscal</th>
                       <th className="p-2 text-[8.5px] uppercase font-bold text-center">Adesão Registrada</th>
                       <th className="p-2 text-[8.5px] uppercase font-bold text-center">Meta Estabelecida</th>
@@ -867,10 +867,10 @@ export default function DashboardTab({
                     {deliveryData.map((d, index) => {
                       const isConforme = d['Entregas Concluídas'] >= d['Meta de Segurança'];
                       return (
-                        <tr key={index} className="hover:bg-slate-50/50">
+                        <tr key={index} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50">
                           <td className="p-2 font-bold">{d.name}</td>
                           <td className="p-2 text-center font-mono">{d['Entregas Concluídas']}%</td>
-                          <td className="p-2 text-center font-mono text-slate-500">{d['Meta de Segurança']}%</td>
+                          <td className="p-2 text-center font-mono text-slate-500 dark:text-slate-400">{d['Meta de Segurança']}%</td>
                           <td className={`p-2 text-right font-bold font-mono ${isConforme ? 'text-[9px] text-emerald-700' : 'text-[9px] text-amber-600'}`}>
                             {isConforme ? '✓ CONFORME' : '▲ ATENÇÃO'}
                           </td>
@@ -881,12 +881,12 @@ export default function DashboardTab({
                 </table>
 
                 {/* Incidents and safety indicators log */}
-                <div className="section-title bg-slate-50 border-l-2 border-emerald-600 px-3 py-1.5 font-bold uppercase text-[10px] text-slate-800 mb-3 tracking-wider">
+                <div className="section-title bg-slate-50 dark:bg-slate-900 border-l-2 border-emerald-600 px-3 py-1.5 font-bold uppercase text-[10px] text-slate-800 dark:text-slate-100 mb-3 tracking-wider">
                   3. Controle e Registro de Desvios (Quase Acidentes &amp; Graves)
                 </div>
                 <table className="w-full text-left table-auto border-collapse text-[10px] mb-6">
                   <thead>
-                    <tr className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                    <tr className="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                       <th className="p-2 text-[8.5px] uppercase font-bold">Período Fiscal</th>
                       <th className="p-2 text-[8.5px] uppercase font-bold text-center">Quase Acidentes (Desvios)</th>
                       <th className="p-2 text-[8.5px] uppercase font-bold text-center">Acidentes Graves</th>
@@ -897,10 +897,10 @@ export default function DashboardTab({
                     {accidentData.map((acc, index) => {
                       const hasAccident = acc['Acidentes Graves'] > 0;
                       return (
-                        <tr key={index} className="hover:bg-slate-50/50">
+                        <tr key={index} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50">
                           <td className="p-2 font-bold">{acc.name}</td>
-                          <td className="p-2 text-center font-mono text-slate-700">{acc['Quase Acidentes']}</td>
-                          <td className={`p-2 text-center font-mono ${hasAccident ? 'text-red-600 font-bold' : 'text-slate-500'}`}>{acc['Acidentes Graves']}</td>
+                          <td className="p-2 text-center font-mono text-slate-700 dark:text-slate-200">{acc['Quase Acidentes']}</td>
+                          <td className={`p-2 text-center font-mono ${hasAccident ? 'text-red-600 font-bold' : 'text-slate-500 dark:text-slate-400'}`}>{acc['Acidentes Graves']}</td>
                           <td className={`p-2 text-right font-bold text-[9px] ${hasAccident ? 'text-red-600' : 'text-emerald-700'}`}>
                             {hasAccident ? '✗ RISCO SEVERO' : '✓ SOB CONTROLE'}
                           </td>
@@ -911,24 +911,24 @@ export default function DashboardTab({
                 </table>
 
                 {/* Audit declaration & signs */}
-                <div className="border border-slate-205 bg-slate-50 p-3 rounded text-[9.5px] leading-relaxed mb-10 text-slate-600">
-                  <p className="font-bold text-slate-800 mb-1 flex items-center gap-1">
+                <div className="border border-slate-205 bg-slate-50 dark:bg-slate-900 p-3 rounded text-[9.5px] leading-relaxed mb-10 text-slate-600 dark:text-slate-300">
+                  <p className="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                     Declaração de Conformidade Técnica
                   </p>
                   As informações deste dossiê técnico de auditoria foram compiladas automaticamente das fichas de controle interno, ordens de serviço eletrônicas emitidas e dos registros de gerenciamento de riscos gerenciados pelo SESMT da Novo Horizonte Alumínios. Este documento serve para as finalidades legais da NR-01, NR-06, NR-12 e composição do PGR/PCMSO.
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 pt-6 border-t border-slate-200 mt-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 pt-6 border-t border-slate-200 dark:border-slate-700 mt-12">
                   <div className="text-center">
                     <div className="border-t border-slate-405 pt-1.5 text-[9.5px]">
-                      <p className="font-bold text-slate-800">Roberto Santos</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">Roberto Santos</p>
                       <p className="text-slate-400 text-[8.5px] font-mono mt-0.5">Engenheiro de Segurança do Trabalho<br/>CREA: 8741-9 / POA</p>
                     </div>
                   </div>
                   <div className="text-center">
                     <div className="border-t border-slate-405 pt-1.5 text-[9.5px]">
-                      <p className="font-bold text-slate-800">Representação da Diretoria</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">Representação da Diretoria</p>
                       <p className="text-slate-400 text-[8.5px] font-mono mt-0.5">Novo Horizonte Alumínios Ltda<br/>CNPJ: 34.892.455/0001-38</p>
                     </div>
                   </div>
@@ -937,13 +937,13 @@ export default function DashboardTab({
             </div>
 
             {/* Footer with actions explanation */}
-            <div className="bg-slate-50 p-3.5 border-t border-slate-200 text-right flex justify-between items-center text-[10px]">
-              <span className="text-slate-500 leading-tight block text-left">
+            <div className="bg-slate-50 dark:bg-slate-900 p-3.5 border-t border-slate-200 dark:border-slate-700 text-right flex justify-between items-center text-[10px]">
+              <span className="text-slate-500 dark:text-slate-400 leading-tight block text-left">
                 Nota: No Chrome/Edge, selecione <strong>"Salvar como PDF"</strong> na caixa de diálogo de impressão.
               </span>
               <button
                 onClick={() => setShowPdfModal(false)}
-                className="px-4 py-1.5 hover:bg-slate-100 border border-slate-250 text-slate-700 font-bold rounded cursor-pointer animate-pulse"
+                className="px-4 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 border border-slate-250 text-slate-700 dark:text-slate-200 font-bold rounded cursor-pointer animate-pulse"
               >
                 Voltar ao Monitor
               </button>

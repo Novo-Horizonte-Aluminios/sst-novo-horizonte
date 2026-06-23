@@ -499,14 +499,14 @@ export default function CipaElectionTab() {
       </div>
 
       {/* Selector Tabs matching User's Mockup */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 pb-3 gap-3">
-        <div className="flex gap-1.5 bg-slate-100 p-1 rounded-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-3 gap-3">
+        <div className="flex gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
           <button
             onClick={() => setSelectionView('candidatos')}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
               selectionView === 'candidatos' 
                 ? 'bg-brand-primary text-white shadow-sm' 
-                : 'text-slate-650 hover:bg-slate-200/60'
+                : 'text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
@@ -517,7 +517,7 @@ export default function CipaElectionTab() {
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
               selectionView === 'eleitores' 
                 ? 'bg-brand-primary text-white shadow-sm' 
-                : 'text-slate-650 hover:bg-slate-200/60'
+                : 'text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60'
             }`}
           >
             <UserCheck className="w-3.5 h-3.5" />
@@ -531,7 +531,7 @@ export default function CipaElectionTab() {
           placeholder="Filtrar dados da listagem..."
           value={searchFilterQuery}
           onChange={(e) => setSearchFilterQuery(e.target.value)}
-          className="border border-slate-200 rounded-xl px-3 py-1.5 text-[11px] focus:outline-none focus:border-slate-400 w-full sm:w-64"
+          className="border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-[11px] focus:outline-none focus:border-slate-400 w-full sm:w-64"
         />
       </div>
 
@@ -541,7 +541,7 @@ export default function CipaElectionTab() {
           <button
             onClick={() => setActiveSubTab('candidatos')}
             className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === 'candidatos' ? 'bg-brand-primary text-white' : 'text-slate-600 hover:bg-slate-100'
+              activeSubTab === 'candidatos' ? 'bg-brand-primary text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80'
             }`}
           >
             Candidatos
@@ -549,7 +549,7 @@ export default function CipaElectionTab() {
           <button
             onClick={() => setActiveSubTab('funcionarios')}
             className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === 'funcionarios' ? 'bg-brand-primary text-white' : 'text-slate-600 hover:bg-slate-100'
+              activeSubTab === 'funcionarios' ? 'bg-brand-primary text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80'
             }`}
           >
             Funcionários
@@ -557,7 +557,7 @@ export default function CipaElectionTab() {
           <button
             onClick={() => setActiveSubTab('nao_votaram')}
             className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === 'nao_votaram' ? 'bg-brand-primary text-white' : 'text-slate-600 hover:bg-slate-100'
+              activeSubTab === 'nao_votaram' ? 'bg-brand-primary text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80'
             }`}
           >
             Não votaram
@@ -567,16 +567,16 @@ export default function CipaElectionTab() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-850 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-slate-200 dark:border-slate-700 border-t-slate-850 rounded-full animate-spin"></div>
         </div>
       ) : (
         <div>
           {/* CANDIDATES VIEW */}
           {selectionView === 'candidatos' && activeSubTab === 'candidatos' && (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
+                  <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
                     <th className="p-4 w-12 text-center">#</th>
                     <th className="p-4">Candidato</th>
                     <th className="p-4">Lotação</th>
@@ -595,35 +595,35 @@ export default function CipaElectionTab() {
                       const lotacaoStr = empMatch ? `NOVO HORIZONTE ALUMÍNIOS LTDA\n${empMatch.sector.toUpperCase()}\n${empMatch.role.toUpperCase()}` : `NOVO HORIZONTE ALUMÍNIOS LTDA\n${cand.sector.toUpperCase()}`;
 
                       return (
-                        <tr key={cand.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 text-center font-bold text-slate-500">{idx + 1}</td>
+                        <tr key={cand.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition-colors">
+                          <td className="p-4 text-center font-bold text-slate-500 dark:text-slate-400">{idx + 1}</td>
                           <td className="p-4">
                             <div className="flex items-center gap-3">
                               {empMatch && empMatch.photoUrl ? (
                                 <img 
                                   src={empMatch.photoUrl} 
                                   alt={cand.name} 
-                                  className="w-10 h-10 rounded-full object-cover border border-slate-200" 
+                                  className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700" 
                                 />
                               ) : (
-                                <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
+                                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
                                   {cand.name.charAt(0)}
                                 </div>
                               )}
                               <div>
-                                <div className="font-bold text-slate-800 leading-tight">{cand.name}</div>
+                                <div className="font-bold text-slate-800 dark:text-slate-100 leading-tight">{cand.name}</div>
                                 <div className="text-slate-450 text-[10px] uppercase font-semibold">{empMatch ? empMatch.role : 'CANDIDATO'}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="p-4 text-slate-500 font-medium whitespace-pre-line text-[10px] leading-tight">
+                          <td className="p-4 text-slate-500 dark:text-slate-400 font-medium whitespace-pre-line text-[10px] leading-tight">
                             {lotacaoStr}
                           </td>
-                          <td className="p-4 text-slate-600 font-medium">{admissionStr}</td>
-                          <td className="p-4 text-center font-bold text-slate-800 text-sm">{cand.votes}</td>
+                          <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">{admissionStr}</td>
+                          <td className="p-4 text-center font-bold text-slate-800 dark:text-slate-100 text-sm">{cand.votes}</td>
                           <td className="p-4">
                             <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded ${
-                              cand.isElected ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500'
+                              cand.isElected ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400'
                             }`}>
                               {cand.isElected ? 'Eleito CIPA' : 'Suplente'}
                             </span>
@@ -664,10 +664,10 @@ export default function CipaElectionTab() {
 
           {/* EMPLOYEES VIEW */}
           {selectionView === 'candidatos' && activeSubTab === 'funcionarios' && (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
+                  <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
                     <th className="p-4 w-12 text-center">#</th>
                     <th className="p-4">Eleitor</th>
                     <th className="p-4">Lotação</th>
@@ -683,23 +683,23 @@ export default function CipaElectionTab() {
                     const linkVoto = `http://localhost:3000/?tab=cipa&token=${employeeToken}`;
 
                     return (
-                      <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="p-4 text-center font-bold text-slate-500">{idx + 1}</td>
+                      <tr key={emp.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition-colors">
+                        <td className="p-4 text-center font-bold text-slate-500 dark:text-slate-400">{idx + 1}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             {emp.photoUrl ? (
                               <img 
                                 src={emp.photoUrl} 
                                 alt={emp.name} 
-                                className="w-10 h-10 rounded-full object-cover border border-slate-200" 
+                                className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700" 
                               />
                             ) : (
-                              <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
+                              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
                                 {emp.name.charAt(0)}
                               </div>
                             )}
                             <div>
-                              <div className="font-bold text-slate-800 leading-tight">{emp.name}</div>
+                              <div className="font-bold text-slate-800 dark:text-slate-100 leading-tight">{emp.name}</div>
                               <div className="text-slate-450 text-[10px] font-semibold">{emp.role}</div>
                               <div className="text-slate-400 text-[9px] font-mono leading-none mt-1">
                                 {emp.phone || '(43) 99999-9999'} • {emp.email || 'sem@email.com'}
@@ -707,7 +707,7 @@ export default function CipaElectionTab() {
                             </div>
                           </div>
                         </td>
-                        <td className="p-4 text-slate-500 font-medium text-[10px] leading-tight">
+                        <td className="p-4 text-slate-500 dark:text-slate-400 font-medium text-[10px] leading-tight">
                           NOVO HORIZONTE ALUMÍNIOS LTDA<br />
                           {emp.sector.toUpperCase()}<br />
                           {emp.role.toUpperCase()}
@@ -724,7 +724,7 @@ export default function CipaElectionTab() {
                         </td>
                         <td className="p-4">
                           {status.voted ? (
-                            <span className="text-[10px] text-slate-400 font-mono bg-slate-50 px-2.5 py-1.5 rounded border border-slate-150 block w-fit">Voto Realizado</span>
+                            <span className="text-[10px] text-slate-400 font-mono bg-slate-50 dark:bg-slate-900 px-2.5 py-1.5 rounded border border-slate-150 block w-fit">Voto Realizado</span>
                           ) : (
                             <div className="flex flex-col gap-1.5 w-fit">
                               <a
@@ -749,7 +749,7 @@ export default function CipaElectionTab() {
                         <td className="p-4 text-center">
                           <button
                             onClick={() => openExtensionModal(emp)}
-                            className="text-[10px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-650 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 mx-auto cursor-pointer"
+                            className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 text-slate-650 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 mx-auto cursor-pointer"
                           >
                             <Clock className="w-3.5 h-3.5" />
                             <span>
@@ -769,10 +769,10 @@ export default function CipaElectionTab() {
 
           {/* NOT VOTED LIST VIEW */}
           {selectionView === 'candidatos' && activeSubTab === 'nao_votaram' && (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
+                  <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
                     <th className="p-4 w-12 text-center">#</th>
                     <th className="p-4">Colaborador Ausente</th>
                     <th className="p-4">Lotação</th>
@@ -789,28 +789,28 @@ export default function CipaElectionTab() {
                       const linkVoto = `http://localhost:3000/?tab=cipa&token=${token}`;
 
                       return (
-                        <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 text-center font-bold text-slate-500">{idx + 1}</td>
+                        <tr key={emp.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition-colors">
+                          <td className="p-4 text-center font-bold text-slate-500 dark:text-slate-400">{idx + 1}</td>
                           <td className="p-4">
                             <div className="flex items-center gap-3">
                               {emp.photoUrl ? (
                                 <img 
                                   src={emp.photoUrl} 
                                   alt={emp.name} 
-                                  className="w-10 h-10 rounded-full object-cover border border-slate-200" 
+                                  className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700" 
                                 />
                               ) : (
-                                <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
+                                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
                                   {emp.name.charAt(0)}
                                 </div>
                               )}
                               <div>
-                                <div className="font-bold text-slate-800 leading-tight">{emp.name}</div>
+                                <div className="font-bold text-slate-800 dark:text-slate-100 leading-tight">{emp.name}</div>
                                 <div className="text-slate-450 text-[10px] font-semibold">{emp.role}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="p-4 text-slate-500 font-medium text-[10px] leading-tight">
+                          <td className="p-4 text-slate-500 dark:text-slate-400 font-medium text-[10px] leading-tight">
                             NOVO HORIZONTE ALUMÍNIOS LTDA<br />
                             {emp.sector.toUpperCase()}<br />
                             {emp.role.toUpperCase()}
@@ -841,7 +841,7 @@ export default function CipaElectionTab() {
                               
                               <button
                                 onClick={() => openExtensionModal(emp)}
-                                className="p-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 rounded-lg transition cursor-pointer"
+                                className="p-1.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition cursor-pointer"
                                 title="Estender Prazo de Votação"
                               >
                                 <Clock className="w-3.5 h-3.5" />
@@ -865,10 +865,10 @@ export default function CipaElectionTab() {
                   <span>Eleitores que já Participaram ({voters.length})</span>
                 </h4>
                 
-                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
+                      <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
                         <th className="p-4">Nome do Votante</th>
                         <th className="p-4">Setor</th>
                         <th className="p-4">Data/Hora</th>
@@ -881,24 +881,24 @@ export default function CipaElectionTab() {
                         .map((v) => {
                           const empMatch = employees.find(e => e.id === v.employeeId);
                           return (
-                            <tr key={v.id} className="hover:bg-slate-50/50 transition">
+                            <tr key={v.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition">
                               <td className="p-4">
                                 <div className="flex items-center gap-3">
                                   {empMatch && empMatch.photoUrl ? (
                                     <img 
                                       src={empMatch.photoUrl} 
                                       alt={v.employeeName} 
-                                      className="w-8 h-8 rounded-full object-cover border border-slate-200" 
+                                      className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" 
                                     />
                                   ) : (
-                                    <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold uppercase">
+                                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 font-bold uppercase">
                                       {v.employeeName.charAt(0)}
                                     </div>
                                   )}
-                                  <span className="font-bold text-slate-800">{v.employeeName}</span>
+                                  <span className="font-bold text-slate-800 dark:text-slate-100">{v.employeeName}</span>
                                 </div>
                               </td>
-                              <td className="p-4 text-slate-500 font-medium">{v.sector || 'Fábrica'}</td>
+                              <td className="p-4 text-slate-500 dark:text-slate-400 font-medium">{v.sector || 'Fábrica'}</td>
                               <td className="p-4 font-semibold text-slate-650">
                                 {new Date(v.votedAt).toLocaleString('pt-BR')}
                               </td>
@@ -925,11 +925,11 @@ export default function CipaElectionTab() {
               {/* AUDIT METRICS */}
               <div className="space-y-4">
                 <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-slate-800" />
+                  <ShieldCheck className="w-4 h-4 text-slate-800 dark:text-slate-100" />
                   <span>Segurança & Auditoria</span>
                 </h4>
                 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 text-slate-650">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 text-slate-650">
                   <div className="bg-emerald-50/60 p-4 rounded-xl border border-emerald-150 space-y-2">
                     <h5 className="font-bold text-emerald-800 text-[11px] uppercase tracking-wider">Criptografia Ativa</h5>
                     <p className="text-[10px] leading-relaxed text-emerald-700">
@@ -940,15 +940,15 @@ export default function CipaElectionTab() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-[10px] font-bold">
                       <span>Total de Funcionários Ativos:</span>
-                      <span className="text-slate-800">{employees.length}</span>
+                      <span className="text-slate-800 dark:text-slate-100">{employees.length}</span>
                     </div>
                     <div className="flex justify-between items-center text-[10px] font-bold">
                       <span>Votos Confirmados:</span>
-                      <span className="text-slate-800">{voters.length}</span>
+                      <span className="text-slate-800 dark:text-slate-100">{voters.length}</span>
                     </div>
                     <div className="flex justify-between items-center text-[10px] font-bold">
                       <span>Quórum Eleitoral:</span>
-                      <span className="text-slate-800">
+                      <span className="text-slate-800 dark:text-slate-100">
                         {employees.length > 0 ? Math.round((voters.length / employees.length) * 100) : 0}%
                       </span>
                     </div>
@@ -963,7 +963,7 @@ export default function CipaElectionTab() {
       {/* SETTINGS / DATES MODAL */}
       {showSettingsModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base">Prazos e Limites da Eleição</h3>
@@ -974,32 +974,32 @@ export default function CipaElectionTab() {
 
             <form onSubmit={handleSaveSettings} className="p-6 space-y-4">
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Abertura da Urna (Início)</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Abertura da Urna (Início)</label>
                 <input
                   type="datetime-local"
                   required
                   value={electionStartsAt}
                   onChange={(e) => setElectionStartsAt(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
                 />
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Fechamento da Urna (Fim)</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Fechamento da Urna (Fim)</label>
                 <input
                   type="datetime-local"
                   required
                   value={electionEndsAt}
                   onChange={(e) => setElectionEndsAt(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
                 />
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowSettingsModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-650 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-650 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>
@@ -1018,7 +1018,7 @@ export default function CipaElectionTab() {
       {/* EXTENSION / TOLERANCE DATE MODAL */}
       {showExtensionModal && selectedEmpForExtension && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base">Tolerância Individual (CIPA)</h3>
@@ -1028,28 +1028,28 @@ export default function CipaElectionTab() {
             </div>
 
             <form onSubmit={handleSaveExtension} className="p-6 space-y-4">
-              <div className="p-3.5 bg-slate-50 border border-slate-150 rounded-xl">
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-150 rounded-xl">
                 <span className="text-[9px] uppercase font-mono font-bold text-slate-400 block mb-0.5">Funcionário</span>
-                <div className="font-bold text-slate-800 text-[13px]">{selectedEmpForExtension.employeeName || selectedEmpForExtension.name}</div>
-                <div className="text-[10px] text-slate-500">Setor: {selectedEmpForExtension.sector || 'Fábrica'}</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100 text-[13px]">{selectedEmpForExtension.employeeName || selectedEmpForExtension.name}</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400">Setor: {selectedEmpForExtension.sector || 'Fábrica'}</div>
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Votação permitida individualmente até:</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Votação permitida individualmente até:</label>
                 <input
                   type="datetime-local"
                   value={newExtensionDate}
                   onChange={(e) => setNewExtensionDate(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
                 />
                 <span className="text-[9px] text-slate-400 mt-1 block">Deixe em branco para remover qualquer tolerância individual.</span>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowExtensionModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-650 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-650 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>
@@ -1068,7 +1068,7 @@ export default function CipaElectionTab() {
       {/* CREATE CANDIDATE MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base">Inscrição Eleitoral de Candidato</h3>
@@ -1079,34 +1079,34 @@ export default function CipaElectionTab() {
 
             <form onSubmit={handleCreateCandidate} className="p-6 space-y-4">
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Nome do Candidato</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Nome do Candidato</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Carlos Henrique Silva"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
                 />
               </div>
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Setor do Colaborador</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Setor do Colaborador</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Usinagem"
                   value={newSector}
                   onChange={(e) => setNewSector(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
                 />
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-650 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-650 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>
@@ -1125,7 +1125,7 @@ export default function CipaElectionTab() {
       {/* VOTE SECURE MODAL */}
       {showVoteModal && selectedCandidate && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-500" />
@@ -1140,27 +1140,27 @@ export default function CipaElectionTab() {
             <form onSubmit={handleSecureVote} className="p-6 space-y-4">
               <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
                 <span className="text-[9px] uppercase font-mono font-black text-emerald-800 tracking-wider">Candidato Selecionado</span>
-                <div className="font-bold text-slate-800 text-[13px]">{selectedCandidate.name}</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100 text-[13px]">{selectedCandidate.name}</div>
                 <div className="text-[10px] text-emerald-700 font-medium">{selectedCandidate.sector}</div>
               </div>
 
               {/* Only show search employee if NOT validated from token */}
               {!validatedTokenData ? (
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Busque seu nome na lista</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Busque seu nome na lista</label>
                   <input
                     type="text"
                     placeholder="Pesquise por Nome, CPF ou Matrícula..."
                     value={searchEmployeeQuery}
                     onChange={(e) => setSearchEmployeeQuery(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px] mb-2"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px] mb-2"
                   />
                   
                   <select
                     required
                     value={selectedEmployeeId}
                     onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px] bg-white max-h-[120px]"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px] bg-white dark:bg-slate-800 max-h-[120px]"
                   >
                     <option value="">-- Selecione seu Nome --</option>
                     {filteredEmployeesForSecureVote.map(emp => (
@@ -1171,15 +1171,15 @@ export default function CipaElectionTab() {
                   </select>
                 </div>
               ) : (
-                <div className="p-3.5 bg-slate-50 border border-slate-150 rounded-xl">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-150 rounded-xl">
                   <span className="text-[9px] uppercase font-mono font-bold text-slate-400 block mb-0.5">Identificação</span>
-                  <div className="font-bold text-slate-800 text-[13px]">{validatedTokenData.employee.name}</div>
+                  <div className="font-bold text-slate-800 dark:text-slate-100 text-[13px]">{validatedTokenData.employee.name}</div>
                   <div className="text-[10px] text-emerald-700 font-medium">Autenticado via Token de Acesso</div>
                 </div>
               )}
 
               <div>
-                <label className="font-semibold block mb-1 text-slate-600">Digite seu PIN de Acesso (4-6 dígitos)</label>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Digite seu PIN de Acesso (4-6 dígitos)</label>
                 <input
                   type="password"
                   required
@@ -1187,15 +1187,15 @@ export default function CipaElectionTab() {
                   placeholder="••••"
                   value={employeePin}
                   onChange={(e) => setEmployeePin(e.target.value.replace(/\D/g, ''))}
-                  className="w-full tracking-widest text-center border border-slate-200 rounded-lg p-3 focus:outline-none focus:border-emerald-500 text-[16px] font-mono font-bold"
+                  className="w-full tracking-widest text-center border border-slate-200 dark:border-slate-700 rounded-lg p-3 focus:outline-none focus:border-emerald-500 text-[16px] font-mono font-bold"
                 />
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowVoteModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-650 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-650 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>

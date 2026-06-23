@@ -138,8 +138,8 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                 </div>
 
                 <div className="space-y-2 text-slate-300">
-                  <p><span className="text-slate-500 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Equipamento</span> {caScrapeResult.equipment}</p>
-                  <p><span className="text-slate-500 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Fabricante</span> {caScrapeResult.manufacturer}</p>
+                  <p><span className="text-slate-500 dark:text-slate-400 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Equipamento</span> {caScrapeResult.equipment}</p>
+                  <p><span className="text-slate-500 dark:text-slate-400 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Fabricante</span> {caScrapeResult.manufacturer}</p>
                   <p className="text-slate-400 font-mono text-[10px]">Validade: <strong className={caScrapeResult.status === 'Vencido' ? 'text-rose-400' : 'text-safety-green'}>{caScrapeResult.expiryDate}</strong></p>
                 </div>
               </div>
@@ -149,9 +149,9 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                 <p className="animate-pulse text-[10px] font-bold">Consultando base do MTE Federal...</p>
               </div>
             ) : (
-              <div className="text-center py-6 text-slate-500 flex flex-col items-center justify-center gap-2.5 border-2 border-dashed border-slate-800 rounded-xl">
-                <HelpCircle className="w-7 h-7 text-slate-700 animate-pulse" />
-                <p className="max-w-[200px] mx-auto text-[10px] text-slate-500 font-bold leading-normal">Digite um CA acima e execute para validar na base oficial.</p>
+              <div className="text-center py-6 text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center gap-2.5 border-2 border-dashed border-slate-800 rounded-xl">
+                <HelpCircle className="w-7 h-7 text-slate-700 dark:text-slate-200 animate-pulse" />
+                <p className="max-w-[200px] mx-auto text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-normal">Digite um CA acima e execute para validar na base oficial.</p>
               </div>
             )}
           </div>
@@ -168,7 +168,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                 placeholder="Buscar EPI cadastrado (CA, Tipo, Marca)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 transition-all hover:border-slate-300 shadow-sm font-bold text-slate-800"
+                className="w-full pl-10 pr-3 py-2.5 text-[12px] bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 transition-all hover:border-slate-300 dark:border-slate-600 shadow-sm font-bold text-slate-800 dark:text-slate-100"
               />
             </div>
 
@@ -183,7 +183,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-sans">
             {filteredPpes.map((ppe) => (
-              <div key={ppe.id} className="bg-white p-5 rounded-2xl border border-slate-200 hover:shadow-md transition-all hover:-translate-y-0.5 flex flex-col justify-between shadow-sm">
+              <div key={ppe.id} className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all hover:-translate-y-0.5 flex flex-col justify-between shadow-sm">
                 <div>
                   <div className="flex justify-between items-start mb-2 leading-none gap-2">
                     <span className="text-[9px] text-slate-400 uppercase font-mono font-black tracking-wider">{ppe.category}</span>
@@ -194,10 +194,10 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                     </span>
                   </div>
 
-                  <h4 className="font-black text-[14px] text-slate-800 leading-snug tracking-tight">{ppe.name}</h4>
+                  <h4 className="font-black text-[14px] text-slate-800 dark:text-slate-100 leading-snug tracking-tight">{ppe.name}</h4>
                   <p className="text-slate-400 font-mono text-[9.5px] mt-1">Cód: {ppe.internalCode} • EAN: {ppe.barCode}</p>
 
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 text-slate-650 font-sans font-bold">
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-700 mb-4 text-slate-650 font-sans font-bold">
                     <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">CA MTE</span> {ppe.caNumber}</p>
                     <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Vencimento</span> {ppe.caExpiryDate}</p>
                     <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Marca</span> {ppe.brand}</p>
@@ -206,10 +206,10 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center text-[11px] pt-3.5 border-t border-slate-100">
+                <div className="flex justify-between items-center text-[11px] pt-3.5 border-t border-slate-100 dark:border-slate-700">
                   <div className="flex items-center gap-1.5">
                     <span className="text-slate-450 font-bold">Estoque:</span>
-                    <strong className={`font-mono text-[13px] ${ppe.stockCount <= ppe.minStock ? 'text-rose-650 font-black' : 'text-slate-800 font-extrabold'}`}>
+                    <strong className={`font-mono text-[13px] ${ppe.stockCount <= ppe.minStock ? 'text-rose-650 font-black' : 'text-slate-800 dark:text-slate-100 font-extrabold'}`}>
                       {ppe.stockCount} un
                     </strong>
                     {ppe.stockCount <= ppe.minStock && (
@@ -230,7 +230,7 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
       {/* --- ADD NEW PPE DIALOG MODAL --- */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-xl rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100 dark:border-slate-700">
             <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base">Cadastrar Novo Equipamento de Proteção</h3>
@@ -242,25 +242,25 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
             <form onSubmit={handleCreatePPE} className="p-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="col-span-2">
-                  <label className="font-semibold block mb-1 text-slate-600">Descrição Comercial / Nome Comercial</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Descrição Comercial / Nome Comercial</label>
                   <input
                     type="text"
                     required
                     value={newPpe.name}
                     onChange={(e) => setNewPpe({...newPpe, name: e.target.value})}
                     placeholder="Ex: Protetor Auricular Plug de Silicone Termoplástico"
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Categoria de Proteção</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Categoria de Proteção</label>
                   <select
                     value={newPpe.category}
                     onChange={(e) => setNewPpe({...newPpe, category: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
                   >
                     <option value="Proteção Ocular">Proteção Ocular / Facial</option>
                     <option value="Proteção Auditiva">Proteção Auditiva</option>
@@ -271,115 +271,115 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                   </select>
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Código Interno de Almoxarifado</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Código Interno de Almoxarifado</label>
                   <input
                     type="text"
                     required
                     value={newPpe.internalCode}
                     onChange={(e) => setNewPpe({...newPpe, internalCode: e.target.value})}
                     placeholder="Ex: EPI-AUD-99S"
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Marca Comercial</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Marca Comercial</label>
                   <input
                     type="text"
                     required
                     value={newPpe.brand}
                     onChange={(e) => setNewPpe({...newPpe, brand: e.target.value})}
                     placeholder="Ex: 3M, Kalipso, Marluvas"
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Fabricante / Fornecedor</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Fabricante / Fornecedor</label>
                   <input
                     type="text"
                     required
                     value={newPpe.manufacturer}
                     onChange={(e) => setNewPpe({...newPpe, manufacturer: e.target.value})}
                     placeholder="Ex: Kalipso Equipamentos de Proteção"
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Nº do CA MTE</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Nº do CA MTE</label>
                   <input
                     type="text"
                     required
                     value={newPpe.caNumber}
                     onChange={(e) => setNewPpe({...newPpe, caNumber: e.target.value})}
                     placeholder="Ex: 39712"
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Emissão do CA</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Emissão do CA</label>
                   <input
                     type="date"
                     required
                     value={newPpe.caIssueDate}
                     onChange={(e) => setNewPpe({...newPpe, caIssueDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Validade do CA</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Validade do CA</label>
                   <input
                     type="date"
                     required
                     value={newPpe.caExpiryDate}
                     onChange={(e) => setNewPpe({...newPpe, caExpiryDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Quantidade de Entrada</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Quantidade de Entrada</label>
                   <input
                     type="number"
                     required
                     value={newPpe.stockCount}
                     onChange={(e) => setNewPpe({...newPpe, stockCount: parseInt(e.target.value)})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Quantidade Mínima de Segurança</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Quantidade Mínima de Segurança</label>
                   <input
                     type="number"
                     required
                     value={newPpe.minStock}
                     onChange={(e) => setNewPpe({...newPpe, minStock: parseInt(e.target.value)})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1 text-slate-600">Durabilidade (Dias)</label>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Durabilidade (Dias)</label>
                   <input
                     type="number"
                     required
                     value={newPpe.durabilityDays}
                     onChange={(e) => setNewPpe({...newPpe, durabilityDays: parseInt(e.target.value)})}
-                    className="w-full border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 hover:bg-slate-50 border border-slate-200 text-slate-600 font-semibold rounded-lg"
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-lg"
                 >
                   Cancelar
                 </button>
