@@ -111,11 +111,21 @@ export default function Sidebar({
       <div className={`px-4 border-b border-slate-200/80 flex flex-col items-center ${isCollapsed ? 'h-[68px] justify-center' : 'py-4'} transition-all`}>
         {!isCollapsed ? (
           <>
-            <div className="w-full flex justify-center items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
-                NH
-              </div>
-              <span className="text-emerald-800 font-extrabold text-lg tracking-tight">SESMT</span>
+            <div className="w-full flex justify-center">
+              <img 
+                src="/logo_horizontal.png" 
+                alt="Novo Horizonte Alumínios" 
+                className="h-9 w-auto object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  const textLogo = document.getElementById('sidebar-text-logo');
+                  if (textLogo) textLogo.style.display = 'block';
+                }}
+              />
+            </div>
+            <div id="sidebar-text-logo" className="hidden text-slate-800 font-extrabold text-xs tracking-tight leading-none text-center uppercase mt-1">
+              <span>Novo Horizonte</span>
+              <span className="text-emerald-600 text-[10px] font-semibold block mt-0.5">Alumínios</span>
             </div>
           </>
         ) : (
