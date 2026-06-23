@@ -2216,10 +2216,25 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     }
   });
 
-  // ─── CIPA CANDIDATES API ────────────────────────────────────────────────────
+  // ─── CIPA CANDIDATES & VOTERS API ────────────────────────────────────────────
   app.get('/api/cipa/candidates', async (req, res) => {
     try {
       const result = await query('SELECT * FROM cipa_candidates ORDER BY votes DESC, name ASC');
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.get('/api/cipa/voters', async (req, res) => {
+    try {
+      // Retorna a lista de eleitores (voto secreto: sem mostrar o candidato)
+      const result = await query(`
+        SELECT cv.id, cv.employee_id, cv.employee_name, cv.voted_at, e.sector 
+        FROM cipa_voters cv
+        LEFT JOIN employees e ON cv.employee_id = e.id
+        ORDER BY cv.voted_at DESC
+      `);
       res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
@@ -2237,15 +2252,69 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     }
   });
 
+  app.post('/api/cipa/vote-secure', async (req, res) => {
+    try {
+      const { employeeId, pin, candidateId } = req.body;
+      if (!employeeId || !pin || !candidateId) {
+        return res.status(400).json({ error: 'Dados incompletos para votação.' });
+      }
+
+      // 1. Verificar se o colaborador existe e validar PIN
+      const empRes = await query('SELECT id, name, pin FROM employees WHERE id = $1', [employeeId]);
+      if (empRes.rows.length === 0) {
+        return res.status(404).json({ error: 'Colaborador não encontrado.' });
+      }
+      
+      const employee = empRes.rows[0];
+      if (!employee.pin || employee.pin.trim() !== pin.toString().trim()) {
+        return res.status(401).json({ error: 'PIN incorreto. Acesso de votação negado.' });
+      }
+
+      // 2. Verificar se o colaborador já votou
+      const voterCheck = await query('SELECT id FROM cipa_voters WHERE employee_id = $1', [employeeId]);
+      if (voterCheck.rows.length > 0) {
+        return res.status(400).json({ error: 'Este colaborador já votou nesta eleição.' });
+      }
+
+      // 3. Registrar o voto e marcar eleitor numa transação única
+      await query('BEGIN');
+      try {
+        // Incrementa voto do candidato
+        await query('UPDATE cipa_candidates SET votes = votes + 1 WHERE id = $1', [candidateId]);
+        
+        // Registra eleitor
+        const voterId = 'vtr_' + Date.now();
+        await query('INSERT INTO cipa_voters (id, employee_id, employee_name) VALUES ($1, $2, $3)', [voterId, employeeId, employee.name]);
+        
+        await query('COMMIT');
+      } catch (err) {
+        await query('ROLLBACK');
+        throw err;
+      }
+
+      // Atualiza status de eleito dinamicamente (Top 2 candidatos eleitos)
+      const allCands = await query('SELECT id FROM cipa_candidates ORDER BY votes DESC, name ASC');
+      for (let i = 0; i < allCands.rows.length; i++) {
+        const isElected = i < 2; // Top 2
+        await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
+      }
+
+      res.json({ success: true, message: 'Voto registrado com sucesso e computado na urna digital!' });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: 'Erro no banco de dados ao registrar o voto: ' + e.message });
+    }
+  });
+
   app.post('/api/cipa/vote/:id', async (req, res) => {
+    // Rota legada mantida temporariamente por compatibilidade ou redundância simples
     try {
       const { id } = req.params;
       const result = await query('UPDATE cipa_candidates SET votes = votes + 1 WHERE id = $1 RETURNING *', [id]);
       
-      // Update is_elected status dynamically for all candidates: Top 2 candidates are elected
       const allCands = await query('SELECT id FROM cipa_candidates ORDER BY votes DESC, name ASC');
       for (let i = 0; i < allCands.rows.length; i++) {
-        const isElected = i < 2; // Top 2 elected
+        const isElected = i < 2;
         await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
       }
       
@@ -2258,7 +2327,15 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
 
   app.post('/api/cipa/reset', async (req, res) => {
     try {
-      await query('UPDATE cipa_candidates SET votes = 0, is_elected = false');
+      await query('BEGIN');
+      try {
+        await query('UPDATE cipa_candidates SET votes = 0, is_elected = false');
+        await query('DELETE FROM cipa_voters');
+        await query('COMMIT');
+      } catch (err) {
+        await query('ROLLBACK');
+        throw err;
+      }
       res.json({ success: true });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });

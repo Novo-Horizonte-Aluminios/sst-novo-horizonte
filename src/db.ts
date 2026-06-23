@@ -375,6 +375,13 @@ export const initDb = async () => {
         evaluator VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      CREATE TABLE IF NOT EXISTS cipa_voters (
+        id VARCHAR(50) PRIMARY KEY,
+        employee_id VARCHAR(50) NOT NULL UNIQUE,
+        employee_name VARCHAR(255) NOT NULL,
+        voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
     // Verificar e criar usuários iniciais se não existirem
