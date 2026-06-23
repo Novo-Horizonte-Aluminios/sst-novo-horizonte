@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Moon, Sun } from 'lucide-react';
 import Sidebar from './components/Sidebar.tsx';
 import DashboardTab from './components/DashboardTab.tsx';
 import CompanyWorkerTab from './components/CompanyWorkerTab.tsx';
@@ -526,9 +526,14 @@ export default function App() {
 
             <div className="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
-            <span className="px-3 py-1.5 bg-brand-primary/10 text-brand-primary border border-brand-primary/20 rounded-xl text-[10.5px] font-bold uppercase tracking-wider shadow-sm">
-              {currentUser.role}
-            </span>
+            <button
+              onClick={toggleDarkMode}
+              className="p-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow active:scale-95"
+              title={isDarkMode ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro'}
+            >
+              {isDarkMode ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5" />}
+            </button>
+
             <button
               onClick={handleLogout}
               className="px-5 py-2 bg-white dark:bg-slate-800 hover:bg-rose-50 border border-slate-200 dark:border-slate-700 hover:border-rose-200 hover:text-rose-600 rounded-xl text-[12px] font-black text-slate-600 dark:text-slate-300 transition-all shadow-sm cursor-pointer hover:shadow-md active:scale-95 uppercase tracking-wide"
