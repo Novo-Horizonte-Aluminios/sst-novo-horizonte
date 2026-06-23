@@ -20,7 +20,9 @@ import {
   ChevronRight,
   Heart,
   RefreshCw,
-  BrainCircuit
+  BrainCircuit,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -41,6 +43,7 @@ export default function Sidebar({
   companies
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Alternador de temas claro/escuro
 
   const menuGroups = [
     {
@@ -97,21 +100,48 @@ export default function Sidebar({
     }
   ];
 
+  // Variáveis de Estilo Baseadas no Tema
+  const themeClasses = isDarkMode ? {
+    aside: 'bg-slate-900 text-slate-100 border-slate-800',
+    collapseBtn: 'bg-slate-850 border-slate-700 text-slate-400 hover:text-emerald-450 hover:border-emerald-500/40',
+    textLogo: 'text-white',
+    avatarText: 'bg-emerald-500 text-slate-950',
+    navGroupTitle: 'text-slate-450',
+    itemBtnActive: 'bg-emerald-500 text-slate-950 font-extrabold shadow-sm',
+    itemBtnInactive: 'text-slate-300 hover:bg-slate-800 hover:text-white',
+    itemIconActive: 'text-slate-950',
+    itemIconInactive: 'text-emerald-500',
+    systemInfo: 'border-slate-800 bg-slate-950/20 text-slate-400',
+    themeToggle: 'hover:bg-slate-800 text-slate-400 hover:text-white'
+  } : {
+    aside: 'bg-slate-50 text-slate-700 border-slate-200/80',
+    collapseBtn: 'bg-white border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-600/40',
+    textLogo: 'text-slate-800',
+    avatarText: 'bg-emerald-600 text-white',
+    navGroupTitle: 'text-emerald-700',
+    itemBtnActive: 'bg-emerald-100/75 text-emerald-900 border-l-4 border-emerald-600 font-extrabold shadow-sm',
+    itemBtnInactive: 'text-slate-650 hover:bg-slate-200/50 hover:text-emerald-800',
+    itemIconActive: 'text-emerald-700',
+    itemIconInactive: 'text-emerald-600',
+    systemInfo: 'border-slate-200/80 bg-white/40 text-slate-500',
+    themeToggle: 'hover:bg-slate-200 text-slate-500 hover:text-slate-800'
+  };
+
   return (
-    <aside className={`relative ${isCollapsed ? 'w-[70px]' : 'w-[250px]'} bg-slate-900 text-slate-100 flex flex-col h-full flex-shrink-0 border-r border-slate-800 font-sans antialiased select-none transition-all duration-300 ease-out shadow-sm`}>
+    <aside className={`relative ${isCollapsed ? 'w-[70px]' : 'w-[250px]'} ${themeClasses.aside} flex flex-col h-full flex-shrink-0 border-r font-sans antialiased select-none transition-all duration-300 ease-out shadow-sm`}>
       
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3.5 top-6 w-7 h-7 bg-slate-850 border border-slate-700 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-450 hover:border-emerald-500/40 shadow-sm z-50 transition-all hover:shadow-md hover:scale-105 active:scale-95"
+        className={`absolute -right-3.5 top-6 w-7 h-7 rounded-full flex items-center justify-center border shadow-sm z-50 transition-all hover:shadow-md hover:scale-105 active:scale-95 ${themeClasses.collapseBtn}`}
         aria-label={isCollapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
       >
         {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
       </button>
 
-      <div className={`px-4 border-b border-slate-800 flex flex-col items-center ${isCollapsed ? 'h-[68px] justify-center' : 'py-4'} transition-all`}>
+      <div className={`px-4 border-b flex flex-col items-center ${isCollapsed ? 'h-[68px] justify-center' : 'py-4'} ${isDarkMode ? 'border-slate-800' : 'border-slate-200/80'} transition-all`}>
         {!isCollapsed ? (
           <>
-            <div className="w-full flex justify-center bg-white p-2 rounded-xl">
+            <div className="w-full flex justify-center bg-white p-2 rounded-xl border border-slate-100 shadow-sm">
               <img 
                 src="/logo_horizontal.png" 
                 alt="Novo Horizonte Alumínios" 
@@ -123,13 +153,13 @@ export default function Sidebar({
                 }}
               />
             </div>
-            <div id="sidebar-text-logo" className="hidden text-white font-extrabold text-xs tracking-tight leading-none text-center uppercase mt-1">
+            <div id="sidebar-text-logo" className={`hidden font-extrabold text-xs tracking-tight leading-none text-center uppercase mt-1 ${themeClasses.textLogo}`}>
               <span>Novo Horizonte</span>
-              <span className="text-emerald-400 text-[10px] font-semibold block mt-0.5">Alumínios</span>
+              <span className="text-emerald-500 text-[10px] font-semibold block mt-0.5">Alumínios</span>
             </div>
           </>
         ) : (
-          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-black text-sm shadow-sm">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm shadow-sm ${themeClasses.avatarText}`}>
             NH
           </div>
         )}
@@ -148,8 +178,8 @@ export default function Sidebar({
                   title={item.label}
                   className={`w-full flex items-center justify-center p-2.5 rounded-xl transition-all duration-150 ${
                     isActive
-                      ? 'bg-emerald-500 text-slate-950 shadow-sm'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                      ? themeClasses.itemBtnActive
+                      : themeClasses.itemBtnInactive
                   }`}
                 >
                   <Icon className="w-[18px] h-[18px] shrink-0" />
@@ -160,7 +190,7 @@ export default function Sidebar({
 
           return (
             <div key={group.group} className="space-y-1">
-              <span className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block px-3">
+              <span className={`text-[10px] font-extrabold uppercase tracking-wider block px-3 ${themeClasses.navGroupTitle}`}>
                 {group.group}
               </span>
               <div className="space-y-0.5 pl-2">
@@ -173,11 +203,11 @@ export default function Sidebar({
                       onClick={() => setActiveTab(item.id)}
                       className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-150 text-left text-[12px] font-semibold leading-none ${
                         isActive
-                          ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
-                          : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                          ? themeClasses.itemBtnActive
+                          : themeClasses.itemBtnInactive
                       }`}
                     >
-                      <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-slate-950' : 'text-emerald-500'}`} />
+                      <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? themeClasses.itemIconActive : themeClasses.itemIconInactive}`} />
                       <span className="truncate">{item.label}</span>
                     </button>
                   );
@@ -188,13 +218,27 @@ export default function Sidebar({
         })}
       </nav>
 
+      {/* Switcher de Tema no Rodapé do Menu */}
+      <div className={`px-4 py-2 border-t flex items-center justify-between ${isDarkMode ? 'border-slate-800' : 'border-slate-200/80'}`}>
+        {!isCollapsed && (
+          <span className="text-[10px] font-bold text-slate-450 uppercase">Alternar Tema</span>
+        )}
+        <button
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className={`p-1.5 rounded-lg transition-all ${themeClasses.themeToggle}`}
+          title={isDarkMode ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro'}
+        >
+          {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+        </button>
+      </div>
+
       {!isCollapsed && (
-        <div className="px-4 py-3 border-t border-slate-800 bg-slate-950/20">
+        <div className={`px-4 py-3 border-t bg-slate-950/5 ${themeClasses.systemInfo}`}>
           <div className="flex justify-between items-center mb-0.5">
-            <span className="text-[10px] font-semibold text-slate-400">Sistema Seguro</span>
+            <span className="text-[10px] font-semibold">Sistema Seguro</span>
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.6)]"></span>
           </div>
-          <p className="text-[8px] text-slate-500 tracking-tight">MTE & compliance legal v2.4</p>
+          <p className="text-[8px] tracking-tight">MTE & compliance legal v2.4</p>
         </div>
       )}
     </aside>
