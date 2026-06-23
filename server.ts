@@ -2226,11 +2226,169 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     }
   });
 
+  app.get('/api/cipa/settings', async (req, res) => {
+    try {
+      const result = await query("SELECT key, value FROM system_settings WHERE key IN ('cipa_election_starts_at', 'cipa_election_ends_at')");
+      const settings: Record<string, string> = {};
+      result.rows.forEach(r => {
+        settings[r.key] = r.value;
+      });
+      res.json({
+        startsAt: settings.cipa_election_starts_at || '2026-06-20T08:00:00.000Z',
+        endsAt: settings.cipa_election_ends_at || '2026-06-25T18:00:00.000Z'
+      });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/settings', async (req, res) => {
+    try {
+      const { startsAt, endsAt } = req.body;
+      if (!startsAt || !endsAt) {
+        return res.status(400).json({ error: 'startsAt e endsAt são obrigatórios.' });
+      }
+      await query("INSERT INTO system_settings (key, value) VALUES ('cipa_election_starts_at', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [startsAt]);
+      await query("INSERT INTO system_settings (key, value) VALUES ('cipa_election_ends_at', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [endsAt]);
+      res.json({ success: true, startsAt, endsAt });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/extend-deadline', async (req, res) => {
+    try {
+      const { employeeId, extensionUntil } = req.body;
+      if (!employeeId) {
+        return res.status(400).json({ error: 'employeeId é obrigatório.' });
+      }
+      await query("UPDATE employees SET cipa_extension_until = $1 WHERE id = $2", [extensionUntil ? new Date(extensionUntil) : null, employeeId]);
+      res.json({ success: true, employeeId, extensionUntil });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/generate-token', async (req, res) => {
+    try {
+      const { employeeId } = req.body;
+      if (!employeeId) {
+        return res.status(400).json({ error: 'employeeId é obrigatório.' });
+      }
+      const token = 'tok_' + crypto.randomBytes(16).toString('hex');
+      await query("UPDATE employees SET cipa_token = $1 WHERE id = $2", [token, employeeId]);
+      res.json({ success: true, token });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/send-invite', async (req, res) => {
+    try {
+      const { employeeId, method } = req.body; // method: 'email' | 'whatsapp' | 'both'
+      if (!employeeId) {
+        return res.status(400).json({ error: 'employeeId é obrigatório.' });
+      }
+
+      const empRes = await query('SELECT id, name, phone, email, sector, role, admission_date FROM employees WHERE id = $1', [employeeId]);
+      if (empRes.rows.length === 0) {
+        return res.status(404).json({ error: 'Colaborador não encontrado.' });
+      }
+
+      const employee = empRes.rows[0];
+      const token = 'tok_' + crypto.randomBytes(16).toString('hex');
+      await query("UPDATE employees SET cipa_token = $1 WHERE id = $2", [token, employeeId]);
+
+      // Envia notificação assíncrona ao n8n
+      const inviteUrl = `http://localhost:3000/?tab=cipa&token=${token}`;
+      
+      const payload = {
+        employeeId: employee.id,
+        name: employee.name,
+        phone: employee.phone || '',
+        email: employee.email || '',
+        sector: employee.sector || '',
+        role: employee.role || '',
+        method: method || 'both',
+        inviteUrl
+      };
+
+      await notifyN8N('/webhook/cipa-invite', payload);
+
+      // Gravar log de envio
+      const logId = 'wl_' + Date.now();
+      const message = `Convite de votação CIPA enviado via ${method || 'ambos'} para ${employee.name}. Link: ${inviteUrl}`;
+      await query(
+        'INSERT INTO whatsapp_logs (id, employee_id, employee_name, alert_type, detail, phone, sent_at, status, message) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, $7, $8)',
+        [logId, employee.id, employee.name, 'CIPA Convite', 'Eleição Online CIPA', employee.phone || 'E-mail', 'Enviado', message]
+      );
+
+      res.json({ success: true, token, inviteUrl });
+    } catch (e: any) {
+      res.status(500).json({ error: 'Erro ao enviar convite: ' + e.message });
+    }
+  });
+
+  app.get('/api/cipa/validate-token', async (req, res) => {
+    try {
+      const { token } = req.query;
+      if (!token) {
+        return res.status(400).json({ error: 'Token é obrigatório.' });
+      }
+
+      const result = await query('SELECT id, name, pin, cipa_extension_until FROM employees WHERE cipa_token = $1', [token]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Token inválido ou expirado.' });
+      }
+
+      const employee = result.rows[0];
+
+      // Verificar prazo de eleição
+      const settingsRes = await query("SELECT key, value FROM system_settings WHERE key IN ('cipa_election_starts_at', 'cipa_election_ends_at')");
+      const settings: Record<string, string> = {};
+      settingsRes.rows.forEach(r => { settings[r.key] = r.value; });
+
+      const startsAt = new Date(settings.cipa_election_starts_at || '2026-06-20T08:00:00.000Z');
+      const endsAt = new Date(settings.cipa_election_ends_at || '2026-06-25T18:00:00.000Z');
+      const now = new Date();
+
+      let isAllowed = now >= startsAt && now <= endsAt;
+
+      // Verificar tolerância individual se estiver fora do prazo global
+      if (!isAllowed && employee.cipa_extension_until) {
+        const extensionUntil = new Date(employee.cipa_extension_until);
+        if (now <= extensionUntil) {
+          isAllowed = true;
+        }
+      }
+
+      // Verificar se já votou
+      const voterCheck = await query('SELECT id FROM cipa_voters WHERE employee_id = $1', [employee.id]);
+      const alreadyVoted = voterCheck.rows.length > 0;
+
+      res.json({
+        valid: true,
+        isAllowed,
+        alreadyVoted,
+        employee: {
+          id: employee.id,
+          name: employee.name,
+          hasPin: !!employee.pin
+        },
+        startsAt,
+        endsAt,
+        extensionUntil: employee.cipa_extension_until
+      });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
   app.get('/api/cipa/voters', async (req, res) => {
     try {
       // Retorna a lista de eleitores (voto secreto: sem mostrar o candidato)
       const result = await query(`
-        SELECT cv.id, cv.employee_id, cv.employee_name, cv.voted_at, e.sector 
+        SELECT cv.id, cv.employee_id, cv.employee_name, cv.voted_at, e.sector, e.phone, e.email, e.admission_date, e.role, e.cipa_extension_until, e.cipa_token
         FROM cipa_voters cv
         LEFT JOIN employees e ON cv.employee_id = e.id
         ORDER BY cv.voted_at DESC
@@ -2254,13 +2412,13 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
 
   app.post('/api/cipa/vote-secure', async (req, res) => {
     try {
-      const { employeeId, pin, candidateId } = req.body;
+      const { employeeId, pin, candidateId, token } = req.body;
       if (!employeeId || !pin || !candidateId) {
         return res.status(400).json({ error: 'Dados incompletos para votação.' });
       }
 
-      // 1. Verificar se o colaborador existe e validar PIN
-      const empRes = await query('SELECT id, name, pin FROM employees WHERE id = $1', [employeeId]);
+      // 1. Verificar se o colaborador existe e validar PIN/Token
+      const empRes = await query('SELECT id, name, pin, cipa_token, cipa_extension_until FROM employees WHERE id = $1', [employeeId]);
       if (empRes.rows.length === 0) {
         return res.status(404).json({ error: 'Colaborador não encontrado.' });
       }
@@ -2268,6 +2426,27 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       const employee = empRes.rows[0];
       if (!employee.pin || employee.pin.trim() !== pin.toString().trim()) {
         return res.status(401).json({ error: 'PIN incorreto. Acesso de votação negado.' });
+      }
+
+      // Validar prazo da eleição/tolerância
+      const settingsRes = await query("SELECT key, value FROM system_settings WHERE key IN ('cipa_election_starts_at', 'cipa_election_ends_at')");
+      const settings: Record<string, string> = {};
+      settingsRes.rows.forEach(r => { settings[r.key] = r.value; });
+
+      const startsAt = new Date(settings.cipa_election_starts_at || '2026-06-20T08:00:00.000Z');
+      const endsAt = new Date(settings.cipa_election_ends_at || '2026-06-25T18:00:00.000Z');
+      const now = new Date();
+
+      let isAllowed = now >= startsAt && now <= endsAt;
+      if (!isAllowed && employee.cipa_extension_until) {
+        const extensionUntil = new Date(employee.cipa_extension_until);
+        if (now <= extensionUntil) {
+          isAllowed = true;
+        }
+      }
+
+      if (!isAllowed) {
+        return res.status(400).json({ error: 'Período de votação encerrado ou ainda não iniciado.' });
       }
 
       // 2. Verificar se o colaborador já votou
@@ -2285,6 +2464,11 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
         // Registra eleitor
         const voterId = 'vtr_' + Date.now();
         await query('INSERT INTO cipa_voters (id, employee_id, employee_name) VALUES ($1, $2, $3)', [voterId, employeeId, employee.name]);
+        
+        // Consumir token se usado
+        if (token) {
+          await query('UPDATE employees SET cipa_token = NULL WHERE id = $1', [employeeId]);
+        }
         
         await query('COMMIT');
       } catch (err) {
@@ -2331,6 +2515,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       try {
         await query('UPDATE cipa_candidates SET votes = 0, is_elected = false');
         await query('DELETE FROM cipa_voters');
+        await query('UPDATE employees SET cipa_token = NULL, cipa_extension_until = NULL');
         await query('COMMIT');
       } catch (err) {
         await query('ROLLBACK');

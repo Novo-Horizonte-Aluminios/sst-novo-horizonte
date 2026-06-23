@@ -382,7 +382,23 @@ export const initDb = async () => {
         employee_name VARCHAR(255) NOT NULL,
         voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      -- Migrações para suporte a token e tolerância de prazo de votação na CIPA
+      ALTER TABLE employees ADD COLUMN IF NOT EXISTS cipa_token VARCHAR(255);
+      ALTER TABLE employees ADD COLUMN IF NOT EXISTS cipa_extension_until TIMESTAMP;
     `);
+
+    // Sementeira de configurações de sistema iniciais se não existirem
+    const settingsCheck = await client.query("SELECT key FROM system_settings WHERE key IN ('cipa_election_starts_at', 'cipa_election_ends_at')");
+    if (settingsCheck.rows.length === 0) {
+      console.log('Semeando configurações iniciais da eleição da CIPA...');
+      await client.query(`
+        INSERT INTO system_settings (key, value) VALUES 
+        ('cipa_election_starts_at', '2026-06-20T08:00:00.000Z'),
+        ('cipa_election_ends_at', '2026-06-25T18:00:00.000Z')
+        ON CONFLICT (key) DO NOTHING
+      `);
+    }
 
     // Verificar e criar usuários iniciais se não existirem
     const userCheck = await client.query("SELECT id FROM users WHERE username = 'admin'");
