@@ -309,6 +309,72 @@ export const initDb = async () => {
         key VARCHAR(255) PRIMARY KEY,
         value TEXT NOT NULL
       );
+
+      CREATE TABLE IF NOT EXISTS aso_certificates (
+        id VARCHAR(50) PRIMARY KEY,
+        employee_id VARCHAR(50) NOT NULL,
+        employee_name VARCHAR(255) NOT NULL,
+        exam_date DATE NOT NULL,
+        next_exam_date DATE NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        doctor_name VARCHAR(255),
+        doctor_crm VARCHAR(50),
+        file_url TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS aso_exam_types (
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        periodicity_months INTEGER DEFAULT 12,
+        company_id VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS cipa_candidates (
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        sector VARCHAR(100) NOT NULL,
+        votes INTEGER DEFAULT 0,
+        is_elected BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS epi_stock_entries (
+        id VARCHAR(50) PRIMARY KEY,
+        ppe_id VARCHAR(50) NOT NULL,
+        ppe_name VARCHAR(255) NOT NULL,
+        quantity INTEGER NOT NULL,
+        supplier VARCHAR(255),
+        invoice_number VARCHAR(100),
+        entry_date DATE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS epi_returns (
+        id VARCHAR(50) PRIMARY KEY,
+        employee_id VARCHAR(50) NOT NULL,
+        employee_name VARCHAR(255) NOT NULL,
+        ppe_id VARCHAR(50) NOT NULL,
+        ppe_name VARCHAR(255) NOT NULL,
+        quantity INTEGER NOT NULL,
+        reason VARCHAR(255),
+        return_date DATE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS psychosocial_assessments (
+        id VARCHAR(50) PRIMARY KEY,
+        employee_id VARCHAR(50) NOT NULL,
+        employee_name VARCHAR(255) NOT NULL,
+        answers TEXT NOT NULL,
+        score INTEGER NOT NULL,
+        risk_level VARCHAR(50) NOT NULL,
+        assessment_date DATE NOT NULL,
+        evaluator VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
     // Verificar e criar usuários iniciais se não existirem
@@ -443,6 +509,53 @@ export const initDb = async () => {
         ('wl_2', 'e2', 'Juliana Montenegro', 'CA de EPI Vencendo', 'Bota de Segurança de Couro Cano Curto', '+5551977775544', '2026-06-16T17:15:00Z',
          'Simulado',
          E'⚠️ ALERTA DE SST - NOVO HORIZONTE ALUMÍNIOS ⚠️\n\nOlá, Juliana Montenegro!\nEste é um aviso automático do SESMT. O CA do seu EPI Bota de Segurança (CA: 41209) está próximo do vencimento.\n\nDirija-se ao Almoxarifado para realizar a substituição (NR-06).')
+      `);
+    }
+
+    // Seeder para ASO Certificates
+    const asoCertCheck = await client.query("SELECT id FROM aso_certificates LIMIT 1");
+    if (asoCertCheck.rows.length === 0) {
+      console.log('Semeando certificados ASO iniciais...');
+      await client.query(`
+        INSERT INTO aso_certificates (id, employee_id, employee_name, exam_date, next_exam_date, status, doctor_name, doctor_crm, file_url) VALUES
+        ('aso1', 'e1', 'Carlos Henrique Silva', '2025-06-01', '2026-06-01', 'Vencido', 'Dr. Ana Beatriz', 'CRM/SP 123456', '#'),
+        ('aso2', 'e2', 'Juliana Montenegro', '2026-01-15', '2027-01-15', 'Apto', 'Dr. Roberto Alves', 'CRM/SP 654321', '#')
+      `);
+    }
+
+    // Seeder para ASO Exam Types
+    const asoExamCheck = await client.query("SELECT id FROM aso_exam_types LIMIT 1");
+    if (asoExamCheck.rows.length === 0) {
+      console.log('Semeando tipos de exames complementares...');
+      await client.query(`
+        INSERT INTO aso_exam_types (id, name, description, periodicity_months, company_id) VALUES
+        ('exam1', 'Audiometria tonal e vocal', 'Avaliação da acuidade auditiva para trabalhadores expostos a ruído.', 12, 'c1'),
+        ('exam2', 'Acuidade Visual', 'Teste de escala de Snellen para motoristas e operadores de empilhadeira.', 12, 'c1'),
+        ('exam3', 'Espirometria', 'Avaliação da função pulmonar para expostos a fumos metálicos.', 24, 'c1')
+      `);
+    }
+
+    // Seeder para CIPA Candidates
+    const cipaCheck = await client.query("SELECT id FROM cipa_candidates LIMIT 1");
+    if (cipaCheck.rows.length === 0) {
+      console.log('Semeando candidatos da CIPA...');
+      await client.query(`
+        INSERT INTO cipa_candidates (id, name, sector, votes, is_elected) VALUES
+        ('cand1', 'Carlos Henrique Silva', 'Usinagem', 24, true),
+        ('cand2', 'Juliana Montenegro', 'Soldagem e Montagem', 18, true),
+        ('cand3', 'Roberto Carlos Pereira', 'Almoxarifado', 12, false),
+        ('cand4', 'Fernanda Souza Lima', 'Administrativo', 8, false)
+      `);
+    }
+
+    // Seeder para Risco Psicossocial
+    const psychoCheck = await client.query("SELECT id FROM psychosocial_assessments LIMIT 1");
+    if (psychoCheck.rows.length === 0) {
+      console.log('Semeando avaliações psicossociais iniciais...');
+      await client.query(`
+        INSERT INTO psychosocial_assessments (id, employee_id, employee_name, answers, score, risk_level, assessment_date, evaluator) VALUES
+        ('psy1', 'e1', 'Carlos Henrique Silva', '{"q1":2,"q2":3,"q3":2,"q4":4,"q5":3}', 14, 'Médio', '2026-06-20', 'Dr. Marcos Patrício'),
+        ('psy2', 'e2', 'Juliana Montenegro', '{"q1":1,"q2":1,"q3":2,"q4":2,"q5":1}', 7, 'Baixo', '2026-06-21', 'Dr. Marcos Patrício')
       `);
     }
 

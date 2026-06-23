@@ -142,3 +142,64 @@ export interface FISPQDocument {
   version: string;
   ghsClassification: string;
 }
+
+export interface AsoCertificate {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  examDate: string;
+  nextExamDate: string;
+  status: string;
+  doctorName?: string;
+  doctorCrm?: string;
+  fileUrl?: string;
+}
+
+export interface AsoExamType {
+  id: string;
+  name: string;
+  description: string;
+  periodicityMonths: number;
+  companyId?: string;
+}
+
+export interface CipaCandidate {
+  id: string;
+  name: string;
+  sector: string;
+  votes: number;
+  isElected: boolean;
+}
+
+export interface EpiStockEntry {
+  id: string;
+  ppeId: string;
+  ppeName: string;
+  quantity: number;
+  supplier: string;
+  invoiceNumber: string;
+  entryDate: string;
+}
+
+export interface EpiReturn {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  ppeId: string;
+  ppeName: string;
+  quantity: number;
+  reason: string;
+  returnDate: string;
+}
+
+export interface PsychosocialAssessment {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  answers: Record<string, number>;
+  score: number;
+  riskLevel: string;
+  assessmentDate: string;
+  evaluator: string;
+}
+

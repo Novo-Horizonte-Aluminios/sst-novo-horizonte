@@ -2139,6 +2139,225 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     }
   });
 
+  // ─── ASO CERTIFICATES API ──────────────────────────────────────────────────
+  app.get('/api/aso', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM aso_certificates ORDER BY exam_date DESC');
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/aso', async (req, res) => {
+    try {
+      const id = 'aso_' + Date.now();
+      const { employeeId, employeeName, examDate, nextExamDate, status, doctorName, doctorCrm, fileUrl } = req.body;
+      await query(
+        'INSERT INTO aso_certificates (id, employee_id, employee_name, exam_date, next_exam_date, status, doctor_name, doctor_crm, file_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        [id, employeeId, employeeName, examDate, nextExamDate, status, doctorName || null, doctorCrm || null, fileUrl || null]
+      );
+      res.status(201).json({ id, employeeId, employeeName, examDate, nextExamDate, status, doctorName, doctorCrm, fileUrl });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.put('/api/aso/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, nextExamDate } = req.body;
+      await query('UPDATE aso_certificates SET status = $1, next_exam_date = $2 WHERE id = $3', [status, nextExamDate, id]);
+      res.json({ id, status, nextExamDate });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.delete('/api/aso/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM aso_certificates WHERE id = $1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  // ─── ASO EXAM TYPES API ─────────────────────────────────────────────────────
+  app.get('/api/aso-exam-types', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM aso_exam_types ORDER BY name ASC');
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/aso-exam-types', async (req, res) => {
+    try {
+      const id = 'exam_' + Date.now();
+      const { name, description, periodicityMonths, companyId } = req.body;
+      await query(
+        'INSERT INTO aso_exam_types (id, name, description, periodicity_months, company_id) VALUES ($1, $2, $3, $4, $5)',
+        [id, name, description || null, periodicityMonths || 12, companyId || 'c1']
+      );
+      res.status(201).json({ id, name, description, periodicityMonths, companyId });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.delete('/api/aso-exam-types/:id', async (req, res) => {
+    try {
+      await query('DELETE FROM aso_exam_types WHERE id = $1', [req.params.id]);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  // ─── CIPA CANDIDATES API ────────────────────────────────────────────────────
+  app.get('/api/cipa/candidates', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM cipa_candidates ORDER BY votes DESC, name ASC');
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/candidates', async (req, res) => {
+    try {
+      const id = 'cand_' + Date.now();
+      const { name, sector } = req.body;
+      await query('INSERT INTO cipa_candidates (id, name, sector, votes, is_elected) VALUES ($1, $2, $3, 0, false)', [id, name, sector]);
+      res.status(201).json({ id, name, sector, votes: 0, isElected: false });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/vote/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await query('UPDATE cipa_candidates SET votes = votes + 1 WHERE id = $1 RETURNING *', [id]);
+      
+      // Update is_elected status dynamically for all candidates: Top 2 candidates are elected
+      const allCands = await query('SELECT id FROM cipa_candidates ORDER BY votes DESC, name ASC');
+      for (let i = 0; i < allCands.rows.length; i++) {
+        const isElected = i < 2; // Top 2 elected
+        await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
+      }
+      
+      if (result.rows.length === 0) return res.status(404).json({ error: 'Candidate not found' });
+      res.json(toCamel(result.rows[0]));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/reset', async (req, res) => {
+    try {
+      await query('UPDATE cipa_candidates SET votes = 0, is_elected = false');
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  // ─── EPI STOCK ENTRIES API ──────────────────────────────────────────────────
+  app.get('/api/epi-stock-entries', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM epi_stock_entries ORDER BY entry_date DESC');
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/epi-stock-entries', async (req, res) => {
+    try {
+      const id = 'entry_' + Date.now();
+      const { ppeId, ppeName, quantity, supplier, invoiceNumber, entryDate } = req.body;
+      const qty = parseInt(quantity) || 0;
+      
+      // Increment inventory stock count in PPES table
+      await query('UPDATE ppes SET stock = stock + $1 WHERE id = $2', [qty, ppeId]);
+      
+      await query(
+        'INSERT INTO epi_stock_entries (id, ppe_id, ppe_name, quantity, supplier, invoice_number, entry_date) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [id, ppeId, ppeName, qty, supplier || null, invoiceNumber || null, entryDate]
+      );
+      res.status(201).json({ id, ppeId, ppeName, quantity: qty, supplier, invoiceNumber, entryDate });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  // ─── EPI RETURNS API ────────────────────────────────────────────────────────
+  app.get('/api/epi-returns', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM epi_returns ORDER BY return_date DESC');
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/epi-returns', async (req, res) => {
+    try {
+      const id = 'ret_' + Date.now();
+      const { employeeId, employeeName, ppeId, ppeName, quantity, reason, returnDate } = req.body;
+      const qty = parseInt(quantity) || 0;
+      
+      // Add back to inventory if reason is not damaged/discarded
+      if (reason !== 'Danificado' && reason !== 'Descartado') {
+        await query('UPDATE ppes SET stock = stock + $1 WHERE id = $2', [qty, ppeId]);
+      }
+      
+      await query(
+        'INSERT INTO epi_returns (id, employee_id, employee_name, ppe_id, ppe_name, quantity, reason, return_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+        [id, employeeId, employeeName, ppeId, ppeName, qty, reason || null, returnDate]
+      );
+      res.status(201).json({ id, employeeId, employeeName, ppeId, ppeName, quantity: qty, reason, returnDate });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  // ─── PSYCHOSOCIAL ASSESSMENTS API ──────────────────────────────────────────
+  app.get('/api/psychosocial', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM psychosocial_assessments ORDER BY assessment_date DESC');
+      res.json(result.rows.map(r => ({
+        id: r.id,
+        employeeId: r.employee_id,
+        employeeName: r.employee_name,
+        answers: safeJsonParse(r.answers, {}),
+        score: r.score,
+        riskLevel: r.risk_level,
+        assessmentDate: r.assessment_date ? r.assessment_date.toISOString().slice(0,10) : null,
+        evaluator: r.evaluator
+      })));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/psychosocial', async (req, res) => {
+    try {
+      const id = 'psy_' + Date.now();
+      const { employeeId, employeeName, answers, score, riskLevel, assessmentDate, evaluator } = req.body;
+      await query(
+        'INSERT INTO psychosocial_assessments (id, employee_id, employee_name, answers, score, risk_level, assessment_date, evaluator) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+        [id, employeeId, employeeName, JSON.stringify(answers || {}), score, riskLevel, assessmentDate, evaluator]
+      );
+      res.status(201).json({ id, employeeId, employeeName, answers, score, riskLevel, assessmentDate, evaluator });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
   // --- VITE MIDDLEWARE OR STATIC ASSETS ---
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

@@ -19,6 +19,12 @@ import BackupTab from './components/BackupTab.tsx';
 import RiskMapTab from './components/RiskMapTab.tsx';
 import Login from './components/Login.tsx';
 import UsersTab from './components/UsersTab.tsx';
+import AsoCertificatesTab from './components/AsoCertificatesTab.tsx';
+import AsoExamTypesTab from './components/AsoExamTypesTab.tsx';
+import CipaElectionTab from './components/CipaElectionTab.tsx';
+import EpiEntryTab from './components/EpiEntryTab.tsx';
+import EpiReturnTab from './components/EpiReturnTab.tsx';
+import PsychosocialTab from './components/PsychosocialTab.tsx';
 
 import { Company, Employee, PPE, PPEDelivery, EmployeeTraining, AccidentReport, ActionPlan, FISPQDocument, Training } from './types';
 
@@ -407,6 +413,18 @@ export default function App() {
         return <RiskMapTab />;
       case 'backup':
         return <BackupTab />;
+      case 'aso_certificates':
+        return <AsoCertificatesTab />;
+      case 'aso_exam_types':
+        return <AsoExamTypesTab />;
+      case 'cipa_election':
+        return <CipaElectionTab />;
+      case 'epi_entry':
+        return <EpiEntryTab />;
+      case 'epi_return':
+        return <EpiReturnTab />;
+      case 'nr01_psychosocial':
+        return <PsychosocialTab />;
       case 'users':
         return currentUser.role === 'Admin' ? <UsersTab currentUser={currentUser} /> : null;
       default:
