@@ -98,20 +98,20 @@ export default function Sidebar({
   ];
 
   return (
-    <aside className={`relative ${isCollapsed ? 'w-[70px]' : 'w-[250px]'} bg-slate-50 text-slate-700 flex flex-col h-full flex-shrink-0 border-r border-slate-200/80 font-sans antialiased select-none transition-all duration-300 ease-out shadow-sm`}>
+    <aside className={`relative ${isCollapsed ? 'w-[70px]' : 'w-[250px]'} bg-slate-900 text-slate-100 flex flex-col h-full flex-shrink-0 border-r border-slate-800 font-sans antialiased select-none transition-all duration-300 ease-out shadow-sm`}>
       
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-600/40 shadow-sm z-50 transition-all hover:shadow-md hover:scale-105 active:scale-95"
+        className="absolute -right-3.5 top-6 w-7 h-7 bg-slate-850 border border-slate-700 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-450 hover:border-emerald-500/40 shadow-sm z-50 transition-all hover:shadow-md hover:scale-105 active:scale-95"
         aria-label={isCollapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
       >
         {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
       </button>
 
-      <div className={`px-4 border-b border-slate-200/80 flex flex-col items-center ${isCollapsed ? 'h-[68px] justify-center' : 'py-4'} transition-all`}>
+      <div className={`px-4 border-b border-slate-800 flex flex-col items-center ${isCollapsed ? 'h-[68px] justify-center' : 'py-4'} transition-all`}>
         {!isCollapsed ? (
           <>
-            <div className="w-full flex justify-center">
+            <div className="w-full flex justify-center bg-white p-2 rounded-xl">
               <img 
                 src="/logo_horizontal.png" 
                 alt="Novo Horizonte Alumínios" 
@@ -123,13 +123,13 @@ export default function Sidebar({
                 }}
               />
             </div>
-            <div id="sidebar-text-logo" className="hidden text-slate-800 font-extrabold text-xs tracking-tight leading-none text-center uppercase mt-1">
+            <div id="sidebar-text-logo" className="hidden text-white font-extrabold text-xs tracking-tight leading-none text-center uppercase mt-1">
               <span>Novo Horizonte</span>
-              <span className="text-emerald-600 text-[10px] font-semibold block mt-0.5">Alumínios</span>
+              <span className="text-emerald-400 text-[10px] font-semibold block mt-0.5">Alumínios</span>
             </div>
           </>
         ) : (
-          <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-black text-sm shadow-sm">
             NH
           </div>
         )}
@@ -148,8 +148,8 @@ export default function Sidebar({
                   title={item.label}
                   className={`w-full flex items-center justify-center p-2.5 rounded-xl transition-all duration-150 ${
                     isActive
-                      ? 'bg-emerald-100 text-emerald-800 shadow-sm'
-                      : 'text-slate-600 hover:bg-slate-200/60 hover:text-emerald-700'
+                      ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                   }`}
                 >
                   <Icon className="w-[18px] h-[18px] shrink-0" />
@@ -160,7 +160,7 @@ export default function Sidebar({
 
           return (
             <div key={group.group} className="space-y-1">
-              <span className="text-[11px] font-extrabold text-emerald-700 uppercase tracking-wider block px-3">
+              <span className="text-[10px] font-extrabold text-slate-450 uppercase tracking-wider block px-3">
                 {group.group}
               </span>
               <div className="space-y-0.5 pl-2">
@@ -171,13 +171,13 @@ export default function Sidebar({
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-150 text-left text-[12px] font-semibold leading-none ${
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-150 text-left text-[12px] font-semibold leading-none ${
                         isActive
-                          ? 'bg-emerald-100/70 text-emerald-800 border-l-4 border-emerald-600 shadow-sm'
-                          : 'text-slate-600 hover:bg-slate-200/50 hover:text-emerald-700'
+                          ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                          : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                       }`}
                     >
-                      <span className="text-emerald-500 font-black text-sm leading-none">•</span>
+                      <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-slate-950' : 'text-emerald-500'}`} />
                       <span className="truncate">{item.label}</span>
                     </button>
                   );
@@ -189,12 +189,12 @@ export default function Sidebar({
       </nav>
 
       {!isCollapsed && (
-        <div className="px-4 py-3 border-t border-slate-200/80 bg-white/40">
+        <div className="px-4 py-3 border-t border-slate-800 bg-slate-950/20">
           <div className="flex justify-between items-center mb-0.5">
-            <span className="text-[10px] font-semibold text-slate-500">Sistema Seguro</span>
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.4)]"></span>
+            <span className="text-[10px] font-semibold text-slate-400">Sistema Seguro</span>
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.6)]"></span>
           </div>
-          <p className="text-[8px] text-slate-400 tracking-tight">MTE & compliance legal v2.4</p>
+          <p className="text-[8px] text-slate-500 tracking-tight">MTE & compliance legal v2.4</p>
         </div>
       )}
     </aside>
