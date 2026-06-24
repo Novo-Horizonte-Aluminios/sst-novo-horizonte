@@ -336,18 +336,23 @@ export default function CipaElectionTab() {
       if (res.ok) {
         const data = await res.json();
         Swal.fire({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
           title: 'Notificação Enviada!',
-          text: 'O link de votação e PIN de segurança foram encaminhados por WhatsApp e E-mail.',
-          icon: 'success',
-          customClass: { popup: 'swal-modern-popup' }
+          icon: 'success'
         });
         await fetchEmployees();
       } else {
         Swal.fire({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
           title: 'Erro',
           text: 'Falha ao acionar notificação.',
-          icon: 'error',
-          customClass: { popup: 'swal-modern-popup' }
+          icon: 'error'
         });
       }
     } catch (e) {
