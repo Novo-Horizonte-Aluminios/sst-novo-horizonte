@@ -576,7 +576,7 @@ export default function CipaElectionTab() {
                   <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
                     <th className="p-4 w-12 text-center">#</th>
                     <th className="p-4">Candidato</th>
-                    <th className="p-4">Lotação</th>
+                    <th className="p-4">Departamento / Cargo</th>
                     <th className="p-4">Admissão</th>
                     <th className="p-4 text-center">Votos</th>
                     <th className="p-4">Status</th>
