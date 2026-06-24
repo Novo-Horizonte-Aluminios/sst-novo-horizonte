@@ -686,7 +686,7 @@ export default function CipaElectionTab() {
                   {filteredEmployeesList.map((emp, idx) => {
                     const status = getVoteStatus(emp.id);
                     const employeeToken = getEmployeeToken(emp);
-                    const linkVoto = `http://localhost:3000/?tab=cipa&token=${employeeToken}`;
+                    const linkVoto = `${window.location.origin}/?tab=cipa&token=${employeeToken}`;
 
                     return (
                       <tr key={emp.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition-colors">
@@ -792,7 +792,7 @@ export default function CipaElectionTab() {
                     .filter(emp => !voters.some(v => v.employeeId === emp.id))
                     .map((emp, idx) => {
                       const token = getEmployeeToken(emp);
-                      const linkVoto = `http://localhost:3000/?tab=cipa&token=${token}`;
+                      const linkVoto = `${window.location.origin}/?tab=cipa&token=${token}`;
 
                       return (
                         <tr key={emp.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition-colors">
