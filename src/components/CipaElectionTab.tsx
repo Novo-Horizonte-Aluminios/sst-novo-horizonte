@@ -326,12 +326,12 @@ export default function CipaElectionTab() {
     }
   };
 
-  const handleSendInvite = async (empId: string) => {
+  const handleSendInvite = async (empId: string, actionType: 'invite' | 'remind' = 'invite') => {
     try {
       const res = await fetch('/api/cipa/send-invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ employeeId: empId, method: 'both' })
+        body: JSON.stringify({ employeeId: empId, method: 'both', actionType })
       });
       if (res.ok) {
         const data = await res.json();
@@ -737,11 +737,11 @@ export default function CipaElectionTab() {
                                 <span>Acessar</span>
                               </a>
                               <button
-                                onClick={() => handleSendInvite(emp.id)}
+                                onClick={() => handleSendInvite(emp.id, 'invite')}
                                 className="flex items-center justify-center gap-1.5 text-[10px] font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-lg transition cursor-pointer"
                               >
                                 <Send className="w-3 h-3" />
-                                <span>Enviar Notificação</span>
+                                <span>Enviar Convite</span>
                               </button>
                             </div>
                           )}
@@ -831,7 +831,7 @@ export default function CipaElectionTab() {
                           <td className="p-4">
                             <div className="flex items-center justify-center gap-1.5">
                               <button
-                                onClick={() => handleSendInvite(emp.id)}
+                                onClick={() => handleSendInvite(emp.id, 'remind')}
                                 className="flex items-center gap-1 text-[10px] font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-lg transition cursor-pointer"
                                 title="Disparar convite por WhatsApp"
                               >

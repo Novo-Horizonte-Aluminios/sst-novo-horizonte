@@ -1,0 +1,108 @@
+{
+  "name": "SST - Fluxo 8: Convite Eleição CIPA",
+  "nodes": [
+    {
+      "id": "webhook-cipa",
+      "name": "Webhook CIPA",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cipa-invite",
+        "responseMode": "lastNode"
+      },
+      "position": [0, 0],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1
+    },
+    {
+      "id": "code-format",
+      "name": "Formatar Mensagem",
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || {};\nlet phone = (body.phone || '').replace(/\\D/g, '');\nif (phone.length >= 10 && !phone.startsWith('55')) {\n  phone = '55' + phone;\n}\nconst name = body.name || 'Colaborador';\nconst inviteUrl = body.inviteUrl || '';\n\nconst text = `🗳️ *Eleição CIPA - Novo Horizonte Alumínios*\\n\\nOlá, ${name}!\\n\\nA votação para a nova comissão da CIPA já começou.\\nSua participação é muito importante e o voto é secreto.\\n\\n🔗 *Acesse seu link de votação:*\\n${inviteUrl}\\n\\nEm caso de dúvidas, procure o SESMT.`;\n\nreturn [{ json: { number: phone, text } }];"
+      },
+      "position": [200, 0],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "http-whatsapp",
+      "name": "Enviar WhatsApp",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.number }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "8029C030CF0D-42CD-8D34-D021CA6755DF"
+            }
+          ]
+        },
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "sendHeaders": true,
+        "url": "https://api.emersontorres.com.br/message/sendText/Trello"
+      },
+      "position": [400, 0],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1
+    },
+    {
+      "id": "respond-webhook",
+      "name": "Resposta Webhook",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\":true,\"message\":\"Convite WhatsApp na fila de envio\"}"
+      },
+      "position": [600, 0],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Webhook CIPA": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Formatar Mensagem",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Formatar Mensagem": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Enviar WhatsApp",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Resposta Webhook",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

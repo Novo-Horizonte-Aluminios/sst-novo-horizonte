@@ -2285,7 +2285,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
 
   app.post('/api/cipa/send-invite', async (req, res) => {
     try {
-      const { employeeId, method } = req.body; // method: 'email' | 'whatsapp' | 'both'
+      const { employeeId, method, actionType } = req.body; // method: 'email' | 'whatsapp' | 'both', actionType: 'invite' | 'remind'
       if (!employeeId) {
         return res.status(400).json({ error: 'employeeId é obrigatório.' });
       }
@@ -2300,7 +2300,8 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       await query("UPDATE employees SET cipa_token = $1 WHERE id = $2", [token, employeeId]);
 
       // Envia notificação assíncrona ao n8n
-      const inviteUrl = `http://localhost:3000/?tab=cipa&token=${token}`;
+      const baseUrl = process.env.APP_URL || process.env.COOLIFY_URL || 'https://sst.novohorizonte.com';
+      const inviteUrl = `${baseUrl}/?tab=cipa&token=${token}`;
       
       const payload = {
         employeeId: employee.id,
@@ -2310,6 +2311,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
         sector: employee.sector || '',
         role: employee.role || '',
         method: method || 'both',
+        actionType: actionType || 'invite',
         inviteUrl
       };
 
