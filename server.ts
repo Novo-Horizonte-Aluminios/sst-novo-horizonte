@@ -2313,7 +2313,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
         inviteUrl
       };
 
-      await notifyN8N('/webhook/cipa-invite', payload);
+      await notifyN8N('/webhook/sst-cipa-invite', payload);
 
       // Gravar log de envio
       const logId = 'wl_' + Date.now();
