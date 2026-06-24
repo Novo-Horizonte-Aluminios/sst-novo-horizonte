@@ -386,6 +386,8 @@ export const initDb = async () => {
       -- Migrações para suporte a token e tolerância de prazo de votação na CIPA
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS cipa_token VARCHAR(255);
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS cipa_extension_until TIMESTAMP;
+      
+      ALTER TABLE cipa_candidates ADD COLUMN IF NOT EXISTS employee_id VARCHAR(50);
     `);
 
     // Sementeira de configurações de sistema iniciais se não existirem

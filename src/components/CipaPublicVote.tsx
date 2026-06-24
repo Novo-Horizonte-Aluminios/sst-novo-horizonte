@@ -182,22 +182,23 @@ export default function CipaPublicVote({ token }: { token: string }) {
                 <div 
                   key={c.id}
                   onClick={() => setSelectedCandidate(c.id)}
-                  className={`flex flex-col p-3 rounded-xl border cursor-pointer transition-all ${
+                  className={`flex flex-col items-center p-4 rounded-xl cursor-pointer border-2 transition-all duration-200 ${
                     selectedCandidate === c.id 
-                      ? 'bg-emerald-500/10 border-emerald-500 shadow-sm' 
-                      : 'bg-slate-900/50 border-slate-800 hover:bg-slate-800'
+                      ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 shadow-md shadow-emerald-500/10 scale-105' 
+                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-300 hover:shadow-md'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      selectedCandidate === c.id ? 'border-emerald-500' : 'border-slate-600'
-                    }`}>
-                      {selectedCandidate === c.id && <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>}
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">{c.name}</div>
-                      <div className="text-[10px] text-slate-400">{c.sector}</div>
-                    </div>
+                  <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-3xl font-black text-slate-400 mb-3 shadow-inner overflow-hidden border border-slate-200 dark:border-slate-600">
+                    {c.photoUrl ? (
+                      <img src={c.photoUrl} alt={c.name} className="w-full h-full object-cover" />
+                    ) : (
+                      c.name.charAt(0).toUpperCase()
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <div className="font-bold text-slate-800 dark:text-slate-100">{c.name}</div>
+                    <div className="text-[10px] text-slate-500 font-semibold tracking-wider uppercase mt-1">CANDIDATO</div>
+                    {c.role && <div className="text-[10px] text-slate-400 mt-0.5">{c.role}</div>}
                   </div>
                 </div>
               ))}

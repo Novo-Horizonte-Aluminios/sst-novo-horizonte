@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Award, UserCheck, Vote, ShieldCheck, Calendar, Users, Mail, Send, Bell, Settings, Clock, Link as LinkIcon, Trash } from 'lucide-react';
+import { Plus, Award, UserCheck, Vote, ShieldCheck, Calendar, Users, Mail, Send, Bell, Settings, Clock, Link as LinkIcon, Trash, Search } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Employee } from '../types';
 
@@ -52,6 +52,8 @@ export default function CipaElectionTab() {
   // Create Candidate state
   const [newName, setNewName] = useState('');
   const [newSector, setNewSector] = useState('');
+  const [candidateSearchQuery, setCandidateSearchQuery] = useState('');
+  const [selectedCandidateForAdd, setSelectedCandidateForAdd] = useState<Employee | null>(null);
   
   // Vote State
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
@@ -203,7 +205,11 @@ export default function CipaElectionTab() {
       const res = await fetch('/api/cipa/candidates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName, sector: newSector })
+        body: JSON.stringify({ 
+          name: newName, 
+          sector: newSector, 
+          employeeId: selectedCandidateForAdd?.id || null 
+        })
       });
 
       if (res.ok) {
@@ -407,12 +413,9 @@ export default function CipaElectionTab() {
     });
 
     if (result.isConfirmed) {
-      // We will perform API call or simulate deletion
-      // Note: we can delete candidates from cipa_candidates
       try {
         const res = await fetch(`/api/cipa/candidates/${candId}`, { method: 'DELETE' });
         if (res.ok || res.status === 404) {
-          // If 404, we can fall back to database delete queries or local updates
           Swal.fire({
             title: 'Excluído!',
             text: 'Candidato removido da urna.',
@@ -427,11 +430,6 @@ export default function CipaElectionTab() {
     }
   };
 
-  // Lists definitions
-  // 1. Candidate List (Sub-Tab 'candidatos')
-  // 2. Funcionários List (Sub-Tab 'funcionarios'): All active employees, their vote status, WhatsApp/Email link, trigger notify
-  // 3. Não Votaram List (Sub-Tab 'nao_votaram'): Employees who have not voted yet.
-
   const filteredEmployeesList = employees.filter(emp => {
     const term = searchFilterQuery.toLowerCase();
     return emp.name.toLowerCase().includes(term) || emp.cpf.includes(term) || (emp.matricula && emp.matricula.toLowerCase().includes(term));
@@ -443,7 +441,6 @@ export default function CipaElectionTab() {
   };
 
   const getEmployeeToken = (emp: Employee) => {
-    // Return token or generate a simulated one based on id to prevent crashes
     return (emp as any).cipaToken || `tok_sim_${emp.id}`;
   };
 
@@ -454,7 +451,6 @@ export default function CipaElectionTab() {
     return matchesSearch && !alreadyVoted;
   });
 
-  // Count active election state
   const startsDate = new Date(electionStartsAt);
   const endsDate = new Date(electionEndsAt);
   const now = new Date();
@@ -462,7 +458,6 @@ export default function CipaElectionTab() {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner & Main Controls */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 relative overflow-hidden">
         <div className="absolute right-0 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="space-y-1 z-10">
@@ -504,7 +499,6 @@ export default function CipaElectionTab() {
         </div>
       </div>
 
-      {/* Selector Tabs matching User's Mockup */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-3 gap-3">
         <div className="flex gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
           <button
@@ -531,7 +525,6 @@ export default function CipaElectionTab() {
           </button>
         </div>
 
-        {/* Localized search for the tables */}
         <input
           type="text"
           placeholder="Filtrar dados da listagem..."
@@ -541,7 +534,6 @@ export default function CipaElectionTab() {
         />
       </div>
 
-      {/* Sub Tabs matching Mockup */}
       {selectionView === 'candidatos' && (
         <div className="flex gap-2">
           <button
@@ -577,7 +569,6 @@ export default function CipaElectionTab() {
         </div>
       ) : (
         <div>
-          {/* CANDIDATES VIEW */}
           {selectionView === 'candidatos' && activeSubTab === 'candidatos' && (
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
@@ -596,7 +587,7 @@ export default function CipaElectionTab() {
                   {candidates
                     .filter(c => c.name.toLowerCase().includes(searchFilterQuery.toLowerCase()))
                     .map((cand, idx) => {
-                                      const empMatch = employees.find(e => e.name.toLowerCase() === cand.name.toLowerCase());
+                      const empMatch = employees.find(e => e.name.toLowerCase() === cand.name.toLowerCase());
                       const admissionStr = empMatch ? new Date(empMatch.admissionDate).toLocaleDateString('pt-BR') : '09/06/2019';
                       const lotacaoStr = empMatch ? `NOVO HORIZONTE ALUMÍNIOS LTDA\n${empMatch.sector.toUpperCase()}\n${empMatch.role.toUpperCase()}` : `NOVO HORIZONTE ALUMÍNIOS LTDA\n${cand.sector.toUpperCase()}`;
 
@@ -668,7 +659,6 @@ export default function CipaElectionTab() {
             </div>
           )}
 
-          {/* EMPLOYEES VIEW */}
           {selectionView === 'candidatos' && activeSubTab === 'funcionarios' && (
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
@@ -713,7 +703,7 @@ export default function CipaElectionTab() {
                             </div>
                           </div>
                         </td>
-                        <td className="p-4 text-slate-500 dark:text-slate-400 font-medium text-[10px] leading-tight">
+                        <td className="p-4 text-slate-500 dark:border-slate-700 font-medium text-[10px] leading-tight">
                           NOVO HORIZONTE ALUMÍNIOS LTDA<br />
                           {emp.sector.toUpperCase()}<br />
                           {emp.role.toUpperCase()}
@@ -773,7 +763,6 @@ export default function CipaElectionTab() {
             </div>
           )}
 
-          {/* NOT VOTED LIST VIEW */}
           {selectionView === 'candidatos' && activeSubTab === 'nao_votaram' && (
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
@@ -862,7 +851,6 @@ export default function CipaElectionTab() {
             </div>
           )}
 
-          {/* AUDIT / ELEITORES PARTICIPANTES VIEW */}
           {selectionView === 'eleitores' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
@@ -884,34 +872,58 @@ export default function CipaElectionTab() {
                     <tbody className="divide-y divide-slate-100">
                       {voters
                         .filter(v => v.employeeName.toLowerCase().includes(searchFilterQuery.toLowerCase()))
-                        .map((v) => {
-                          const empMatch = employees.find(e => e.id === v.employeeId);
+                        .map((voter) => {
+                          const empInfo = employees.find(e => e.id === voter.employeeId);
                           return (
-                            <tr key={v.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition">
+                            <tr key={voter.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition">
                               <td className="p-4">
                                 <div className="flex items-center gap-3">
-                                  {empMatch && empMatch.photoUrl ? (
-                                    <img 
-                                      src={empMatch.photoUrl} 
-                                      alt={v.employeeName} 
-                                      className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" 
-                                    />
-                                  ) : (
-                                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 font-bold uppercase">
-                                      {v.employeeName.charAt(0)}
+                                  {empInfo ? (
+                                    <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50">
+                                      {empInfo.photoUrl ? (
+                                        <img src={empInfo.photoUrl} alt={empInfo.name} className="w-full h-full object-cover" />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-xs font-bold text-slate-400">{empInfo.name.charAt(0)}</div>
+                                      )}
                                     </div>
+                                  ) : (
+                                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800"></div>
                                   )}
-                                  <span className="font-bold text-slate-800 dark:text-slate-100">{v.employeeName}</span>
+                                  <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">{voter.employeeName}</div>
                                 </div>
                               </td>
-                              <td className="p-4 text-slate-500 dark:text-slate-400 font-medium">{v.sector || 'Fábrica'}</td>
-                              <td className="p-4 font-semibold text-slate-650">
-                                {new Date(v.votedAt).toLocaleString('pt-BR')}
+                              <td className="p-4 text-slate-500 dark:text-slate-400 font-medium">{voter.sector || 'Fábrica'}</td>
+                              <td className="p-4 text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                {new Date(voter.votedAt).toLocaleString('pt-BR')}
                               </td>
-                              <td className="p-4 text-center">
-                                <span className="text-[9px] text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full font-mono font-bold border border-emerald-100">
-                                  COMPROVADO
-                                </span>
+                              <td className="p-4">
+                                <div className="flex items-center gap-3 justify-center">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 font-bold text-[9px] uppercase tracking-wider border border-emerald-200 dark:border-emerald-500/20">
+                                    Comprovado
+                                  </span>
+                                  <button
+                                    onClick={() => {
+                                      Swal.fire({
+                                        icon: 'success',
+                                        title: 'Comprovante de Voto CIPA',
+                                        html: `<div class="text-left text-sm mt-4 p-4 bg-slate-50 border rounded"><p><b>Eleitor:</b> ${voter.employeeName}</p><p><b>Setor:</b> ${empInfo?.sector || '-'}</p><p><b>Data/Hora:</b> ${new Date(voter.votedAt).toLocaleString('pt-BR')}</p><p><b>Hash de Validação:</b> ${btoa(voter.id).substring(0,20)}</p></div><div class="mt-4 text-xs text-slate-500">O voto é secreto e esta assinatura criptográfica garante sua participação inviolável.</div>`,
+                                        confirmButtonText: 'Imprimir',
+                                        confirmButtonColor: '#10b981',
+                                        customClass: { popup: 'rounded-xl' }
+                                      }).then((res) => {
+                                        if (res.isConfirmed) {
+                                          window.print();
+                                        }
+                                      });
+                                    }}
+                                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                                    title="Imprimir Comprovante"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                    </svg>
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           );
@@ -928,7 +940,6 @@ export default function CipaElectionTab() {
                 </div>
               </div>
 
-              {/* AUDIT METRICS */}
               <div className="space-y-4">
                 <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-slate-800 dark:text-slate-100" />
@@ -966,7 +977,6 @@ export default function CipaElectionTab() {
         </div>
       )}
 
-      {/* SETTINGS / DATES MODAL */}
       {showSettingsModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100 dark:border-slate-700">
@@ -1021,7 +1031,6 @@ export default function CipaElectionTab() {
         </div>
       )}
 
-      {/* EXTENSION / TOLERANCE DATE MODAL */}
       {showExtensionModal && selectedEmpForExtension && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100 dark:border-slate-700">
@@ -1071,7 +1080,6 @@ export default function CipaElectionTab() {
         </div>
       )}
 
-      {/* CREATE CANDIDATE MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-xs border border-slate-100 dark:border-slate-700">
@@ -1080,38 +1088,73 @@ export default function CipaElectionTab() {
                 <h3 className="font-bold text-base">Inscrição Eleitoral de Candidato</h3>
                 <p className="text-[10px] text-slate-400 mt-1">Registra novo funcionário elegível para CIPA-A</p>
               </div>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white font-bold text-sm">✖</button>
+              <button onClick={() => { setShowAddModal(false); setSelectedCandidateForAdd(null); setCandidateSearchQuery(''); setNewName(''); setNewSector(''); }} className="text-slate-400 hover:text-white font-bold text-sm">✖</button>
             </div>
 
             <form onSubmit={handleCreateCandidate} className="p-6 space-y-4">
               <div>
-                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Nome do Candidato</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ex: Carlos Henrique Silva"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
-                />
-              </div>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Buscar Colaborador (Apenas Funcionários)</label>
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Digite o nome, CPF ou matrícula..."
+                    value={candidateSearchQuery}
+                    onChange={(e) => setCandidateSearchQuery(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg py-2.5 pl-9 pr-3 focus:outline-none focus:border-slate-800 text-[12px]"
+                  />
+                </div>
 
-              <div>
-                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Setor do Colaborador</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ex: Usinagem"
-                  value={newSector}
-                  onChange={(e) => setNewSector(e.target.value)}
-                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
-                />
+                {candidateSearchQuery.length > 1 && !selectedCandidateForAdd && (
+                  <div className="mt-2 max-h-32 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-lg custom-scrollbar">
+                    {employees
+                      .filter(emp => emp.name.toLowerCase().includes(candidateSearchQuery.toLowerCase()) || emp.cpf.includes(candidateSearchQuery) || (emp.matricula && emp.matricula.toLowerCase().includes(candidateSearchQuery.toLowerCase())))
+                      .map(emp => (
+                        <div 
+                          key={emp.id} 
+                          onClick={() => {
+                            setSelectedCandidateForAdd(emp);
+                            setNewName(emp.name);
+                            setNewSector(emp.sector || 'Não informado');
+                            setCandidateSearchQuery('');
+                          }}
+                          className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer border-b border-slate-100 dark:border-slate-700/50 last:border-0"
+                        >
+                          <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">{emp.name}</div>
+                          <div className="text-[9px] text-slate-500">{emp.sector} • {emp.cpf}</div>
+                        </div>
+                      ))}
+                    {employees.filter(emp => emp.name.toLowerCase().includes(candidateSearchQuery.toLowerCase()) || emp.cpf.includes(candidateSearchQuery)).length === 0 && (
+                      <div className="p-3 text-center text-slate-500 text-[10px]">Nenhum funcionário encontrado.</div>
+                    )}
+                  </div>
+                )}
+
+                {selectedCandidateForAdd && (
+                  <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-lg flex justify-between items-center">
+                    <div>
+                      <div className="font-bold text-emerald-800 dark:text-emerald-400 text-xs">{selectedCandidateForAdd.name}</div>
+                      <div className="text-[10px] text-emerald-600 dark:text-emerald-500">{selectedCandidateForAdd.sector}</div>
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setSelectedCandidateForAdd(null);
+                        setNewName('');
+                        setNewSector('');
+                      }}
+                      className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 font-bold px-2 py-1"
+                    >
+                      Trocar
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => { setShowAddModal(false); setSelectedCandidateForAdd(null); setCandidateSearchQuery(''); setNewName(''); setNewSector(''); }}
                   className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-650 font-semibold rounded-lg"
                 >
                   Cancelar

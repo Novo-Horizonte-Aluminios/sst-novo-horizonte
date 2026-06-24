@@ -167,6 +167,10 @@ export interface CipaCandidate {
   id: string;
   name: string;
   sector: string;
+  employeeId?: string;
+  photoUrl?: string;
+  role?: string;
+  admissionDate?: string;
   votes: number;
   isElected: boolean;
 }

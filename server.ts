@@ -2219,7 +2219,14 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
   // ─── CIPA CANDIDATES & VOTERS API ────────────────────────────────────────────
   app.get('/api/cipa/candidates', async (req, res) => {
     try {
-      const result = await query('SELECT * FROM cipa_candidates ORDER BY votes DESC, name ASC');
+      const result = await query(`
+        SELECT 
+          c.id, c.name, c.sector, c.employee_id, c.votes, c.is_elected,
+          e.photo_url, e.role, e.admission_date
+        FROM cipa_candidates c
+        LEFT JOIN employees e ON c.employee_id = e.id
+        ORDER BY c.votes DESC, e.admission_date ASC NULLS LAST, c.name ASC
+      `);
       res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
@@ -2404,9 +2411,12 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
   app.post('/api/cipa/candidates', async (req, res) => {
     try {
       const id = 'cand_' + Date.now();
-      const { name, sector } = req.body;
-      await query('INSERT INTO cipa_candidates (id, name, sector, votes, is_elected) VALUES ($1, $2, $3, 0, false)', [id, name, sector]);
-      res.status(201).json({ id, name, sector, votes: 0, isElected: false });
+      const { name, sector, employeeId } = req.body;
+      await query(
+        'INSERT INTO cipa_candidates (id, name, sector, employee_id, votes, is_elected) VALUES ($1, $2, $3, $4, 0, false)', 
+        [id, name, sector, employeeId || null]
+      );
+      res.status(201).json({ id, name, sector, employeeId, votes: 0, isElected: false });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -2478,8 +2488,13 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
         throw err;
       }
 
-      // Atualiza status de eleito dinamicamente (Top 2 candidatos eleitos)
-      const allCands = await query('SELECT id FROM cipa_candidates ORDER BY votes DESC, name ASC');
+      // Atualiza status de eleito dinamicamente (Top 2 candidatos eleitos), desempate por admissao mais antiga (menor data)
+      const allCands = await query(`
+        SELECT c.id 
+        FROM cipa_candidates c
+        LEFT JOIN employees e ON c.employee_id = e.id
+        ORDER BY c.votes DESC, e.admission_date ASC NULLS LAST, c.name ASC
+      `);
       for (let i = 0; i < allCands.rows.length; i++) {
         const isElected = i < 2; // Top 2
         await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
