@@ -336,23 +336,24 @@ export default function CipaElectionTab() {
       if (res.ok) {
         const data = await res.json();
         Swal.fire({
-          toast: true,
-          position: 'top-end',
+          position: 'center',
+          icon: 'success',
+          title: 'Enviado!',
+          text: 'A notificação foi encaminhada.',
           showConfirmButton: false,
-          timer: 3000,
-          title: 'Notificação Enviada!',
-          icon: 'success'
+          timer: 2500,
+          width: '320px'
         });
         await fetchEmployees();
       } else {
         Swal.fire({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
+          position: 'center',
+          icon: 'error',
           title: 'Erro',
-          text: 'Falha ao acionar notificação.',
-          icon: 'error'
+          text: 'Falha ao acionar.',
+          showConfirmButton: false,
+          timer: 2500,
+          width: '320px'
         });
       }
     } catch (e) {
