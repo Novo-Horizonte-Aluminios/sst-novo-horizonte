@@ -25,6 +25,7 @@ import CipaElectionTab from './components/CipaElectionTab.tsx';
 import EpiEntryTab from './components/EpiEntryTab.tsx';
 import EpiReturnTab from './components/EpiReturnTab.tsx';
 import PsychosocialTab from './components/PsychosocialTab.tsx';
+import CipaPublicVote from './components/CipaPublicVote.tsx';
 
 import { Company, Employee, PPE, PPEDelivery, EmployeeTraining, AccidentReport, ActionPlan, FISPQDocument, Training } from './types';
 
@@ -332,6 +333,15 @@ export default function App() {
       console.error(e);
     }
   };
+
+  // Intercept Public Voting Link before login check
+  const params = new URLSearchParams(window.location.search);
+  const isCipaTab = params.get('tab') === 'cipa';
+  const cipaToken = params.get('token');
+
+  if (isCipaTab && cipaToken) {
+    return <CipaPublicVote token={cipaToken} />;
+  }
 
   if (!currentUser) {
     return <Login onLoginSuccess={handleLoginSuccess} />;
