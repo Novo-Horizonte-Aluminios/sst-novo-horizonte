@@ -163,8 +163,22 @@ export interface AsoExamType {
   companyId?: string;
 }
 
+export interface CipaElection {
+  id: string;
+  name: string;
+  term: string;
+  presidentName: string;
+  secretaryName: string;
+  description: string;
+  startsAt: string;
+  endsAt: string;
+  isActive: boolean;
+  createdAt?: string;
+}
+
 export interface CipaCandidate {
   id: string;
+  electionId: string;
   name: string;
   sector: string;
   employeeId?: string;
@@ -173,6 +187,16 @@ export interface CipaCandidate {
   admissionDate?: string;
   votes: number;
   isElected: boolean;
+}
+
+export interface CipaVoter {
+  id: string;
+  electionId: string;
+  employeeId: string;
+  employeeName: string;
+  votedAt: string;
+  sector?: string;
+  role?: string;
 }
 
 export interface EpiStockEntry {

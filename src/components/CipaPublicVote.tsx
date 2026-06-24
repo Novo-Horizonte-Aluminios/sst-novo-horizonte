@@ -164,7 +164,7 @@ export default function CipaPublicVote({ token }: { token: string }) {
           <div className="w-16 h-16 bg-slate-900 border border-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
             <CheckSquare className="w-8 h-8 text-emerald-500" />
           </div>
-          <h2 className="text-lg font-bold text-white tracking-tight uppercase">Eleições CIPA</h2>
+          <h2 className="text-lg font-bold text-white tracking-tight uppercase">{validatedData?.election?.name || 'Eleições CIPA'}</h2>
           <p className="text-slate-400 text-xs mt-1 leading-relaxed">
             Olá, <strong className="text-emerald-400">{validatedData.employee.name}</strong>.<br/>
             Bem-vindo(a) à Urna Virtual.

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Award, UserCheck, Vote, ShieldCheck, Calendar, Users, Mail, Send, Bell, Settings, Clock, Link as LinkIcon, Trash, Search } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { Employee } from '../types';
+import { Employee, CipaElection } from '../types';
 
 interface Candidate {
   id: string;
@@ -26,14 +26,24 @@ interface Voter {
 }
 
 export default function CipaElectionTab() {
+  const [elections, setElections] = useState<CipaElection[]>([]);
+  const [selectedElection, setSelectedElection] = useState<CipaElection | null>(null);
+
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [voters, setVoters] = useState<Voter[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Election settings
-  const [electionStartsAt, setElectionStartsAt] = useState('2026-06-20T08:00');
-  const [electionEndsAt, setElectionEndsAt] = useState('2026-06-25T18:00');
+  const [electionName, setElectionName] = useState('');
+  const [electionTerm, setElectionTerm] = useState('');
+  const [electionPresident, setElectionPresident] = useState('');
+  const [electionSecretary, setElectionSecretary] = useState('');
+  const [electionDescription, setElectionDescription] = useState('');
+  const [electionStartsAt, setElectionStartsAt] = useState('');
+  const [electionEndsAt, setElectionEndsAt] = useState('');
+  const [electionIsActive, setElectionIsActive] = useState(false);
+  const [editingElectionId, setEditingElectionId] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   // Active Tab: 'candidatos' | 'funcionarios' | 'nao_votaram'
@@ -68,9 +78,21 @@ export default function CipaElectionTab() {
   const [urlToken, setUrlToken] = useState<string | null>(null);
   const [validatedTokenData, setValidatedTokenData] = useState<any>(null);
 
-  const fetchCandidates = async () => {
+  const fetchElections = async () => {
     try {
-      const res = await fetch('/api/cipa/candidates');
+      const res = await fetch('/api/cipa/elections');
+      const data = await res.json();
+      setElections(data);
+      if (data.length > 0) {
+        const active = data.find((e: CipaElection) => e.isActive) || data[0];
+        setSelectedElection(active);
+      }
+    } catch(e) { console.error(e) }
+  };
+
+  const fetchCandidates = async (eid: string) => {
+    try {
+      const res = await fetch(`/api/cipa/candidates?election_id=${eid}`);
       const data = await res.json();
       setCandidates(data);
     } catch (e) {
@@ -78,9 +100,9 @@ export default function CipaElectionTab() {
     }
   };
 
-  const fetchVoters = async () => {
+  const fetchVoters = async (eid: string) => {
     try {
-      const res = await fetch('/api/cipa/voters');
+      const res = await fetch(`/api/cipa/voters?election_id=${eid}`);
       const data = await res.json();
       setVoters(data);
     } catch (e) {
@@ -98,26 +120,19 @@ export default function CipaElectionTab() {
     }
   };
 
-  const fetchSettings = async () => {
-    try {
-      const res = await fetch('/api/cipa/settings');
-      const data = await res.json();
-      if (data.startsAt) {
-        setElectionStartsAt(new Date(data.startsAt).toISOString().slice(0, 16));
-      }
-      if (data.endsAt) {
-        setElectionEndsAt(new Date(data.endsAt).toISOString().slice(0, 16));
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const loadAllData = async () => {
     setLoading(true);
-    await Promise.all([fetchCandidates(), fetchVoters(), fetchEmployees(), fetchSettings()]);
+    await fetchElections();
+    await fetchEmployees();
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (selectedElection) {
+      fetchCandidates(selectedElection.id);
+      fetchVoters(selectedElection.id);
+    }
+  }, [selectedElection]);
 
   useEffect(() => {
     loadAllData();
@@ -175,22 +190,33 @@ export default function CipaElectionTab() {
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/cipa/settings', {
-        method: 'POST',
+      const url = editingElectionId ? `/api/cipa/elections/${editingElectionId}` : '/api/cipa/elections';
+      const method = editingElectionId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: electionName,
+          term: electionTerm,
+          presidentName: electionPresident,
+          secretaryName: electionSecretary,
+          description: electionDescription,
           startsAt: new Date(electionStartsAt).toISOString(),
-          endsAt: new Date(electionEndsAt).toISOString()
+          endsAt: new Date(electionEndsAt).toISOString(),
+          isActive: electionIsActive
         })
       });
       if (res.ok) {
         Swal.fire({
           title: 'Configurações Salvas!',
-          text: 'Os prazos da eleição foram atualizados com sucesso.',
+          text: 'Eleição configurada com sucesso.',
           icon: 'success',
           customClass: { popup: 'swal-modern-popup' }
         });
         setShowSettingsModal(false);
+        const data = await res.json();
+        await fetchElections();
+        setSelectedElection(data);
       }
     } catch (err) {
       console.error(err);
@@ -206,6 +232,7 @@ export default function CipaElectionTab() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
+          electionId: selectedElection?.id,
           name: newName, 
           sector: newSector, 
           employeeId: selectedCandidateForAdd?.id || null 
@@ -222,7 +249,7 @@ export default function CipaElectionTab() {
         setShowAddModal(false);
         setNewName('');
         setNewSector('');
-        fetchCandidates();
+        if (selectedElection) fetchCandidates(selectedElection.id);
       }
     } catch (err) {
       console.error(err);
@@ -281,7 +308,7 @@ export default function CipaElectionTab() {
         setValidatedTokenData(null);
         // Clear token parameter from URL
         window.history.replaceState({}, document.title, window.location.pathname);
-        await Promise.all([fetchCandidates(), fetchVoters(), fetchEmployees()]);
+        if (selectedElection) { fetchCandidates(selectedElection.id); fetchVoters(selectedElection.id); fetchEmployees(); }
       } else {
         Swal.fire({
           title: 'Falha na Validação',
@@ -324,7 +351,7 @@ export default function CipaElectionTab() {
           });
           setUrlToken(null);
           setValidatedTokenData(null);
-          await Promise.all([fetchCandidates(), fetchVoters(), fetchEmployees()]);
+          if (selectedElection) { fetchCandidates(selectedElection.id); fetchVoters(selectedElection.id); fetchEmployees(); }
         }
       } catch (e) {
         console.error(e);
@@ -422,7 +449,7 @@ export default function CipaElectionTab() {
             icon: 'success',
             customClass: { popup: 'swal-modern-popup' }
           });
-          fetchCandidates();
+          if (selectedElection) fetchCandidates(selectedElection.id);
         }
       } catch (e) {
         console.error(e);
@@ -451,10 +478,10 @@ export default function CipaElectionTab() {
     return matchesSearch && !alreadyVoted;
   });
 
-  const startsDate = new Date(electionStartsAt);
-  const endsDate = new Date(electionEndsAt);
+  const startsDate = selectedElection ? new Date(selectedElection.startsAt) : new Date();
+  const endsDate = selectedElection ? new Date(selectedElection.endsAt) : new Date();
   const now = new Date();
-  const isElectionRunning = now >= startsDate && now <= endsDate;
+  const isElectionRunning = selectedElection?.isActive && now >= startsDate && now <= endsDate;
 
   return (
     <div className="space-y-6">
@@ -467,15 +494,52 @@ export default function CipaElectionTab() {
               CIPA-A {isElectionRunning ? 'VOTAÇÃO ATIVA' : 'SESSÃO FECHADA'}
             </span>
           </div>
-          <h3 className="text-base font-black tracking-tight uppercase leading-snug">Eleição CIPA 2026</h3>
+          <div className="flex items-center gap-2 mb-1">
+            <select
+              value={selectedElection?.id || ''}
+              onChange={(e) => {
+                const sel = elections.find(el => el.id === e.target.value);
+                if (sel) setSelectedElection(sel);
+              }}
+              className="bg-slate-800 text-white font-black text-base border-none rounded-lg p-1 focus:ring-2 focus:ring-emerald-500 uppercase cursor-pointer"
+            >
+              {elections.map(el => (
+                <option key={el.id} value={el.id}>{el.name}</option>
+              ))}
+            </select>
+          </div>
           <p className="text-slate-400 text-[11px] max-w-xl">
-            Painel de administração e votação online integrada. Período oficial: {startsDate.toLocaleString('pt-BR')} até {endsDate.toLocaleString('pt-BR')}.
+            {selectedElection?.description || "Painel de administração e votação online integrada."} 
+            {selectedElection && ` Período oficial: ${new Date(selectedElection.startsAt).toLocaleString('pt-BR')} até ${new Date(selectedElection.endsAt).toLocaleString('pt-BR')}.`}
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2 z-10 w-full md:w-auto">
           <button
-            onClick={() => setShowSettingsModal(true)}
+            onClick={() => {
+              if (selectedElection) {
+                setEditingElectionId(selectedElection.id);
+                setElectionName(selectedElection.name);
+                setElectionTerm(selectedElection.term);
+                setElectionPresident(selectedElection.presidentName);
+                setElectionSecretary(selectedElection.secretaryName);
+                setElectionDescription(selectedElection.description);
+                setElectionStartsAt(new Date(selectedElection.startsAt).toISOString().slice(0, 16));
+                setElectionEndsAt(new Date(selectedElection.endsAt).toISOString().slice(0, 16));
+                setElectionIsActive(selectedElection.isActive);
+              } else {
+                setEditingElectionId(null);
+                setElectionName('CIPA Nova Eleição');
+                setElectionTerm('');
+                setElectionPresident('');
+                setElectionSecretary('');
+                setElectionDescription('');
+                setElectionStartsAt('');
+                setElectionEndsAt('');
+                setElectionIsActive(true);
+              }
+              setShowSettingsModal(true);
+            }}
             className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 text-[11px] font-bold px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
           >
             <Settings className="w-3.5 h-3.5" />
@@ -502,7 +566,7 @@ export default function CipaElectionTab() {
               const content = `
                 <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
                   <h2 style="text-align: center; text-transform: uppercase; margin: 0;">EDITAL DE CONVOCAÇÃO ELEIÇÃO CIPA</h2>
-                  <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO 2025/2026</h3>
+                  <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO ${selectedElection?.term || '2025/2026'}</h3>
                   <br/>
                   <p style="text-align: justify; line-height: 1.5; font-size: 14px;">
                     Ficam convocados todos os empregados da NOVO HORIZONTE ALUMÍNIOS LTDA, para eleição dos membros da representação dos empregados da Comissão Interna de Prevenção de Acidentes – CIPA, de acordo com a Norma Regulamentadora - NR 05, a ser realizada, por meio eletrônico através da Urna Virtual SST, iniciando no dia ${startsDate.toLocaleDateString('pt-BR')} às ${startsDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})} e encerrando no dia ${endsDate.toLocaleDateString('pt-BR')} às ${endsDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}.
@@ -527,12 +591,12 @@ export default function CipaElectionTab() {
                   <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
                     <div style="width: 45%;">
                       <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                      <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                      <b>${selectedElection?.presidentName || 'ROSILENE GOMES MONTEIRO DA SILVA'}</b><br/>
                       <i>Presidente</i>
                     </div>
                     <div style="width: 45%;">
                       <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                      <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                      <b>${selectedElection?.secretaryName || 'ANDRÉA GONÇALVES DE AGUIAR BROCOLI'}</b><br/>
                       <i>Secretário</i>
                     </div>
                   </div>
@@ -593,7 +657,7 @@ export default function CipaElectionTab() {
               const content = `
                 <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
                   <h2 style="text-align: center; text-transform: uppercase; margin: 0;">RESULTADO DE ELEIÇÃO DA CIPA</h2>
-                  <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO 2025/2026</h3>
+                  <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO ${selectedElection?.term || '2025/2026'}</h3>
                   <br/>
                   <p style="text-align: justify; line-height: 1.5; font-size: 14px;">
                     Abaixo relacionamos o resultado da eleição dos votos apurados dos empregados da NOVO HORIZONTE ALUMÍNIOS LTDA, que participaram da eleição dos membros da representação dos empregados da Comissão Interna de Prevenção de Acidentes – CIPA, de acordo com a Norma Regulamentadora - NR 05, realizada por meio eletrônico através da Urna Virtual SST, no período de ${startsDate.toLocaleDateString('pt-BR')} até ${endsDate.toLocaleDateString('pt-BR')}.
@@ -618,12 +682,12 @@ export default function CipaElectionTab() {
                   <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
                     <div style="width: 45%;">
                       <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                      <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                      <b>${selectedElection?.presidentName || 'ROSILENE GOMES MONTEIRO DA SILVA'}</b><br/>
                       <i>Presidente</i>
                     </div>
                     <div style="width: 45%;">
                       <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                      <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                      <b>${selectedElection?.secretaryName || 'ANDRÉA GONÇALVES DE AGUIAR BROCOLI'}</b><br/>
                       <i>Secretário</i>
                     </div>
                   </div>
@@ -987,12 +1051,12 @@ export default function CipaElectionTab() {
                         <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
                           <div style="width: 45%;">
                             <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                            <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                            <b>${selectedElection?.presidentName || 'ROSILENE GOMES MONTEIRO DA SILVA'}</b><br/>
                             <i>Presidente</i>
                           </div>
                           <div style="width: 45%;">
                             <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                            <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                            <b>${selectedElection?.secretaryName || 'ANDRÉA GONÇALVES DE AGUIAR BROCOLI'}</b><br/>
                             <i>Secretário</i>
                           </div>
                         </div>
@@ -1159,12 +1223,12 @@ export default function CipaElectionTab() {
                           <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
                             <div style="width: 45%;">
                               <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                              <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                              <b>${selectedElection?.presidentName || 'ROSILENE GOMES MONTEIRO DA SILVA'}</b><br/>
                               <i>Presidente</i>
                             </div>
                             <div style="width: 45%;">
                               <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
-                              <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                              <b>${selectedElection?.secretaryName || 'ANDRÉA GONÇALVES DE AGUIAR BROCOLI'}</b><br/>
                               <i>Secretário</i>
                             </div>
                           </div>

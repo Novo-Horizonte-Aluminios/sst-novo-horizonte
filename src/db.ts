@@ -332,10 +332,28 @@ export const initDb = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
-      CREATE TABLE IF NOT EXISTS cipa_candidates (
+      DROP TABLE IF EXISTS cipa_voters CASCADE;
+      DROP TABLE IF EXISTS cipa_candidates CASCADE;
+
+      CREATE TABLE IF NOT EXISTS cipa_elections (
         id VARCHAR(50) PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
+        term VARCHAR(100) NOT NULL,
+        president_name VARCHAR(255),
+        secretary_name VARCHAR(255),
+        description TEXT,
+        starts_at TIMESTAMP NOT NULL,
+        ends_at TIMESTAMP NOT NULL,
+        is_active BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS cipa_candidates (
+        id VARCHAR(50) PRIMARY KEY,
+        election_id VARCHAR(50) NOT NULL REFERENCES cipa_elections(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
         sector VARCHAR(100) NOT NULL,
+        employee_id VARCHAR(50),
         votes INTEGER DEFAULT 0,
         is_elected BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -378,9 +396,11 @@ export const initDb = async () => {
 
       CREATE TABLE IF NOT EXISTS cipa_voters (
         id VARCHAR(50) PRIMARY KEY,
-        employee_id VARCHAR(50) NOT NULL UNIQUE,
+        election_id VARCHAR(50) NOT NULL REFERENCES cipa_elections(id) ON DELETE CASCADE,
+        employee_id VARCHAR(50) NOT NULL,
         employee_name VARCHAR(255) NOT NULL,
-        voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(election_id, employee_id)
       );
 
       -- Migrações para suporte a token e tolerância de prazo de votação na CIPA
@@ -390,15 +410,13 @@ export const initDb = async () => {
       ALTER TABLE cipa_candidates ADD COLUMN IF NOT EXISTS employee_id VARCHAR(50);
     `);
 
-    // Sementeira de configurações de sistema iniciais se não existirem
-    const settingsCheck = await client.query("SELECT key FROM system_settings WHERE key IN ('cipa_election_starts_at', 'cipa_election_ends_at')");
-    if (settingsCheck.rows.length === 0) {
-      console.log('Semeando configurações iniciais da eleição da CIPA...');
+    // Sementeira da Eleição da CIPA
+    const cipaElectionCheck = await client.query("SELECT id FROM cipa_elections");
+    if (cipaElectionCheck.rows.length === 0) {
+      console.log('Semeando eleição inicial da CIPA...');
       await client.query(`
-        INSERT INTO system_settings (key, value) VALUES 
-        ('cipa_election_starts_at', '2026-06-20T08:00:00.000Z'),
-        ('cipa_election_ends_at', '2026-06-25T18:00:00.000Z')
-        ON CONFLICT (key) DO NOTHING
+        INSERT INTO cipa_elections (id, name, term, president_name, secretary_name, description, starts_at, ends_at, is_active) VALUES 
+        ('e_cipa_1', 'CIPA 2025/2026', '2025/2026', 'ROSILENE GOMES MONTEIRO DA SILVA', 'ANDRÉA GONÇALVES DE AGUIAR BROCOLI', 'A finalidade principal da CIPA (Comissão Interna de Prevenção de Acidentes e Assédio) é a prevenção de acidentes e doenças decorrentes do trabalho, visando garantir, de forma permanente, a segurança e a saúde dos trabalhadores.', '2026-06-20T08:00:00.000Z', '2026-06-25T18:00:00.000Z', true)
       `);
     }
 
@@ -560,17 +578,20 @@ export const initDb = async () => {
       `);
     }
 
-    // Seeder para CIPA Candidates
+    // Seeder para Candidatos da CIPA
     const cipaCheck = await client.query("SELECT id FROM cipa_candidates LIMIT 1");
     if (cipaCheck.rows.length === 0) {
-      console.log('Semeando candidatos da CIPA...');
-      await client.query(`
-        INSERT INTO cipa_candidates (id, name, sector, votes, is_elected) VALUES
-        ('cand1', 'Carlos Henrique Silva', 'Usinagem', 24, true),
-        ('cand2', 'Juliana Montenegro', 'Soldagem e Montagem', 18, true),
-        ('cand3', 'Roberto Carlos Pereira', 'Almoxarifado', 12, false),
-        ('cand4', 'Fernanda Souza Lima', 'Administrativo', 8, false)
-      `);
+      const activeElection = await client.query("SELECT id FROM cipa_elections WHERE is_active = true LIMIT 1");
+      if (activeElection.rows.length > 0) {
+        const eid = activeElection.rows[0].id;
+        console.log('Semeando candidatos da CIPA para eleição ativa...');
+        await client.query(`
+          INSERT INTO cipa_candidates (id, election_id, name, sector, votes, is_elected) VALUES
+          ('cand_1', $1, 'Gessica Dabila de Mello da Silva', 'VENDAS INTERNAS', 0, false),
+          ('cand_2', $1, 'Luis Gustavo Vignoto', 'REPRESENTANTES', 0, false),
+          ('cand_3', $1, 'Joao Pedro Cordeiro da Silva', 'FATURAMENTO', 0, false)
+        `, [eid]);
+      }
     }
 
     // Seeder para Risco Psicossocial

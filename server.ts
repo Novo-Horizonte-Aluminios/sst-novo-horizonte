@@ -2217,16 +2217,83 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
   });
 
   // ─── CIPA CANDIDATES & VOTERS API ────────────────────────────────────────────
+  app.get('/api/cipa/elections', async (req, res) => {
+    try {
+      const result = await query(`SELECT * FROM cipa_elections ORDER BY created_at DESC`);
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.post('/api/cipa/elections', async (req, res) => {
+    try {
+      const { name, term, presidentName, secretaryName, description, startsAt, endsAt, isActive } = req.body;
+      const id = 'e_cipa_' + Date.now();
+      
+      if (isActive) {
+        await query('UPDATE cipa_elections SET is_active = false');
+      }
+
+      const result = await query(
+        `INSERT INTO cipa_elections (id, name, term, president_name, secretary_name, description, starts_at, ends_at, is_active)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+        [id, name, term, presidentName, secretaryName, description, startsAt, endsAt, isActive || false]
+      );
+      res.status(201).json(toCamel(result.rows[0]));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.put('/api/cipa/elections/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, term, presidentName, secretaryName, description, startsAt, endsAt, isActive } = req.body;
+      
+      if (isActive) {
+        await query('UPDATE cipa_elections SET is_active = false WHERE id != $1', [id]);
+      }
+
+      const result = await query(
+        `UPDATE cipa_elections 
+         SET name = $1, term = $2, president_name = $3, secretary_name = $4, description = $5, starts_at = $6, ends_at = $7, is_active = $8
+         WHERE id = $9 RETURNING *`,
+        [name, term, presidentName, secretaryName, description, startsAt, endsAt, isActive, id]
+      );
+      
+      if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+      res.json(toCamel(result.rows[0]));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
   app.get('/api/cipa/candidates', async (req, res) => {
     try {
-      const result = await query(`
-        SELECT 
-          c.id, c.name, c.sector, c.employee_id, c.votes, c.is_elected,
-          e.photo_url, e.role, e.admission_date
-        FROM cipa_candidates c
-        LEFT JOIN employees e ON c.employee_id = e.id
-        ORDER BY c.votes DESC, e.admission_date ASC NULLS LAST, c.name ASC
-      `);
+      const { election_id } = req.query;
+      let result;
+      if (election_id) {
+        result = await query(`
+          SELECT 
+            c.id, c.election_id, c.name, c.sector, c.employee_id, c.votes, c.is_elected,
+            e.photo_url, e.role, e.admission_date
+          FROM cipa_candidates c
+          LEFT JOIN employees e ON c.employee_id = e.id
+          WHERE c.election_id = $1
+          ORDER BY c.votes DESC, e.admission_date ASC NULLS LAST, c.name ASC
+        `, [election_id]);
+      } else {
+        result = await query(`
+          SELECT 
+            c.id, c.election_id, c.name, c.sector, c.employee_id, c.votes, c.is_elected,
+            e.photo_url, e.role, e.admission_date
+          FROM cipa_candidates c
+          LEFT JOIN employees e ON c.employee_id = e.id
+          JOIN cipa_elections ce ON c.election_id = ce.id AND ce.is_active = true
+          ORDER BY c.votes DESC, e.admission_date ASC NULLS LAST, c.name ASC
+        `);
+      }
       res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
@@ -2353,12 +2420,14 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       const employee = result.rows[0];
 
       // Verificar prazo de eleição
-      const settingsRes = await query("SELECT key, value FROM system_settings WHERE key IN ('cipa_election_starts_at', 'cipa_election_ends_at')");
-      const settings: Record<string, string> = {};
-      settingsRes.rows.forEach(r => { settings[r.key] = r.value; });
+      const activeElectionRes = await query("SELECT * FROM cipa_elections WHERE is_active = true LIMIT 1");
+      if (activeElectionRes.rows.length === 0) {
+        return res.status(404).json({ error: 'Nenhuma eleição CIPA ativa no momento.' });
+      }
+      const election = activeElectionRes.rows[0];
 
-      const startsAt = new Date(settings.cipa_election_starts_at || '2026-06-20T08:00:00.000Z');
-      const endsAt = new Date(settings.cipa_election_ends_at || '2026-06-25T18:00:00.000Z');
+      const startsAt = new Date(election.starts_at);
+      const endsAt = new Date(election.ends_at);
       const now = new Date();
 
       let isAllowed = now >= startsAt && now <= endsAt;
@@ -2372,7 +2441,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       }
 
       // Verificar se já votou
-      const voterCheck = await query('SELECT id FROM cipa_voters WHERE employee_id = $1', [employee.id]);
+      const voterCheck = await query('SELECT id FROM cipa_voters WHERE employee_id = $1 AND election_id = $2', [employee.id, election.id]);
       const alreadyVoted = voterCheck.rows.length > 0;
 
       res.json({
@@ -2383,6 +2452,10 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
           id: employee.id,
           name: employee.name,
           hasPin: !!employee.pin
+        },
+        election: {
+          name: election.name,
+          description: election.description
         },
         startsAt,
         endsAt,
@@ -2395,13 +2468,25 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
 
   app.get('/api/cipa/voters', async (req, res) => {
     try {
-      // Retorna a lista de eleitores (voto secreto: sem mostrar o candidato)
-      const result = await query(`
-        SELECT cv.id, cv.employee_id, cv.employee_name, cv.voted_at, e.sector, e.phone, e.email, e.admission_date, e.role, e.cipa_extension_until, e.cipa_token
-        FROM cipa_voters cv
-        LEFT JOIN employees e ON cv.employee_id = e.id
-        ORDER BY cv.voted_at DESC
-      `);
+      const { election_id } = req.query;
+      let result;
+      if (election_id) {
+        result = await query(`
+          SELECT cv.id, cv.election_id, cv.employee_id, cv.employee_name, cv.voted_at, e.sector, e.phone, e.email, e.admission_date, e.role, e.cipa_extension_until, e.cipa_token
+          FROM cipa_voters cv
+          LEFT JOIN employees e ON cv.employee_id = e.id
+          WHERE cv.election_id = $1
+          ORDER BY cv.voted_at DESC
+        `, [election_id]);
+      } else {
+        result = await query(`
+          SELECT cv.id, cv.election_id, cv.employee_id, cv.employee_name, cv.voted_at, e.sector, e.phone, e.email, e.admission_date, e.role, e.cipa_extension_until, e.cipa_token
+          FROM cipa_voters cv
+          LEFT JOIN employees e ON cv.employee_id = e.id
+          JOIN cipa_elections ce ON cv.election_id = ce.id AND ce.is_active = true
+          ORDER BY cv.voted_at DESC
+        `);
+      }
       res.json(result.rows.map(toCamel));
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
@@ -2411,12 +2496,15 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
   app.post('/api/cipa/candidates', async (req, res) => {
     try {
       const id = 'cand_' + Date.now();
-      const { name, sector, employeeId } = req.body;
+      const { name, sector, employeeId, electionId } = req.body;
+      if (!electionId) {
+        return res.status(400).json({ error: 'ID da eleição é obrigatório.' });
+      }
       await query(
-        'INSERT INTO cipa_candidates (id, name, sector, employee_id, votes, is_elected) VALUES ($1, $2, $3, $4, 0, false)', 
-        [id, name, sector, employeeId || null]
+        'INSERT INTO cipa_candidates (id, election_id, name, sector, employee_id, votes, is_elected) VALUES ($1, $2, $3, $4, $5, 0, false)', 
+        [id, electionId, name, sector, employeeId || null]
       );
-      res.status(201).json({ id, name, sector, employeeId, votes: 0, isElected: false });
+      res.status(201).json({ id, electionId, name, sector, employeeId, votes: 0, isElected: false });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -2441,12 +2529,14 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       }
 
       // Validar prazo da eleição/tolerância
-      const settingsRes = await query("SELECT key, value FROM system_settings WHERE key IN ('cipa_election_starts_at', 'cipa_election_ends_at')");
-      const settings: Record<string, string> = {};
-      settingsRes.rows.forEach(r => { settings[r.key] = r.value; });
+      const activeElectionRes = await query("SELECT * FROM cipa_elections WHERE is_active = true LIMIT 1");
+      if (activeElectionRes.rows.length === 0) {
+        return res.status(404).json({ error: 'Nenhuma eleição CIPA ativa no momento.' });
+      }
+      const election = activeElectionRes.rows[0];
 
-      const startsAt = new Date(settings.cipa_election_starts_at || '2026-06-20T08:00:00.000Z');
-      const endsAt = new Date(settings.cipa_election_ends_at || '2026-06-25T18:00:00.000Z');
+      const startsAt = new Date(election.starts_at);
+      const endsAt = new Date(election.ends_at);
       const now = new Date();
 
       let isAllowed = now >= startsAt && now <= endsAt;
@@ -2462,7 +2552,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       }
 
       // 2. Verificar se o colaborador já votou
-      const voterCheck = await query('SELECT id FROM cipa_voters WHERE employee_id = $1', [employeeId]);
+      const voterCheck = await query('SELECT id FROM cipa_voters WHERE employee_id = $1 AND election_id = $2', [employeeId, election.id]);
       if (voterCheck.rows.length > 0) {
         return res.status(400).json({ error: 'Este colaborador já votou nesta eleição.' });
       }
@@ -2471,11 +2561,11 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       await query('BEGIN');
       try {
         // Incrementa voto do candidato
-        await query('UPDATE cipa_candidates SET votes = votes + 1 WHERE id = $1', [candidateId]);
+        await query('UPDATE cipa_candidates SET votes = votes + 1 WHERE id = $1 AND election_id = $2', [candidateId, election.id]);
         
         // Registra eleitor
         const voterId = 'vtr_' + Date.now();
-        await query('INSERT INTO cipa_voters (id, employee_id, employee_name) VALUES ($1, $2, $3)', [voterId, employeeId, employee.name]);
+        await query('INSERT INTO cipa_voters (id, election_id, employee_id, employee_name) VALUES ($1, $2, $3, $4)', [voterId, election.id, employeeId, employee.name]);
         
         // Consumir token se usado
         if (token) {
@@ -2493,8 +2583,9 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
         SELECT c.id 
         FROM cipa_candidates c
         LEFT JOIN employees e ON c.employee_id = e.id
+        WHERE c.election_id = $1
         ORDER BY c.votes DESC, e.admission_date ASC NULLS LAST, c.name ASC
-      `);
+      `, [election.id]);
       for (let i = 0; i < allCands.rows.length; i++) {
         const isElected = i < 2; // Top 2
         await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
@@ -2513,7 +2604,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       const { id } = req.params;
       const result = await query('UPDATE cipa_candidates SET votes = votes + 1 WHERE id = $1 RETURNING *', [id]);
       
-      const allCands = await query('SELECT id FROM cipa_candidates ORDER BY votes DESC, name ASC');
+      const allCands = await query('SELECT id FROM cipa_candidates WHERE election_id = (SELECT election_id FROM cipa_candidates WHERE id = $1) ORDER BY votes DESC, name ASC', [id]);
       for (let i = 0; i < allCands.rows.length; i++) {
         const isElected = i < 2;
         await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
@@ -2528,10 +2619,16 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
 
   app.post('/api/cipa/reset', async (req, res) => {
     try {
+      const activeElectionRes = await query("SELECT id FROM cipa_elections WHERE is_active = true LIMIT 1");
+      if (activeElectionRes.rows.length === 0) {
+        return res.status(400).json({ error: 'Nenhuma eleição ativa para zerar.' });
+      }
+      const eid = activeElectionRes.rows[0].id;
+      
       await query('BEGIN');
       try {
-        await query('UPDATE cipa_candidates SET votes = 0, is_elected = false');
-        await query('DELETE FROM cipa_voters');
+        await query('UPDATE cipa_candidates SET votes = 0, is_elected = false WHERE election_id = $1', [eid]);
+        await query('DELETE FROM cipa_voters WHERE election_id = $1', [eid]);
         await query('UPDATE employees SET cipa_token = NULL, cipa_extension_until = NULL');
         await query('COMMIT');
       } catch (err) {
