@@ -59,7 +59,7 @@ export default function CipaPublicVote({ token }: { token: string }) {
     }
 
     try {
-      const res = await fetch('/api/cipa/vote', {
+      const res = await fetch('/api/cipa/vote-secure', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -85,8 +85,9 @@ export default function CipaPublicVote({ token }: { token: string }) {
         window.location.href = 'https://www.google.com';
       });
 
-    } catch (e) {
-      Swal.fire('Erro', 'Falha de conexão.', 'error');
+    } catch (e: any) {
+      console.error(e);
+      Swal.fire('Erro', e.message || 'Falha de conexão ou erro no servidor.', 'error');
     }
   };
 
