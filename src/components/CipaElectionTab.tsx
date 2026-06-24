@@ -488,6 +488,92 @@ export default function CipaElectionTab() {
           >
             Zerar Urna
           </button>
+          <button
+            onClick={() => {
+              const candsHtml = candidates.map((c, i) => `
+                <tr>
+                  <td style="padding: 4px; text-align: center; font-size: 12px;">${i + 1}</td>
+                  <td style="padding: 4px; font-size: 12px;">${c.name.toUpperCase()}</td>
+                  <td style="padding: 4px; font-size: 12px;">${c.sector.toUpperCase()}</td>
+                  <td style="padding: 4px; font-size: 12px;">${c.role ? c.role.toUpperCase() : '-'}</td>
+                </tr>
+              `).join('');
+
+              const content = `
+                <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
+                  <h2 style="text-align: center; text-transform: uppercase; margin: 0;">EDITAL DE CONVOCAÇÃO ELEIÇÃO CIPA</h2>
+                  <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO 2025/2026</h3>
+                  <br/>
+                  <p style="text-align: justify; line-height: 1.5; font-size: 14px;">
+                    Ficam convocados todos os empregados da NOVO HORIZONTE ALUMÍNIOS LTDA, para eleição dos membros da representação dos empregados da Comissão Interna de Prevenção de Acidentes – CIPA, de acordo com a Norma Regulamentadora - NR 05, a ser realizada, por meio eletrônico através da Urna Virtual SST, iniciando no dia ${startsDate.toLocaleDateString('pt-BR')} às ${startsDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})} e encerrando no dia ${endsDate.toLocaleDateString('pt-BR')} às ${endsDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}.
+                  </p>
+                  <p style="font-size: 14px; margin-top: 20px;">Apresentaram-se e serão votados os seguintes candidatos:</p>
+                  <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px;">
+                    <thead>
+                      <tr>
+                        <th style="padding: 4px; width: 30px; text-align: center;">#</th>
+                        <th style="padding: 4px;">Colaborador</th>
+                        <th style="padding: 4px;">Setor</th>
+                        <th style="padding: 4px;">Cargo / Função</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${candsHtml}
+                    </tbody>
+                  </table>
+                  <div style="text-align: right; margin-top: 40px; margin-bottom: 60px; font-size: 12px;">
+                    CAMBÉ-PR, ${new Date().toLocaleString('pt-BR')}
+                  </div>
+                  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
+                    <div style="width: 45%;">
+                      <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                      <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                      <i>Presidente</i>
+                    </div>
+                    <div style="width: 45%;">
+                      <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                      <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                      <i>Secretário</i>
+                    </div>
+                  </div>
+                  <div style="text-align: center; margin-top: 60px; font-size: 12px;">
+                    <div style="width: 50%; margin: 0 auto;">
+                      <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                      <b>NOVO HORIZONTE ALUMÍNIOS LTDA</b><br/>
+                      <i>Empregador</i>
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              Swal.fire({
+                title: 'Imprimir Edital de Convocação?',
+                html: 'Ao confirmar, uma versão em tela cheia do edital abrirá e a impressão será solicitada automaticamente.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                confirmButtonText: 'Sim, Imprimir',
+                cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const printWin = window.open('', '', 'width=800,height=900');
+                  printWin?.document.write(content);
+                  printWin?.document.close();
+                  printWin?.focus();
+                  setTimeout(() => {
+                    printWin?.print();
+                    printWin?.close();
+                  }, 500);
+                }
+              });
+            }}
+            className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 text-[11px] font-bold px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            <span>Imprimir Edital</span>
+          </button>
           
           <button
             onClick={() => setShowAddModal(true)}
