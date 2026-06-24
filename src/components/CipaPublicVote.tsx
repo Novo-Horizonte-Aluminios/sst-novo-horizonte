@@ -50,11 +50,29 @@ export default function CipaPublicVote({ token }: { token: string }) {
   const handleVoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCandidate) {
-      Swal.fire('Atenção', 'Selecione um candidato para votar.', 'warning');
+      Swal.fire({
+        title: '⚠️ Opa, pera aí!',
+        text: 'Selecione um candidato na lista acima para poder votar.',
+        icon: 'warning',
+        background: '#0f172a',
+        color: '#f8fafc',
+        confirmButtonColor: '#10b981',
+        confirmButtonText: 'Entendido',
+        customClass: { popup: 'rounded-3xl border border-slate-800 shadow-2xl' }
+      });
       return;
     }
     if (!votePin.trim()) {
-      Swal.fire('Atenção', 'O PIN de segurança é obrigatório.', 'warning');
+      Swal.fire({
+        title: '⚠️ Quase lá!',
+        text: 'A sua assinatura digital (PIN) é obrigatória.',
+        icon: 'warning',
+        background: '#0f172a',
+        color: '#f8fafc',
+        confirmButtonColor: '#10b981',
+        confirmButtonText: 'Preencher PIN',
+        customClass: { popup: 'rounded-3xl border border-slate-800 shadow-2xl' }
+      });
       return;
     }
 
@@ -71,23 +89,44 @@ export default function CipaPublicVote({ token }: { token: string }) {
 
       const data = await res.json();
       if (!res.ok) {
-        Swal.fire('Erro', data.error || 'Erro ao registrar voto.', 'error');
+        Swal.fire({
+          title: '❌ Acesso Negado',
+          text: data.error || 'Erro ao registrar voto.',
+          icon: 'error',
+          background: '#0f172a',
+          color: '#f8fafc',
+          confirmButtonColor: '#ef4444',
+          confirmButtonText: 'Tentar Novamente',
+          customClass: { popup: 'rounded-3xl border border-slate-800 shadow-2xl' }
+        });
         return;
       }
 
       Swal.fire({
         icon: 'success',
-        title: 'Voto Confirmado!',
-        text: `Comprovante Nº: ${data.receiptNumber}\nData: ${new Date(data.timestamp).toLocaleString('pt-BR')}`,
+        title: '✅ Voto Confirmado!',
+        html: `<div class="text-sm mt-2">Comprovante Nº: <b class="text-emerald-400 tracking-wider">${data.receiptNumber}</b><br/>Data: ${new Date(data.timestamp).toLocaleString('pt-BR')}</div><div class="mt-4 text-xs text-slate-400">Obrigado por participar da segurança da nossa equipe! 🛡️</div>`,
+        background: '#0f172a',
+        color: '#f8fafc',
         confirmButtonColor: '#10b981',
-        confirmButtonText: 'Fechar Sistema'
+        confirmButtonText: 'Fechar Sistema',
+        customClass: { popup: 'rounded-3xl border border-emerald-900/30 shadow-2xl shadow-emerald-900/20' }
       }).then(() => {
         window.location.href = 'https://www.google.com';
       });
 
     } catch (e: any) {
       console.error(e);
-      Swal.fire('Erro', e.message || 'Falha de conexão ou erro no servidor.', 'error');
+      Swal.fire({
+        title: '🔌 Ops!',
+        text: e.message || 'Falha de conexão ou erro no servidor.',
+        icon: 'error',
+        background: '#0f172a',
+        color: '#f8fafc',
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Fechar',
+        customClass: { popup: 'rounded-3xl border border-slate-800 shadow-2xl' }
+      });
     }
   };
 
