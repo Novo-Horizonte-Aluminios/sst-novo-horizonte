@@ -941,6 +941,81 @@ export default function CipaElectionTab() {
           )}
 
           {selectionView === 'candidatos' && activeSubTab === 'nao_votaram' && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-slate-500" />
+                  <span>Colaboradores Ausentes ({filteredEmployeesList.length})</span>
+                </h4>
+                <button
+                  onClick={() => {
+                    const naoVotaram = filteredEmployeesList;
+                    const rowsHtml = naoVotaram.map((emp, i) => `
+                      <tr>
+                        <td style="padding: 4px; text-align: center; font-size: 10px;">${i + 1}</td>
+                        <td style="padding: 4px; font-size: 10px;">${emp.name.toUpperCase()}</td>
+                        <td style="padding: 4px; font-size: 10px;">${emp.sector.toUpperCase()}</td>
+                        <td style="padding: 4px; font-size: 10px;">${emp.role.toUpperCase()}</td>
+                      </tr>
+                    `).join('');
+
+                    const content = `
+                      <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
+                        <h2 style="text-align: center; text-transform: uppercase; margin: 0;">LISTA DE NÃO PRESENÇA ELEIÇÃO CIPA</h2>
+                        <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO 2025/2026</h3>
+                        <br/>
+                        <p style="text-align: justify; line-height: 1.5; font-size: 12px;">
+                          Abaixo relacionamos os empregados da NOVO HORIZONTE ALUMÍNIOS LTDA, que <b>NÃO</b> participaram da eleição dos membros da representação dos empregados da Comissão Interna de Prevenção de Acidentes – CIPA, de acordo com a Norma Regulamentadora - NR 05, realizada por meio eletrônico através da Urna Virtual SST, no período de ${startsDate.toLocaleDateString('pt-BR')} até ${endsDate.toLocaleDateString('pt-BR')}.
+                        </p>
+                        <p style="font-size: 12px; margin-top: 20px;">Segue listagem dos empregados não participantes:</p>
+                        <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px;">
+                          <thead>
+                            <tr>
+                              <th style="padding: 4px; width: 30px; text-align: center; font-size: 11px;">#</th>
+                              <th style="padding: 4px; font-size: 11px;">Colaborador</th>
+                              <th style="padding: 4px; font-size: 11px;">Setor</th>
+                              <th style="padding: 4px; font-size: 11px;">Cargo / Função</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            ${rowsHtml}
+                          </tbody>
+                        </table>
+                        <div style="text-align: right; margin-top: 40px; margin-bottom: 60px; font-size: 12px;">
+                          CAMBÉ-PR, ${new Date().toLocaleString('pt-BR')}
+                        </div>
+                        <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
+                          <div style="width: 45%;">
+                            <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                            <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                            <i>Presidente</i>
+                          </div>
+                          <div style="width: 45%;">
+                            <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                            <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                            <i>Secretário</i>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+
+                    const printWin = window.open('', '', 'width=800,height=900');
+                    printWin?.document.write(content);
+                    printWin?.document.close();
+                    printWin?.focus();
+                    setTimeout(() => {
+                      printWin?.print();
+                      printWin?.close();
+                    }, 500);
+                  }}
+                  className="flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg transition cursor-pointer border border-slate-200 dark:border-slate-700"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Imprimir Ausentes</span>
+                </button>
+              </div>
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
@@ -1031,10 +1106,88 @@ export default function CipaElectionTab() {
           {selectionView === 'eleitores' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
-                <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
-                  <UserCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Eleitores que já Participaram ({voters.length})</span>
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
+                    <UserCheck className="w-4 h-4 text-emerald-600" />
+                    <span>Eleitores que já Participaram ({voters.length})</span>
+                  </h4>
+                  <button
+                    onClick={() => {
+                      const rowsHtml = voters.map((v, i) => {
+                        const empMatch = employees.find(e => e.id === v.employeeId);
+                        const dataVoto = new Date(v.votedAt).toLocaleString('pt-BR');
+                        const hash = btoa(v.id).substring(0, 15);
+                        return `
+                          <tr>
+                            <td style="padding: 4px; text-align: center; font-size: 10px;">${i + 1}</td>
+                            <td style="padding: 4px; font-size: 10px;">${v.employeeName.toUpperCase()}</td>
+                            <td style="padding: 4px; font-size: 10px;">${(empMatch?.sector || v.sector || '').toUpperCase()}</td>
+                            <td style="padding: 4px; font-size: 10px;">${(empMatch?.role || '').toUpperCase()}</td>
+                            <td style="padding: 4px; font-size: 10px;">${dataVoto}</td>
+                            <td style="padding: 4px; font-size: 10px; font-family: monospace;">${hash}</td>
+                          </tr>
+                        `;
+                      }).join('');
+
+                      const content = `
+                        <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
+                          <h2 style="text-align: center; text-transform: uppercase; margin: 0;">LISTA DE PRESENÇA ELEIÇÃO CIPA</h2>
+                          <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO 2025/2026</h3>
+                          <br/>
+                          <p style="text-align: justify; line-height: 1.5; font-size: 12px;">
+                            Abaixo relacionamos os empregados da NOVO HORIZONTE ALUMÍNIOS LTDA, que participaram da eleição dos membros da representação dos empregados da Comissão Interna de Prevenção de Acidentes – CIPA, de acordo com a Norma Regulamentadora - NR 05, realizada por meio eletrônico através da Urna Virtual SST, no período de ${startsDate.toLocaleDateString('pt-BR')} até ${endsDate.toLocaleDateString('pt-BR')}.
+                          </p>
+                          <p style="font-size: 12px; margin-top: 20px;">Segue listagem dos empregados participantes:</p>
+                          <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px;">
+                            <thead>
+                              <tr>
+                                <th style="padding: 4px; width: 30px; text-align: center; font-size: 11px;">#</th>
+                                <th style="padding: 4px; font-size: 11px;">Colaborador</th>
+                                <th style="padding: 4px; font-size: 11px;">Setor</th>
+                                <th style="padding: 4px; font-size: 11px;">Cargo / Função</th>
+                                <th style="padding: 4px; font-size: 11px;">Data</th>
+                                <th style="padding: 4px; font-size: 11px;">Hash Validação</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${rowsHtml}
+                            </tbody>
+                          </table>
+                          <div style="text-align: right; margin-top: 40px; margin-bottom: 60px; font-size: 12px;">
+                            CAMBÉ-PR, ${new Date().toLocaleString('pt-BR')}
+                          </div>
+                          <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
+                            <div style="width: 45%;">
+                              <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                              <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                              <i>Presidente</i>
+                            </div>
+                            <div style="width: 45%;">
+                              <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                              <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                              <i>Secretário</i>
+                            </div>
+                          </div>
+                        </div>
+                      `;
+
+                      const printWin = window.open('', '', 'width=800,height=900');
+                      printWin?.document.write(content);
+                      printWin?.document.close();
+                      printWin?.focus();
+                      setTimeout(() => {
+                        printWin?.print();
+                        printWin?.close();
+                      }, 500);
+                    }}
+                    className="flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-lg transition cursor-pointer border border-emerald-200 dark:border-emerald-500/30"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    <span>Imprimir Presenças</span>
+                  </button>
+                </div>
                 
                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                   <table className="w-full text-left text-xs border-collapse">
