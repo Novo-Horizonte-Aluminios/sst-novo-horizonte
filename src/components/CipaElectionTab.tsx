@@ -1118,10 +1118,19 @@ export default function CipaElectionTab() {
                             setNewSector(emp.sector || 'Não informado');
                             setCandidateSearchQuery('');
                           }}
-                          className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer border-b border-slate-100 dark:border-slate-700/50 last:border-0"
+                          className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer border-b border-slate-100 dark:border-slate-700/50 last:border-0 flex items-center gap-3"
                         >
-                          <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">{emp.name}</div>
-                          <div className="text-[9px] text-slate-500">{emp.sector} • {emp.cpf}</div>
+                          <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 flex items-center justify-center font-bold text-slate-400 text-xs">
+                            {emp.photoUrl ? (
+                              <img src={emp.photoUrl} alt={emp.name} className="w-full h-full object-cover" />
+                            ) : (
+                              emp.name.charAt(0)
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">{emp.name}</div>
+                            <div className="text-[9px] text-slate-500">{emp.sector} • {emp.cpf}</div>
+                          </div>
                         </div>
                       ))}
                     {employees.filter(emp => emp.name.toLowerCase().includes(candidateSearchQuery.toLowerCase()) || emp.cpf.includes(candidateSearchQuery)).length === 0 && (
@@ -1132,9 +1141,18 @@ export default function CipaElectionTab() {
 
                 {selectedCandidateForAdd && (
                   <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-lg flex justify-between items-center">
-                    <div>
-                      <div className="font-bold text-emerald-800 dark:text-emerald-400 text-xs">{selectedCandidateForAdd.name}</div>
-                      <div className="text-[10px] text-emerald-600 dark:text-emerald-500">{selectedCandidateForAdd.sector}</div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-white border border-emerald-200 flex-shrink-0 flex items-center justify-center font-bold text-emerald-600">
+                        {selectedCandidateForAdd.photoUrl ? (
+                          <img src={selectedCandidateForAdd.photoUrl} alt={selectedCandidateForAdd.name} className="w-full h-full object-cover" />
+                        ) : (
+                          selectedCandidateForAdd.name.charAt(0)
+                        )}
+                      </div>
+                      <div>
+                        <div className="font-bold text-emerald-800 dark:text-emerald-400 text-xs">{selectedCandidateForAdd.name}</div>
+                        <div className="text-[10px] text-emerald-600 dark:text-emerald-500">{selectedCandidateForAdd.sector}</div>
+                      </div>
                     </div>
                     <button 
                       type="button" 
@@ -1161,7 +1179,8 @@ export default function CipaElectionTab() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-slate-850 text-white font-bold rounded-lg hover:bg-slate-900 transition"
+                  disabled={!selectedCandidateForAdd}
+                  className={`px-5 py-2 font-bold rounded-lg transition ${selectedCandidateForAdd ? 'bg-slate-800 text-white hover:bg-slate-900' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
                 >
                   Confirmar Candidatura
                 </button>
