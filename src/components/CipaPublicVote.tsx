@@ -139,8 +139,9 @@ export default function CipaPublicVote({ token }: { token: string }) {
             </label>
             <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
               {candidates.map(c => (
-                <label 
+                <div 
                   key={c.id}
+                  onClick={() => setSelectedCandidate(c.id)}
                   className={`flex flex-col p-3 rounded-xl border cursor-pointer transition-all ${
                     selectedCandidate === c.id 
                       ? 'bg-emerald-500/10 border-emerald-500 shadow-sm' 
@@ -158,7 +159,7 @@ export default function CipaPublicVote({ token }: { token: string }) {
                       <div className="text-[10px] text-slate-400">{c.sector}</div>
                     </div>
                   </div>
-                </label>
+                </div>
               ))}
             </div>
           </div>
