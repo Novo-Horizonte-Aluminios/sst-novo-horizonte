@@ -574,6 +574,97 @@ export default function CipaElectionTab() {
             </svg>
             <span>Imprimir Edital</span>
           </button>
+
+          <button
+            onClick={() => {
+              const sortedCands = [...candidates].sort((a, b) => b.votes - a.votes);
+              const candsHtml = sortedCands.map((c, i) => {
+                const empMatch = employees.find(e => e.name.toLowerCase() === c.name.toLowerCase());
+                const admissionStr = empMatch ? new Date(empMatch.admissionDate).toLocaleDateString('pt-BR') : '-';
+                return `
+                <tr>
+                  <td style="padding: 4px; text-align: center; font-size: 12px;">${i + 1}</td>
+                  <td style="padding: 4px; font-size: 12px;">${c.name.toUpperCase()}</td>
+                  <td style="padding: 4px; text-align: center; font-size: 12px;">${admissionStr}</td>
+                  <td style="padding: 4px; text-align: center; font-size: 14px; font-weight: bold;">${c.votes}</td>
+                </tr>
+              `}).join('');
+
+              const content = `
+                <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
+                  <h2 style="text-align: center; text-transform: uppercase; margin: 0;">RESULTADO DE ELEIÇÃO DA CIPA</h2>
+                  <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO 2025/2026</h3>
+                  <br/>
+                  <p style="text-align: justify; line-height: 1.5; font-size: 14px;">
+                    Abaixo relacionamos o resultado da eleição dos votos apurados dos empregados da NOVO HORIZONTE ALUMÍNIOS LTDA, que participaram da eleição dos membros da representação dos empregados da Comissão Interna de Prevenção de Acidentes – CIPA, de acordo com a Norma Regulamentadora - NR 05, realizada por meio eletrônico através da Urna Virtual SST, no período de ${startsDate.toLocaleDateString('pt-BR')} até ${endsDate.toLocaleDateString('pt-BR')}.
+                  </p>
+                  <p style="font-size: 14px; margin-top: 20px;">Segue listagem dos votos dos candidatos:</p>
+                  <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px;">
+                    <thead>
+                      <tr>
+                        <th style="padding: 4px; width: 30px; text-align: center;">#</th>
+                        <th style="padding: 4px;">Colaborador</th>
+                        <th style="padding: 4px; text-align: center;">Admissão</th>
+                        <th style="padding: 4px; text-align: center;">Votos</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${candsHtml}
+                    </tbody>
+                  </table>
+                  <div style="text-align: right; margin-top: 40px; margin-bottom: 60px; font-size: 12px;">
+                    CAMBÉ-PR, ${new Date().toLocaleString('pt-BR')}
+                  </div>
+                  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; font-size: 12px;">
+                    <div style="width: 45%;">
+                      <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                      <b>ROSILENE GOMES MONTEIRO DA SILVA</b><br/>
+                      <i>Presidente</i>
+                    </div>
+                    <div style="width: 45%;">
+                      <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                      <b>ANDRÉA GONÇALVES DE AGUIAR BROCOLI</b><br/>
+                      <i>Secretário</i>
+                    </div>
+                  </div>
+                  <div style="text-align: center; margin-top: 60px; font-size: 12px;">
+                    <div style="width: 50%; margin: 0 auto;">
+                      <hr style="border-top: 1px solid black; margin-bottom: 5px;" />
+                      <b>NOVO HORIZONTE ALUMÍNIOS LTDA</b><br/>
+                      <i>Empregador</i>
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              Swal.fire({
+                title: 'Imprimir Resultado?',
+                html: 'Ao confirmar, uma versão em tela cheia do resultado abrirá e a impressão será solicitada automaticamente.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                confirmButtonText: 'Sim, Imprimir',
+                cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const printWin = window.open('', '', 'width=800,height=900');
+                  printWin?.document.write(content);
+                  printWin?.document.close();
+                  printWin?.focus();
+                  setTimeout(() => {
+                    printWin?.print();
+                    printWin?.close();
+                  }, 500);
+                }
+              });
+            }}
+            className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 text-[11px] font-bold px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Imprimir Resultado</span>
+          </button>
           
           <button
             onClick={() => setShowAddModal(true)}
