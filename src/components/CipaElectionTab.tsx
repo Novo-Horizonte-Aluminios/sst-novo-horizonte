@@ -496,7 +496,9 @@ export default function CipaElectionTab() {
           customClass: { popup: "swal-modern-popup" },
         });
         setShowExtensionModal(false);
-        await Promise.all([fetchEmployees(), fetchVoters()]);
+        const tasks: Promise<void>[] = [fetchEmployees()];
+        if (selectedElection) tasks.push(fetchVoters(selectedElection.id));
+        await Promise.all(tasks);
       }
     } catch (e) {
       console.error(e);
@@ -549,7 +551,8 @@ export default function CipaElectionTab() {
 
   const getVoteStatus = (empId: string) => {
     const v = voters.find((vt) => vt.employeeId === empId);
-    return v ? { voted: true, date: v.votedAt } : { voted: false };
+    const receiptNumber = v ? btoa(v.id).substring(0, 12).toUpperCase() : "";
+    return v ? { voted: true, date: v.votedAt, receiptNumber } : { voted: false, date: undefined, receiptNumber: "" };
   };
 
   const getEmployeeToken = (emp: Employee) => {
@@ -903,8 +906,8 @@ export default function CipaElectionTab() {
                 : "text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60"
             }`}
           >
-            <Users className="w-4 h-4" />
-            Candidatos
+            <Award className="w-4 h-4" />
+            Candidatos ({candidates.length})
           </button>
           <button
             onClick={() => setActiveTab("funcionarios")}
@@ -915,7 +918,7 @@ export default function CipaElectionTab() {
             }`}
           >
             <Users className="w-4 h-4" />
-            Funcionários
+            Funcionários ({employees.length})
           </button>
           <button
             onClick={() => setActiveTab("nao_votaram")}
@@ -925,8 +928,8 @@ export default function CipaElectionTab() {
                 : "text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60"
             }`}
           >
-            <Users className="w-4 h-4" />
-            Não Votaram
+            <Bell className="w-4 h-4" />
+            Não Votaram ({employees.filter(e => !voters.some(v => v.employeeId === e.id)).length})
           </button>
           <button
             onClick={() => setActiveTab("eleitores")}
@@ -937,7 +940,7 @@ export default function CipaElectionTab() {
             }`}
           >
             <UserCheck className="w-4 h-4" />
-            Já Votaram
+            Já Votaram ({voters.length})
           </button>
         </div>
 
@@ -949,41 +952,6 @@ export default function CipaElectionTab() {
           className="border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-[11px] focus:outline-none focus:border-slate-400 w-full sm:w-64"
         />
       </div>
-
-      {selectionView === "candidatos" && (
-        <div className="flex gap-2">
-          <button
-            onClick={() => setActiveSubTab("candidatos")}
-            className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === "candidatos"
-                ? "bg-brand-primary text-white"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80"
-            }`}
-          >
-            Candidatos
-          </button>
-          <button
-            onClick={() => setActiveSubTab("funcionarios")}
-            className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === "funcionarios"
-                ? "bg-brand-primary text-white"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80"
-            }`}
-          >
-            Funcionários
-          </button>
-          <button
-            onClick={() => setActiveSubTab("nao_votaram")}
-            className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition ${
-              activeSubTab === "nao_votaram"
-                ? "bg-brand-primary text-white"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80"
-            }`}
-          >
-            Não votaram
-          </button>
-        </div>
-      )}
 
       {loading ? (
         <div className="flex justify-center py-12">
@@ -1400,12 +1368,12 @@ export default function CipaElectionTab() {
                 <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-slate-500" />
                   <span>
-                    Colaboradores Ausentes ({filteredEmployeesList.length})
+                    Colaboradores Ausentes ({filteredEmployeesList.filter(e => !voters.some(v => v.employeeId === e.id)).length})
                   </span>
                 </h4>
                 <button
                   onClick={() => {
-                    const naoVotaram = filteredEmployeesList;
+                    const naoVotaram = filteredEmployeesList.filter(e => !voters.some(v => v.employeeId === e.id));
                     const rowsHtml = naoVotaram
                       .map(
                         (emp, i) => `
@@ -1506,6 +1474,9 @@ export default function CipaElectionTab() {
                     {filteredEmployeesList
                       .filter(
                         (emp) => !voters.some((v) => v.employeeId === emp.id),
+                      )
+                      .filter((emp) =>
+                        (emp.name || "").toLowerCase().includes(searchFilterQuery.toLowerCase())
                       )
                       .map((emp, idx) => {
                         const token = getEmployeeToken(emp);
