@@ -680,13 +680,15 @@ async function startServer() {
         if (empRes.rows.length > 0) empData = empRes.rows[0];
       } catch (_) {}
 
-      notifyN8N('/webhook/sst-epi-confirm-link', {
-        deliveryId: id, employeeId,
-        employeeName: empData.name || employeeName,
-        phone: empData.phone || '', email: empData.email || '',
-        sector: empData.sector || '', role: empData.role || '', matricula: empData.matricula || '',
-        ppeName, caNumber: caNumber || 'N/A', quantity: qty, reason: reason || 'Entrega Inicial',
-        confirmUrl, expiresAt: expiresAt.toISOString(),
+      notifyN8N('/webhook/sst-signature-link', {
+        delivery: {
+          id: id,
+          ppeName: ppeName,
+          signatureLink: confirmUrl,
+          employeeName: empData.name || employeeName,
+          employeeEmail: empData.email || '',
+          employeePhone: empData.phone || ''
+        }
       });
 
       res.status(201).json({ id, confirmToken, confirmUrl, expiresAt, status: 'Pendente', employeeId, ppeName, quantity: qty });

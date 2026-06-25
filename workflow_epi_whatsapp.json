@@ -1,0 +1,108 @@
+﻿{
+  "name": "SST - Fluxo 9: Envio de Link para Assinatura de EPI",
+  "nodes": [
+    {
+      "id": "webhook-epi-link",
+      "name": "Webhook EPI Link",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sst-epi-confirm-link",
+        "responseMode": "lastNode"
+      },
+      "position": [0, 0],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1
+    },
+    {
+      "id": "code-format-epi",
+      "name": "Formatar Mensagem EPI",
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || {};\nlet phone = (body.phone || '').replace(/\\D/g, '');\nif (phone.length >= 10 && !phone.startsWith('55')) {\n  phone = '55' + phone;\n}\nconst name = body.employeeName || 'Colaborador';\nconst confirmUrl = body.confirmUrl || '';\nconst ppeName = body.ppeName || '';\nconst caNumber = body.caNumber || 'N/A';\nconst quantity = body.quantity || 1;\n\nconst text = `🦺 *Novo Horizonte Alumínios - Confirmação de EPI*\\n\\nOlá, ${name}!\\n\\nO técnico de segurança registrou a entrega do seguinte EPI para você:\\n\\n📦 *Item:* ${ppeName} (CA: ${caNumber})\\n🔢 *Quantidade:* ${quantity}\\n\\nPara confirmar o recebimento do equipamento que seu líder irá lhe entregar, acesse o link abaixo e insira seu PIN:\\n\\n🔗 *Acesse o link para assinar:*\\n${confirmUrl}\\n\\n⏳ _Este link expira em 72 horas._\\n\\nEm caso de dúvidas, procure o SESMT.`;\n\nreturn [{ json: { number: phone, text } }];"
+      },
+      "position": [200, 0],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "http-whatsapp-epi",
+      "name": "Enviar WhatsApp",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.number }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "8029C030CF0D-42CD-8D34-D021CA6755DF"
+            }
+          ]
+        },
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "sendHeaders": true,
+        "url": "https://api.emersontorres.com.br/message/sendText/Trello"
+      },
+      "position": [400, 0],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1
+    },
+    {
+      "id": "respond-webhook-epi",
+      "name": "Resposta Webhook",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\":true,\"message\":\"Link de EPI enviado para o WhatsApp com sucesso!\"}"
+      },
+      "position": [600, 0],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Webhook EPI Link": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Formatar Mensagem EPI",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Formatar Mensagem EPI": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Enviar WhatsApp",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Resposta Webhook",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}
