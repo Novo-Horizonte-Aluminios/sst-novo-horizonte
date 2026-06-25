@@ -541,8 +541,8 @@ export default function CipaElectionTab() {
   const filteredEmployeesList = employees.filter((emp) => {
     const term = searchFilterQuery.toLowerCase();
     return (
-      emp.name.toLowerCase().includes(term) ||
-      emp.cpf.includes(term) ||
+      (emp.name || "").toLowerCase().includes(term) ||
+      (emp.cpf || "").includes(term) ||
       (emp.matricula && emp.matricula.toLowerCase().includes(term))
     );
   });
@@ -559,8 +559,8 @@ export default function CipaElectionTab() {
   const filteredEmployeesForSecureVote = employees.filter((emp) => {
     const term = searchEmployeeQuery.toLowerCase();
     const matchesSearch =
-      emp.name.toLowerCase().includes(term) ||
-      emp.cpf.includes(term) ||
+      (emp.name || "").toLowerCase().includes(term) ||
+      (emp.cpf || "").includes(term) ||
       (emp.matricula && emp.matricula.toLowerCase().includes(term));
     const alreadyVoted = voters.some((v) => v.employeeId === emp.id);
     return matchesSearch && !alreadyVoted;
@@ -676,8 +676,8 @@ export default function CipaElectionTab() {
                   (c, i) => `
                 <tr>
                   <td style="padding: 4px; text-align: center; font-size: 12px;">${i + 1}</td>
-                  <td style="padding: 4px; font-size: 12px;">${c.name.toUpperCase()}</td>
-                  <td style="padding: 4px; font-size: 12px;">${c.sector.toUpperCase()}</td>
+                  <td style="padding: 4px; font-size: 12px;">${(c.name || "").toUpperCase()}</td>
+                  <td style="padding: 4px; font-size: 12px;">${(c.sector || "").toUpperCase()}</td>
                   <td style="padding: 4px; font-size: 12px;">${c.role ? c.role.toUpperCase() : "-"}</td>
                 </tr>
               `,
@@ -778,7 +778,8 @@ export default function CipaElectionTab() {
               const candsHtml = sortedCands
                 .map((c, i) => {
                   const empMatch = employees.find(
-                    (e) => e.name.toLowerCase() === c.name.toLowerCase(),
+                    (e) =>
+                      e.name.toLowerCase() === (c.name || "").toLowerCase(),
                   );
                   const admissionStr = empMatch
                     ? new Date(empMatch.admissionDate).toLocaleDateString(
@@ -788,7 +789,7 @@ export default function CipaElectionTab() {
                   return `
                 <tr>
                   <td style="padding: 4px; text-align: center; font-size: 12px;">${i + 1}</td>
-                  <td style="padding: 4px; font-size: 12px;">${c.name.toUpperCase()}</td>
+                  <td style="padding: 4px; font-size: 12px;">${(c.name || "").toUpperCase()}</td>
                   <td style="padding: 4px; text-align: center; font-size: 12px;">${admissionStr}</td>
                   <td style="padding: 4px; text-align: center; font-size: 14px; font-weight: bold;">${c.votes}</td>
                 </tr>
@@ -1007,13 +1008,15 @@ export default function CipaElectionTab() {
                 <tbody className="divide-y divide-slate-100">
                   {candidates
                     .filter((c) =>
-                      c.name
+                      (c.name || "")
                         .toLowerCase()
                         .includes(searchFilterQuery.toLowerCase()),
                     )
                     .map((cand, idx) => {
                       const empMatch = employees.find(
-                        (e) => e.name.toLowerCase() === cand.name.toLowerCase(),
+                        (e) =>
+                          e.name.toLowerCase() ===
+                          (cand.name || "").toLowerCase(),
                       );
                       const admissionStr = empMatch
                         ? new Date(empMatch.admissionDate).toLocaleDateString(
@@ -1021,8 +1024,8 @@ export default function CipaElectionTab() {
                           )
                         : "09/06/2019";
                       const lotacaoStr = empMatch
-                        ? `NOVO HORIZONTE ALUMÍNIOS LTDA\n${empMatch.sector.toUpperCase()}\n${empMatch.role.toUpperCase()}`
-                        : `NOVO HORIZONTE ALUMÍNIOS LTDA\n${cand.sector.toUpperCase()}`;
+                        ? `NOVO HORIZONTE ALUMÍNIOS LTDA\n${(empMatch.sector || "").toUpperCase()}\n${(empMatch.role || "").toUpperCase()}`
+                        : `NOVO HORIZONTE ALUMÍNIOS LTDA\n${(cand.sector || "").toUpperCase()}`;
 
                       return (
                         <tr
@@ -1130,8 +1133,8 @@ export default function CipaElectionTab() {
                         return `
                           <tr>
                             <td style="padding: 4px; text-align: center; font-size: 10px;">${i + 1}</td>
-                            <td style="padding: 4px; font-size: 10px;">${emp.name.toUpperCase()}</td>
-                            <td style="padding: 4px; font-size: 10px;">${emp.sector.toUpperCase()}</td>
+                            <td style="padding: 4px; font-size: 10px;">${(emp.name || "").toUpperCase()}</td>
+                            <td style="padding: 4px; font-size: 10px;">${(emp.sector || "").toUpperCase()}</td>
                             <td style="padding: 4px; text-align: center; font-size: 10px;">${new Date(status.date).toLocaleString("pt-BR")}</td>
                             <td style="padding: 4px; text-align: center; font-size: 10px; font-family: monospace;">${status.receiptNumber}</td>
                           </tr>
@@ -1267,9 +1270,9 @@ export default function CipaElectionTab() {
                           <td className="p-4 text-slate-500 dark:border-slate-700 font-medium text-[10px] leading-tight">
                             NOVO HORIZONTE ALUMÍNIOS LTDA
                             <br />
-                            {emp.sector.toUpperCase()}
+                            {(emp.sector || "").toUpperCase()}
                             <br />
-                            {emp.role.toUpperCase()}
+                            {(emp.role || "").toUpperCase()}
                           </td>
                           <td className="p-4 font-medium">
                             {status.voted ? (
@@ -1408,9 +1411,9 @@ export default function CipaElectionTab() {
                         (emp, i) => `
                       <tr>
                         <td style="padding: 4px; text-align: center; font-size: 10px;">${i + 1}</td>
-                        <td style="padding: 4px; font-size: 10px;">${emp.name.toUpperCase()}</td>
-                        <td style="padding: 4px; font-size: 10px;">${emp.sector.toUpperCase()}</td>
-                        <td style="padding: 4px; font-size: 10px;">${emp.role.toUpperCase()}</td>
+                        <td style="padding: 4px; font-size: 10px;">${(emp.name || "").toUpperCase()}</td>
+                        <td style="padding: 4px; font-size: 10px;">${(emp.sector || "").toUpperCase()}</td>
+                        <td style="padding: 4px; font-size: 10px;">${(emp.role || "").toUpperCase()}</td>
                       </tr>
                     `,
                       )
@@ -1542,9 +1545,9 @@ export default function CipaElectionTab() {
                             <td className="p-4 text-slate-500 dark:text-slate-400 font-medium text-[10px] leading-tight">
                               NOVO HORIZONTE ALUMÍNIOS LTDA
                               <br />
-                              {emp.sector.toUpperCase()}
+                              {(emp.sector || "").toUpperCase()}
                               <br />
-                              {emp.role.toUpperCase()}
+                              {(emp.role || "").toUpperCase()}
                             </td>
                             <td className="p-4 font-mono font-bold text-[10px] text-slate-400">
                               {emp.phone || "(43) 99999-9999"}
@@ -1617,7 +1620,7 @@ export default function CipaElectionTab() {
                           return `
                           <tr>
                             <td style="padding: 4px; text-align: center; font-size: 10px;">${i + 1}</td>
-                            <td style="padding: 4px; font-size: 10px;">${v.employeeName.toUpperCase()}</td>
+                            <td style="padding: 4px; font-size: 10px;">${(v.employeeName || "").toUpperCase()}</td>
                             <td style="padding: 4px; font-size: 10px;">${(empMatch?.sector || v.sector || "").toUpperCase()}</td>
                             <td style="padding: 4px; font-size: 10px;">${(empMatch?.role || "").toUpperCase()}</td>
                             <td style="padding: 4px; font-size: 10px;">${dataVoto}</td>
@@ -1714,7 +1717,7 @@ export default function CipaElectionTab() {
                     <tbody className="divide-y divide-slate-100">
                       {voters
                         .filter((v) =>
-                          v.employeeName
+                          (v.employeeName || "")
                             .toLowerCase()
                             .includes(searchFilterQuery.toLowerCase()),
                         )
@@ -2118,10 +2121,10 @@ export default function CipaElectionTab() {
                       {employees
                         .filter(
                           (emp) =>
-                            emp.name
+                            (emp.name || "")
                               .toLowerCase()
                               .includes(candidateSearchQuery.toLowerCase()) ||
-                            emp.cpf.includes(candidateSearchQuery) ||
+                            (emp.cpf || "").includes(candidateSearchQuery) ||
                             (emp.matricula &&
                               emp.matricula
                                 .toLowerCase()
@@ -2161,10 +2164,10 @@ export default function CipaElectionTab() {
                         ))}
                       {employees.filter(
                         (emp) =>
-                          emp.name
+                          (emp.name || "")
                             .toLowerCase()
                             .includes(candidateSearchQuery.toLowerCase()) ||
-                          emp.cpf.includes(candidateSearchQuery),
+                          (emp.cpf || "").includes(candidateSearchQuery),
                       ).length === 0 && (
                         <div className="p-3 text-center text-slate-500 text-[10px]">
                           Nenhum funcionário encontrado.
