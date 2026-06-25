@@ -635,7 +635,175 @@ async function startServer() {
     }
   });
 
+  // ─── EPI REMOTE CONFIRMATION (NR-06 Digital — Lei 14.063/2020) ─────────────
+
+  // Auto-migrate: add confirm columns if not exist yet
+  (async () => {
+    try {
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS confirm_token VARCHAR(100) UNIQUE`);
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS confirm_token_expires_at TIMESTAMP`);
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMP`);
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS confirmed_ip VARCHAR(60)`);
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS confirmed_device TEXT`);
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS integrity_hash VARCHAR(64)`);
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW()`);
+    } catch (e) { /* columns may already exist */ }
+  })();
+
+  app.post('/api/deliveries/pending', async (req, res) => {
+    try {
+      const id = 'd_' + Date.now();
+      const deliveryDate = new Date().toISOString().split('T')[0];
+      const { ppeId, employeeId, quantity, employeeName, ppeName, caNumber, reason } = req.body;
+      const qty = parseInt(quantity) || 1;
+      const confirmToken = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000);
+
+      const ppe = await query('SELECT stock FROM ppes WHERE id = $1', [ppeId]);
+      if (ppe.rows.length > 0) {
+        const newStock = Math.max(0, ppe.rows[0].stock - qty);
+        await query('UPDATE ppes SET stock = $1 WHERE id = $2', [newStock, ppeId]);
+      }
+
+      await query(
+        `INSERT INTO deliveries (id, delivery_date, status, ppe_id, employee_id, quantity, employee_name, ppe_name, ca_number, reason, signing_method, confirm_token, confirm_token_expires_at, created_at)
+         VALUES ($1, $2, 'Pendente', $3, $4, $5, $6, $7, $8, $9, 'link', $10, $11, NOW())`,
+        [id, deliveryDate, ppeId, employeeId, qty, employeeName || null, ppeName || null, caNumber || null, reason || null, confirmToken, expiresAt]
+      );
+
+      const appUrl = process.env.APP_URL || process.env.COOLIFY_URL || 'https://sst.novohorizonte.com';
+      const confirmUrl = `${appUrl}/?tab=epi-confirm&token=${confirmToken}`;
+
+      let empData: any = {};
+      try {
+        const empRes = await query('SELECT name, phone, email, sector, role, matricula FROM employees WHERE id = $1', [employeeId]);
+        if (empRes.rows.length > 0) empData = empRes.rows[0];
+      } catch (_) {}
+
+      notifyN8N('/webhook/sst-epi-confirm-link', {
+        deliveryId: id, employeeId,
+        employeeName: empData.name || employeeName,
+        phone: empData.phone || '', email: empData.email || '',
+        sector: empData.sector || '', role: empData.role || '', matricula: empData.matricula || '',
+        ppeName, caNumber: caNumber || 'N/A', quantity: qty, reason: reason || 'Entrega Inicial',
+        confirmUrl, expiresAt: expiresAt.toISOString(),
+      });
+
+      res.status(201).json({ id, confirmToken, confirmUrl, expiresAt, status: 'Pendente', employeeId, ppeName, quantity: qty });
+    } catch (e: any) {
+      console.error('[/api/deliveries/pending]', e);
+      res.status(500).json({ error: 'DB Error: ' + e.message });
+    }
+  });
+
+  app.get('/api/deliveries/pending', async (req, res) => {
+    try {
+      const result = await query(`
+        SELECT d.id, d.delivery_date, d.status, d.ppe_id, d.employee_id, d.quantity,
+               d.employee_name, d.ppe_name, d.ca_number, d.reason,
+               d.confirm_token, d.confirm_token_expires_at, d.confirmed_at, d.integrity_hash, d.created_at,
+               e.sector, e.role, e.matricula, e.phone
+        FROM deliveries d
+        LEFT JOIN employees e ON d.employee_id = e.id
+        WHERE d.status = 'Pendente' AND d.signing_method = 'link'
+        ORDER BY d.created_at DESC
+      `);
+      res.json(result.rows.map(toCamel));
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
+  app.get('/api/deliveries/confirm/:token', async (req, res) => {
+    try {
+      const { token } = req.params;
+      const result = await query(`
+        SELECT d.id, d.ppe_id, d.employee_id, d.quantity, d.employee_name, d.ppe_name,
+               d.ca_number, d.reason, d.status, d.confirm_token_expires_at, d.confirmed_at, d.integrity_hash, d.created_at,
+               e.name, e.matricula, e.sector, e.role, e.pin,
+               c.name AS company_name
+        FROM deliveries d
+        JOIN employees e ON d.employee_id = e.id
+        LEFT JOIN companies c ON e.company_id = c.id
+        WHERE d.confirm_token = $1
+      `, [token]);
+
+      if (result.rows.length === 0) return res.status(404).json({ error: 'Link inválido ou não encontrado.' });
+      const row = result.rows[0];
+
+      if (row.confirm_token_expires_at && new Date(row.confirm_token_expires_at) < new Date()) {
+        return res.status(410).json({ error: 'Este link expirou. Solicite um novo link ao técnico de segurança.' });
+      }
+
+      const alreadyConfirmed = row.status === 'Entregue' && !!row.confirmed_at;
+
+      res.json({
+        delivery: { id: row.id, ppeName: row.ppe_name, caNumber: row.ca_number, quantity: row.quantity, reason: row.reason, createdAt: row.created_at, expiresAt: row.confirm_token_expires_at },
+        employee: { id: row.employee_id, name: row.name || row.employee_name, matricula: row.matricula || '', sector: row.sector || '', role: row.role || '', hasPin: !!(row.pin && row.pin.length > 0) },
+        company: row.company_name || 'Novo Horizonte Alumínios',
+        alreadyConfirmed, confirmedAt: row.confirmed_at, integrityHash: row.integrity_hash,
+      });
+    } catch (e: any) {
+      console.error('[GET /deliveries/confirm]', e);
+      res.status(500).json({ error: 'DB Error: ' + e.message });
+    }
+  });
+
+  app.post('/api/deliveries/confirm/:token', async (req, res) => {
+    try {
+      const { token } = req.params;
+      const { pin } = req.body;
+      if (!pin) return res.status(400).json({ error: 'PIN é obrigatório.' });
+
+      const result = await query(`
+        SELECT d.id, d.status, d.employee_id, d.employee_name, d.ppe_name, d.ca_number, d.quantity, d.reason,
+               d.confirm_token_expires_at, d.confirmed_at,
+               e.pin AS employee_pin, e.name AS emp_name
+        FROM deliveries d
+        JOIN employees e ON d.employee_id = e.id
+        WHERE d.confirm_token = $1
+      `, [token]);
+
+      if (result.rows.length === 0) return res.status(404).json({ error: 'Link inválido.' });
+      const row = result.rows[0];
+
+      if (row.confirm_token_expires_at && new Date(row.confirm_token_expires_at) < new Date()) {
+        return res.status(410).json({ error: 'Link expirado. Solicite um novo ao técnico.' });
+      }
+      if (row.confirmed_at) {
+        return res.status(409).json({ error: 'Este EPI já foi confirmado anteriormente.' });
+      }
+
+      const pinHash = crypto.createHash('sha256').update(pin.toString().trim()).digest('hex');
+      const storedPin = row.employee_pin ? row.employee_pin.trim() : '';
+      const pinOk = storedPin === pinHash || storedPin === pin.toString().trim();
+      if (!storedPin || !pinOk) return res.status(401).json({ error: 'PIN incorreto. Acesso negado.' });
+
+      const confirmedAt = new Date().toISOString();
+      const clientIp = ((req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '').split(',')[0].trim();
+      const userAgent = (req.headers['user-agent'] || '').substring(0, 500);
+      const hashPayload = `${row.id}|${row.emp_name}|${row.ppe_name}|${row.quantity}|${confirmedAt}|${clientIp}`;
+      const integrityHash = crypto.createHash('sha256').update(hashPayload).digest('hex');
+
+      await query(
+        `UPDATE deliveries SET status = 'Entregue', confirmed_at = $1, confirmed_ip = $2, confirmed_device = $3, integrity_hash = $4 WHERE id = $5`,
+        [confirmedAt, clientIp, userAgent, integrityHash, row.id]
+      );
+
+      notifyN8N('/webhook/sst-epi-confirmed', {
+        deliveryId: row.id, employeeName: row.emp_name || row.employee_name,
+        ppeName: row.ppe_name, quantity: row.quantity, confirmedAt, confirmedIp: clientIp, integrityHash,
+      });
+
+      res.json({ success: true, confirmedAt, integrityHash, deliveryId: row.id });
+    } catch (e: any) {
+      console.error('[POST /deliveries/confirm]', e);
+      res.status(500).json({ error: 'DB Error: ' + e.message });
+    }
+  });
+
   // Training, LMS, and certificates
+
   app.get('/api/trainings', async (req, res) => {
     try {
       const result = await query('SELECT * FROM trainings');

@@ -96,6 +96,13 @@ export default function DeliveryTab({
   const [searchTermReceipt, setSearchTermReceipt] = useState('');
   const [isOpenReceipt, setIsOpenReceipt] = useState(false);
 
+  // Remote link confirmation states
+  const [pendingLink, setPendingLink] = useState<{url: string; token: string; expiresAt: string} | null>(null);
+  const [pendingDeliveries, setPendingDeliveries] = useState<any[]>([]);
+  const [showPendingPanel, setShowPendingPanel] = useState(false);
+  const [loadingPending, setLoadingPending] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+
   // Refs for click outside
   const deliveryDropdownRef = useRef<HTMLDivElement>(null);
   const receiptDropdownRef = useRef<HTMLDivElement>(null);
@@ -474,6 +481,66 @@ function calculateSimilarity(sigA: string, sigB: string): number {
       if (!confirmResult.isConfirmed) {
         return;
       }
+    }
+
+    if (signingMethod === 'link') {
+      if (!selectedEmpId || !selectedPpeId) {
+        Swal.fire('Atenção', 'Selecione o colaborador e o EPI antes de gerar o link.', 'warning');
+        return;
+      }
+      const employee = employees.find(emp => emp.id === selectedEmpId);
+      const ppe = ppes.find(p => p.id === selectedPpeId);
+      if (!employee || !ppe) return;
+
+      if (!employee.pin) {
+        const confirm = await Swal.fire({
+          title: '⚠️ Sem PIN cadastrado',
+          text: `${employee.name} não possui PIN cadastrado. O colaborador não conseguirá confirmar o recebimento. Deseja prosseguir assim mesmo?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Gerar link mesmo assim',
+          cancelButtonText: 'Cancelar'
+        });
+        if (!confirm.isConfirmed) return;
+      }
+
+      try {
+        const res = await fetch('/api/deliveries/pending', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ppeId: selectedPpeId,
+            employeeId: selectedEmpId,
+            quantity,
+            employeeName: employee.name,
+            ppeName: ppe.name,
+            caNumber: ppe.caNumber,
+            reason,
+          })
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Erro ao gerar link');
+
+        setPendingLink({ url: result.confirmUrl, token: result.confirmToken, expiresAt: result.expiresAt });
+
+        // Gerar QR code simples via API pública (sem biblioteca extra)
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(result.confirmUrl)}`;
+        setQrDataUrl(qrApiUrl);
+
+        setSelectedPpeId('');
+        setQuantity(1);
+
+        await Swal.fire({
+          title: '🔗 Link Gerado!',
+          html: `<div class="text-sm">Link enviado via WhatsApp para <b>${employee.name}</b>.<br/>O colaborador tem <b>72 horas</b> para confirmar.</div>`,
+          icon: 'success',
+          confirmButtonColor: '#10b981',
+          confirmButtonText: 'Mostrar QR Code'
+        });
+      } catch (err: any) {
+        Swal.fire('Erro', err.message, 'error');
+      }
+      return;
     }
 
     let signatureValue = '';
@@ -977,29 +1044,58 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                   )}
 
                   {signingMethod === 'link' && (
-                    <div className="flex flex-col items-center py-2 space-y-3">
-                      <div className="text-center space-y-1">
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block">Assinatura no Celular do Colaborador</span>
-                        <p className="text-[9px] text-slate-400 max-w-[200px] leading-snug">Envie o link seguro para o WhatsApp ou mostre o QR Code para o funcionário assinar a ficha no próprio aparelho.</p>
+                    <div className="space-y-4">
+                      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 rounded-xl p-4">
+                        <div className="flex items-start gap-3">
+                          <Smartphone className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-[11px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-wide">Confirmação Remota por Link</p>
+                            <p className="text-[10px] text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+                              Ao registrar, o sistema gera um link único e envia via WhatsApp para o colaborador.
+                              Ele confirma o recebimento com o PIN no próprio celular — ideal para turno noturno.
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      
-                      <div className="flex gap-4 w-full justify-center">
-                        <button
-                          type="button"
-                          className="flex items-center gap-1.5 px-3 py-2 bg-[#25D366] hover:bg-[#1ebd57] text-white rounded font-bold text-[9px] uppercase transition shadow-sm"
-                        >
-                          <Send className="w-3.5 h-3.5" />
-                          Enviar WhatsApp
-                        </button>
-                        
-                        <button
-                          type="button"
-                          className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-600 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded font-bold text-[9px] uppercase transition shadow-sm"
-                        >
-                          <QrCode className="w-3.5 h-3.5" />
-                          Gerar QR Code
-                        </button>
-                      </div>
+
+                      {pendingLink ? (
+                        <div className="bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-700/40 rounded-xl p-4 space-y-3">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-400">Link gerado com sucesso!</span>
+                          </div>
+                          {qrDataUrl && (
+                            <div className="flex flex-col items-center gap-2">
+                              <img src={qrDataUrl} alt="QR Code" className="w-40 h-40 border-4 border-slate-200 dark:border-slate-700 rounded-xl shadow" />
+                              <span className="text-[9px] text-slate-500 font-mono text-center break-all max-w-[200px]">{pendingLink.url}</span>
+                            </div>
+                          )}
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => navigator.clipboard.writeText(pendingLink.url).then(() => Swal.fire({title: 'Copiado!', icon: 'success', timer: 1500, showConfirmButton: false}))}
+                              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-bold text-[10px] uppercase transition hover:bg-slate-200 dark:hover:bg-slate-600"
+                            >
+                              <QrCode className="w-3.5 h-3.5" /> Copiar Link
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setPendingLink(null)}
+                              className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-500 rounded-lg font-bold text-[10px] uppercase transition hover:bg-slate-200"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                          <p className="text-[9px] text-slate-400 text-center">
+                            Expira em: {pendingLink.expiresAt ? new Date(pendingLink.expiresAt).toLocaleString('pt-BR') : '72h'}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-4 text-center">
+                          <Smartphone className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+                          <p className="text-[10px] text-slate-400 font-bold">O QR Code e link aparecerão aqui após registrar</p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1007,10 +1103,17 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
               <button
                 type="submit"
-                className="w-full bg-brand-primary-dark hover:bg-brand-primary-dark text-white font-black p-4 rounded-xl transition-all hover:shadow-lg hover:shadow-brand-primary-dark/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 uppercase text-[12px] tracking-wider cursor-pointer mt-6"
+                className={`w-full font-black p-4 rounded-xl transition-all hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2 uppercase text-[12px] tracking-wider cursor-pointer mt-6 ${
+                  signingMethod === 'link'
+                    ? 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20'
+                    : 'bg-brand-primary-dark hover:bg-brand-primary-dark text-white shadow-brand-primary-dark/30'
+                }`}
               >
-                <Plus className="w-4 h-4" />
-                Registrar Entrega e Gerar Ficha Legal
+                {signingMethod === 'link' ? (
+                  <><Send className="w-4 h-4" /> Gerar Link e Enviar WhatsApp</>
+                ) : (
+                  <><Plus className="w-4 h-4" /> Registrar Entrega e Gerar Ficha Legal</>
+                )}
               </button>
             </form>
           </div>

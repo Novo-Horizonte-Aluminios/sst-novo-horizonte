@@ -80,11 +80,20 @@ export interface PPEDelivery {
   quantity: number;
   deliveryDate: string;
   reason: 'Entrega Inicial' | 'Substituição' | 'Extravio' | 'Danificado';
-  signingMethod: 'assinatura_digital' | 'biometria' | 'senha' | 'selfie';
-  signatureData?: string; // base64 or PIN
+  signingMethod: 'assinatura_digital' | 'biometria' | 'senha' | 'selfie' | 'link';
+  signatureData?: string;
   selfieUrl?: string;
   status: 'Entregue' | 'Pendente' | 'Devolvido';
+  // Remote confirmation fields
+  confirmToken?: string;
+  confirmTokenExpiresAt?: string;
+  confirmedAt?: string;
+  confirmedIp?: string;
+  confirmedDevice?: string;
+  integrityHash?: string;
+  createdAt?: string;
 }
+
 
 export interface Training {
   id: string;
