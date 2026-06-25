@@ -2524,7 +2524,11 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       }
       
       const employee = empRes.rows[0];
-      if (!employee.pin || employee.pin.trim() !== pin.toString().trim()) {
+      // Validar PIN com suporte retrocompatível: aceita hash SHA-256 e texto puro (PINs antigos)
+      const pinHash = crypto.createHash('sha256').update(pin.toString().trim()).digest('hex');
+      const storedPin = employee.pin ? employee.pin.trim() : '';
+      const pinOk = storedPin === pinHash || storedPin === pin.toString().trim();
+      if (!storedPin || !pinOk) {
         return res.status(401).json({ error: 'PIN incorreto. Acesso de votação negado.' });
       }
 

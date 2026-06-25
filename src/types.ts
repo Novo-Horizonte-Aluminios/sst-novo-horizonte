@@ -30,7 +30,11 @@ export interface Employee {
   biometricTemplate?: string;
   biometricFinger?: string;
   pin?: string;
+  // CIPA fields
+  cipaExtensionUntil?: string;
+  cipaToken?: string;
 }
+
 
 export interface RoleConfig {
   id: string;
