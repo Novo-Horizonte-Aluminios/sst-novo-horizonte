@@ -600,6 +600,24 @@ function calculateSimilarity(sigA: string, sigB: string): number {
     setPinNumber('');
   };
 
+  const handleResendLink = async (deliveryId: string) => {
+    try {
+      const res = await fetch(`/api/deliveries/resend-link/${deliveryId}`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erro ao reenviar link');
+      
+      Swal.fire({
+        title: 'Sucesso!',
+        text: 'Link reenviado para o WhatsApp do colaborador.',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } catch (err: any) {
+      Swal.fire('Erro', err.message, 'error');
+    }
+  };
+
   // Receipt visual logic
   const activeReceiptEmployee = employees.find(e => e.id === selectedReceiptEmpId);
   const activeReceiptDeliveries = deliveries.filter(d => {
@@ -1279,6 +1297,17 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                                   <div className="text-center">
                                     <Lock className="w-5 h-5 text-emerald-600 mx-auto opacity-80" />
                                     <span className="text-[7px] font-bold text-emerald-700 uppercase block mt-0.5 tracking-tighter">Link Validado</span>
+                                  </div>
+                                ) : delivery.status === 'Pendente' && delivery.signingMethod === 'link' ? (
+                                  <div className="flex flex-col items-center gap-1">
+                                    <span className="text-[8px] italic text-slate-400 font-serif">— Pendente —</span>
+                                    <button 
+                                      onClick={() => handleResendLink(delivery.id)}
+                                      title="Reenviar link para WhatsApp"
+                                      className="px-1.5 py-0.5 bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 hover:text-sky-600 rounded text-[7px] font-bold uppercase transition-colors flex items-center gap-1"
+                                    >
+                                      <Send className="w-2 h-2" /> Reenviar
+                                    </button>
                                   </div>
                                 ) : (
                                   <span className="text-[8px] italic text-slate-400 font-serif">— Pendente —</span>

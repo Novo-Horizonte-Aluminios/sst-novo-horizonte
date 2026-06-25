@@ -695,6 +695,39 @@ async function startServer() {
     }
   });
 
+  app.post('/api/deliveries/resend-link/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await query(`
+        SELECT d.*, e.name as emp_name, e.phone as emp_phone, e.email as emp_email
+        FROM deliveries d
+        JOIN employees e ON d.employee_id = e.id
+        WHERE d.id = $1 AND d.status = 'Pendente' AND d.signing_method = 'link'
+      `, [id]);
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Entrega pendente não encontrada.' });
+      }
+
+      const row = result.rows[0];
+      const appUrl = process.env.APP_URL || process.env.COOLIFY_URL || 'https://sst.novohorizonte.com';
+      const confirmUrl = `${appUrl}/?tab=epi-confirm&token=${row.confirm_token}`;
+
+      notifyN8N('/webhook/sst-epi-confirm-link', {
+        deliveryId: row.id, employeeId: row.employee_id,
+        employeeName: row.emp_name || row.employee_name,
+        phone: row.emp_phone || '', email: row.emp_email || '',
+        ppeName: row.ppe_name, caNumber: row.ca_number || 'N/A', quantity: row.quantity,
+        confirmUrl, expiresAt: row.confirm_token_expires_at ? new Date(row.confirm_token_expires_at).toISOString() : null,
+      });
+
+      res.json({ success: true, message: 'Link reenviado com sucesso.' });
+    } catch (e: any) {
+      console.error('[/api/deliveries/resend-link]', e);
+      res.status(500).json({ error: 'DB Error: ' + e.message });
+    }
+  });
+
   app.get('/api/deliveries/pending', async (req, res) => {
     try {
       const result = await query(`
