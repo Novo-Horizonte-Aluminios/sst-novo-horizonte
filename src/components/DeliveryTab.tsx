@@ -1275,6 +1275,11 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                                     <Lock className="w-5 h-5 text-sky-600 mx-auto opacity-80" />
                                     <span className="text-[7px] font-bold text-sky-700 uppercase block mt-0.5 tracking-tighter">PIN Pessoal</span>
                                   </div>
+                                ) : (delivery.status === 'Entregue' && delivery.signingMethod === 'link') || delivery.confirmedAt ? (
+                                  <div className="text-center">
+                                    <Lock className="w-5 h-5 text-emerald-600 mx-auto opacity-80" />
+                                    <span className="text-[7px] font-bold text-emerald-700 uppercase block mt-0.5 tracking-tighter">Link Validado</span>
+                                  </div>
                                 ) : (
                                   <span className="text-[8px] italic text-slate-400 font-serif">— Pendente —</span>
                                 )}
