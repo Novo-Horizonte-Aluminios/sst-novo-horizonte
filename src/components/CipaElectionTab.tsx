@@ -66,14 +66,9 @@ export default function CipaElectionTab() {
   );
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-  // Active Tab: 'candidatos' | 'funcionarios' | 'nao_votaram'
-  const [activeSubTab, setActiveSubTab] = useState<
-    "candidatos" | "funcionarios" | "nao_votaram"
-  >("candidatos");
-
-  // Selection View: 'candidatos' | 'eleitores'
-  const [selectionView, setSelectionView] = useState<
-    "candidatos" | "eleitores"
+  // Active Tab
+  const [activeTab, setActiveTab] = useState<
+    "candidatos" | "funcionarios" | "nao_votaram" | "eleitores"
   >("candidatos");
 
   // Modals state
@@ -106,6 +101,15 @@ export default function CipaElectionTab() {
   // Token login logic from URL
   const [urlToken, setUrlToken] = useState<string | null>(null);
   const [validatedTokenData, setValidatedTokenData] = useState<any>(null);
+
+  // Helper to format date for datetime-local input
+  const formatDatetimeLocal = (dateString: string) => {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return "";
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
 
   const fetchElections = async () => {
     try {
@@ -187,7 +191,7 @@ export default function CipaElectionTab() {
           // Open voting modal directly with this employee pre-selected
           setSelectedEmployeeId(data.employee.id);
           // Set view as candidates so they can vote
-          setSelectionView("candidatos");
+          setActiveTab("candidatos");
         } else {
           // Show error message
           let message = "Votação indisponível no momento.";
@@ -610,6 +614,24 @@ export default function CipaElectionTab() {
         <div className="flex flex-wrap gap-2 z-10 w-full md:w-auto">
           <button
             onClick={() => {
+              setEditingElectionId(null);
+              setElectionName("Nova Eleição CIPA");
+              setElectionTerm("");
+              setElectionPresident("");
+              setElectionSecretary("");
+              setElectionDescription("");
+              setElectionStartsAt("");
+              setElectionEndsAt("");
+              setElectionIsActive(true);
+              setShowSettingsModal(true);
+            }}
+            className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 text-[11px] font-bold px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition cursor-pointer"
+          >
+            <span>+ Nova Eleição</span>
+          </button>
+
+          <button
+            onClick={() => {
               if (selectedElection) {
                 setEditingElectionId(selectedElection.id);
                 setElectionName(selectedElection.name);
@@ -618,13 +640,9 @@ export default function CipaElectionTab() {
                 setElectionSecretary(selectedElection.secretaryName);
                 setElectionDescription(selectedElection.description);
                 setElectionStartsAt(
-                  new Date(selectedElection.startsAt)
-                    .toISOString()
-                    .slice(0, 16),
+                  formatDatetimeLocal(selectedElection.startsAt),
                 );
-                setElectionEndsAt(
-                  new Date(selectedElection.endsAt).toISOString().slice(0, 16),
-                );
+                setElectionEndsAt(formatDatetimeLocal(selectedElection.endsAt));
                 setElectionIsActive(selectedElection.isActive);
               } else {
                 setEditingElectionId(null);
@@ -642,7 +660,7 @@ export default function CipaElectionTab() {
             className="flex-1 md:flex-initial flex items-center justify-center gap-1.5 text-[11px] font-bold px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition cursor-pointer"
           >
             <Settings className="w-3.5 h-3.5" />
-            <span>Prazos</span>
+            <span>Configurações</span>
           </button>
 
           <button
@@ -875,28 +893,50 @@ export default function CipaElectionTab() {
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-3 gap-3">
-        <div className="flex gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+        <div className="flex flex-wrap gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
           <button
-            onClick={() => setSelectionView("candidatos")}
+            onClick={() => setActiveTab("candidatos")}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
-              selectionView === "candidatos"
+              activeTab === "candidatos"
                 ? "bg-brand-primary text-white shadow-sm"
                 : "text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60"
             }`}
           >
-            <Users className="w-3.5 h-3.5" />
-            Selecionar Candidatos
+            <Users className="w-4 h-4" />
+            Candidatos
           </button>
           <button
-            onClick={() => setSelectionView("eleitores")}
+            onClick={() => setActiveTab("funcionarios")}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
-              selectionView === "eleitores"
+              activeTab === "funcionarios"
                 ? "bg-brand-primary text-white shadow-sm"
                 : "text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60"
             }`}
           >
-            <UserCheck className="w-3.5 h-3.5" />
-            Selecionar Eleitores
+            <Users className="w-4 h-4" />
+            Funcionários
+          </button>
+          <button
+            onClick={() => setActiveTab("nao_votaram")}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
+              activeTab === "nao_votaram"
+                ? "bg-brand-primary text-white shadow-sm"
+                : "text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60"
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            Não Votaram
+          </button>
+          <button
+            onClick={() => setActiveTab("eleitores")}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all cursor-pointer ${
+              activeTab === "eleitores"
+                ? "bg-brand-primary text-white shadow-sm"
+                : "text-slate-650 hover:bg-slate-200 dark:bg-slate-700/60"
+            }`}
+          >
+            <UserCheck className="w-4 h-4" />
+            Já Votaram
           </button>
         </div>
 
@@ -950,7 +990,7 @@ export default function CipaElectionTab() {
         </div>
       ) : (
         <div>
-          {selectionView === "candidatos" && activeSubTab === "candidatos" && (
+          {activeTab === "candidatos" && (
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
@@ -1072,23 +1112,22 @@ export default function CipaElectionTab() {
             </div>
           )}
 
-          {selectionView === "candidatos" &&
-            activeSubTab === "funcionarios" && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
-                    <UserCheck className="w-4 h-4 text-emerald-600" />
-                    <span>Eleitores Cadastrados e Votos</span>
-                  </h4>
-                  <button
-                    onClick={() => {
-                      const eleitores = filteredEmployeesList.filter((emp) =>
-                        voters.some((v) => v.employeeId === emp.id),
-                      );
-                      const rowsHtml = eleitores
-                        .map((emp, i) => {
-                          const status = getVoteStatus(emp.id);
-                          return `
+          {activeTab === "funcionarios" && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
+                  <UserCheck className="w-4 h-4 text-emerald-600" />
+                  <span>Eleitores Cadastrados e Votos</span>
+                </h4>
+                <button
+                  onClick={() => {
+                    const eleitores = filteredEmployeesList.filter((emp) =>
+                      voters.some((v) => v.employeeId === emp.id),
+                    );
+                    const rowsHtml = eleitores
+                      .map((emp, i) => {
+                        const status = getVoteStatus(emp.id);
+                        return `
                           <tr>
                             <td style="padding: 4px; text-align: center; font-size: 10px;">${i + 1}</td>
                             <td style="padding: 4px; font-size: 10px;">${emp.name.toUpperCase()}</td>
@@ -1097,10 +1136,10 @@ export default function CipaElectionTab() {
                             <td style="padding: 4px; text-align: center; font-size: 10px; font-family: monospace;">${status.receiptNumber}</td>
                           </tr>
                         `;
-                        })
-                        .join("");
+                      })
+                      .join("");
 
-                      const contentHtml = `
+                    const contentHtml = `
                         <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
                           <h2 style="text-align: center; text-transform: uppercase; margin: 0;">LISTA DE PRESENÇA (VOTANTES) ELEIÇÃO CIPA</h2>
                           <h3 style="text-align: center; text-transform: uppercase; margin-top: 5px;">GESTÃO ${selectedElection?.term || "2025/2026"}</h3>
@@ -1141,120 +1180,118 @@ export default function CipaElectionTab() {
                         </div>
                       `;
 
-                      const printWin = window.open(
-                        "",
-                        "",
-                        "width=800,height=900",
-                      );
-                      printWin?.document.write(contentHtml);
-                      printWin?.document.close();
-                      printWin?.focus();
-                      setTimeout(() => {
-                        printWin?.print();
-                        printWin?.close();
-                      }, 500);
-                    }}
-                    className="flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg transition cursor-pointer border border-slate-200 dark:border-slate-700"
+                    const printWin = window.open(
+                      "",
+                      "",
+                      "width=800,height=900",
+                    );
+                    printWin?.document.write(contentHtml);
+                    printWin?.document.close();
+                    printWin?.focus();
+                    setTimeout(() => {
+                      printWin?.print();
+                      printWin?.close();
+                    }, 500);
+                  }}
+                  className="flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg transition cursor-pointer border border-slate-200 dark:border-slate-700"
+                >
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-                      />
-                    </svg>
-                    <span>Imprimir Lista de Presença</span>
-                  </button>
-                </div>
-                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
-                        <th className="p-4 w-12 text-center">#</th>
-                        <th className="p-4">Eleitor</th>
-                        <th className="p-4">Lotação</th>
-                        <th className="p-4">Data Voto</th>
-                        <th className="p-4">Link Votação</th>
-                        <th className="p-4 w-28 text-center">Tolerância</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {filteredEmployeesList.map((emp, idx) => {
-                        const status = getVoteStatus(emp.id);
-                        const employeeToken = getEmployeeToken(emp);
-                        const linkVoto = `${window.location.origin}/?tab=cipa&token=${employeeToken}`;
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                    />
+                  </svg>
+                  <span>Imprimir Lista de Presença</span>
+                </button>
+              </div>
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-450 uppercase font-mono font-bold text-[9px] tracking-wider">
+                      <th className="p-4 w-12 text-center">#</th>
+                      <th className="p-4">Eleitor</th>
+                      <th className="p-4">Lotação</th>
+                      <th className="p-4">Data Voto</th>
+                      <th className="p-4">Link Votação</th>
+                      <th className="p-4 w-28 text-center">Tolerância</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredEmployeesList.map((emp, idx) => {
+                      const status = getVoteStatus(emp.id);
+                      const employeeToken = getEmployeeToken(emp);
+                      const linkVoto = `${window.location.origin}/?tab=cipa&token=${employeeToken}`;
 
-                        return (
-                          <tr
-                            key={emp.id}
-                            className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition-colors"
-                          >
-                            <td className="p-4 text-center font-bold text-slate-500 dark:text-slate-400">
-                              {idx + 1}
-                            </td>
-                            <td className="p-4">
-                              <div className="flex items-center gap-3">
-                                {emp.photoUrl ? (
-                                  <img
-                                    src={emp.photoUrl}
-                                    alt={emp.name}
-                                    className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
-                                  />
-                                ) : (
-                                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
-                                    {emp.name.charAt(0)}
-                                  </div>
-                                )}
-                                <div>
-                                  <div className="font-bold text-slate-800 dark:text-slate-100 leading-tight">
-                                    {emp.name}
-                                  </div>
-                                  <div className="text-slate-450 text-[10px] font-semibold">
-                                    {emp.role}
-                                  </div>
-                                  <div className="text-slate-400 text-[9px] font-mono leading-none mt-1">
-                                    {emp.phone || "(43) 99999-9999"} •{" "}
-                                    {emp.email || "sem@email.com"}
-                                  </div>
+                      return (
+                        <tr
+                          key={emp.id}
+                          className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition-colors"
+                        >
+                          <td className="p-4 text-center font-bold text-slate-500 dark:text-slate-400">
+                            {idx + 1}
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              {emp.photoUrl ? (
+                                <img
+                                  src={emp.photoUrl}
+                                  alt={emp.name}
+                                  className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center text-slate-400 font-bold uppercase">
+                                  {emp.name.charAt(0)}
+                                </div>
+                              )}
+                              <div>
+                                <div className="font-bold text-slate-800 dark:text-slate-100 leading-tight">
+                                  {emp.name}
+                                </div>
+                                <div className="text-slate-450 text-[10px] font-semibold">
+                                  {emp.role}
+                                </div>
+                                <div className="text-slate-400 text-[9px] font-mono leading-none mt-1">
+                                  {emp.phone || "(43) 99999-9999"} •{" "}
+                                  {emp.email || "sem@email.com"}
                                 </div>
                               </div>
-                            </td>
-                            <td className="p-4 text-slate-500 dark:border-slate-700 font-medium text-[10px] leading-tight">
-                              NOVO HORIZONTE ALUMÍNIOS LTDA
-                              <br />
-                              {emp.sector.toUpperCase()}
-                              <br />
-                              {emp.role.toUpperCase()}
-                            </td>
-                            <td className="p-4 font-medium">
-                              {status.voted ? (
-                                <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                  {new Date(status.date!).toLocaleString(
-                                    "pt-BR",
-                                  )}
+                            </div>
+                          </td>
+                          <td className="p-4 text-slate-500 dark:border-slate-700 font-medium text-[10px] leading-tight">
+                            NOVO HORIZONTE ALUMÍNIOS LTDA
+                            <br />
+                            {emp.sector.toUpperCase()}
+                            <br />
+                            {emp.role.toUpperCase()}
+                          </td>
+                          <td className="p-4 font-medium">
+                            {status.voted ? (
+                              <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                {new Date(status.date!).toLocaleString("pt-BR")}
+                              </span>
+                            ) : (
+                              <span className="text-slate-450 italic">
+                                Aguardando
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            {status.voted ? (
+                              <div className="flex flex-col gap-1.5 w-fit">
+                                <span className="text-[10px] text-emerald-600 font-mono bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1.5 rounded border border-emerald-150 block w-full text-center">
+                                  Voto Realizado
                                 </span>
-                              ) : (
-                                <span className="text-slate-450 italic">
-                                  Aguardando
-                                </span>
-                              )}
-                            </td>
-                            <td className="p-4">
-                              {status.voted ? (
-                                <div className="flex flex-col gap-1.5 w-fit">
-                                  <span className="text-[10px] text-emerald-600 font-mono bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1.5 rounded border border-emerald-150 block w-full text-center">
-                                    Voto Realizado
-                                  </span>
-                                  <button
-                                    onClick={() => {
-                                      const contentHtml = `
+                                <button
+                                  onClick={() => {
+                                    const contentHtml = `
                                       <div style="font-family: monospace; padding: 20px; color: black; background: white; text-align: center; max-width: 300px; border: 1px dashed #ccc; margin: 0 auto;">
                                         <h3 style="margin: 0; padding: 0;">COMPROVANTE CIPA</h3>
                                         <p style="margin: 5px 0; font-size: 10px;">NOVO HORIZONTE ALUMÍNIOS LTDA</p>
@@ -1275,86 +1312,86 @@ export default function CipaElectionTab() {
                                         <p style="margin: 10px 0; font-size: 10px;">Voto secreto registrado em urna eletrônica auditável.</p>
                                       </div>
                                     `;
-                                      const printWin = window.open(
-                                        "",
-                                        "",
-                                        "width=400,height=600",
-                                      );
-                                      printWin?.document.write(contentHtml);
-                                      printWin?.document.close();
-                                      printWin?.focus();
-                                      setTimeout(() => {
-                                        printWin?.print();
-                                        printWin?.close();
-                                      }, 500);
-                                    }}
-                                    className="flex items-center justify-center gap-1.5 text-[10px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 transition cursor-pointer"
-                                    title="Imprimir comprovante individual"
+                                    const printWin = window.open(
+                                      "",
+                                      "",
+                                      "width=400,height=600",
+                                    );
+                                    printWin?.document.write(contentHtml);
+                                    printWin?.document.close();
+                                    printWin?.focus();
+                                    setTimeout(() => {
+                                      printWin?.print();
+                                      printWin?.close();
+                                    }, 500);
+                                  }}
+                                  className="flex items-center justify-center gap-1.5 text-[10px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 transition cursor-pointer"
+                                  title="Imprimir comprovante individual"
+                                >
+                                  <svg
+                                    className="w-3 h-3"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
                                   >
-                                    <svg
-                                      className="w-3 h-3"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-                                      />
-                                    </svg>
-                                    <span>Imprimir</span>
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="flex flex-col gap-1.5 w-fit">
-                                  <a
-                                    href={linkVoto}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center justify-center gap-1.5 text-[10px] font-black bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-center transition"
-                                  >
-                                    <LinkIcon className="w-3 h-3" />
-                                    <span>Acessar</span>
-                                  </a>
-                                  <button
-                                    onClick={() =>
-                                      handleSendInvite(emp.id, "invite")
-                                    }
-                                    className="flex items-center justify-center gap-1.5 text-[10px] font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-lg transition cursor-pointer"
-                                  >
-                                    <Send className="w-3 h-3" />
-                                    <span>Enviar Convite</span>
-                                  </button>
-                                </div>
-                              )}
-                            </td>
-                            <td className="p-4 text-center">
-                              <button
-                                onClick={() => openExtensionModal(emp)}
-                                className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 text-slate-650 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 mx-auto cursor-pointer"
-                              >
-                                <Clock className="w-3.5 h-3.5" />
-                                <span>
-                                  {(emp as any).cipaExtensionUntil
-                                    ? new Date(
-                                        (emp as any).cipaExtensionUntil,
-                                      ).toLocaleDateString("pt-BR")
-                                    : "Definir"}
-                                </span>
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                    />
+                                  </svg>
+                                  <span>Imprimir</span>
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex flex-col gap-1.5 w-fit">
+                                <a
+                                  href={linkVoto}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center justify-center gap-1.5 text-[10px] font-black bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-center transition"
+                                >
+                                  <LinkIcon className="w-3 h-3" />
+                                  <span>Acessar</span>
+                                </a>
+                                <button
+                                  onClick={() =>
+                                    handleSendInvite(emp.id, "invite")
+                                  }
+                                  className="flex items-center justify-center gap-1.5 text-[10px] font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-lg transition cursor-pointer"
+                                >
+                                  <Send className="w-3 h-3" />
+                                  <span>Enviar Convite</span>
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4 text-center">
+                            <button
+                              onClick={() => openExtensionModal(emp)}
+                              className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:bg-slate-700 text-slate-650 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 mx-auto cursor-pointer"
+                            >
+                              <Clock className="w-3.5 h-3.5" />
+                              <span>
+                                {(emp as any).cipaExtensionUntil
+                                  ? new Date(
+                                      (emp as any).cipaExtensionUntil,
+                                    ).toLocaleDateString("pt-BR")
+                                  : "Definir"}
+                              </span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
-            )}
+            </div>
+          )}
 
-          {selectionView === "candidatos" && activeSubTab === "nao_votaram" && (
+          {activeTab === "nao_votaram" && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-[11px] font-bold uppercase text-slate-450 tracking-wider flex items-center gap-1.5">
@@ -1558,7 +1595,7 @@ export default function CipaElectionTab() {
             </div>
           )}
 
-          {selectionView === "eleitores" && (
+          {activeTab === "eleitores" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center justify-between">
