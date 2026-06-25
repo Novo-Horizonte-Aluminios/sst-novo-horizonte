@@ -1850,28 +1850,97 @@ export default function CipaElectionTab() {
             <form onSubmit={handleSaveSettings} className="p-6 space-y-4">
               <div>
                 <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">
-                  Abertura da Urna (Início)
+                  Nome da Eleição
                 </label>
                 <input
-                  type="datetime-local"
+                  type="text"
                   required
-                  value={electionStartsAt}
-                  onChange={(e) => setElectionStartsAt(e.target.value)}
+                  value={electionName}
+                  onChange={(e) => setElectionName(e.target.value)}
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">
+                    Gestão
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={electionTerm}
+                    onChange={(e) => setElectionTerm(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">
+                    Presidente da Mesa
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={electionPresident}
+                    onChange={(e) => setElectionPresident(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">
+                  Secretário
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={electionSecretary}
+                  onChange={(e) => setElectionSecretary(e.target.value)}
                   className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
                 />
               </div>
 
               <div>
                 <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">
-                  Fechamento da Urna (Fim)
+                  Explicativa / Finalidade
                 </label>
-                <input
-                  type="datetime-local"
+                <textarea
                   required
-                  value={electionEndsAt}
-                  onChange={(e) => setElectionEndsAt(e.target.value)}
-                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  rows={2}
+                  value={electionDescription}
+                  onChange={(e) => setElectionDescription(e.target.value)}
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px] resize-none"
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">
+                    Abertura da Urna (Início)
+                  </label>
+                  <input
+                    type="datetime-local"
+                    required
+                    value={electionStartsAt}
+                    onChange={(e) => setElectionStartsAt(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">
+                    Fechamento da Urna (Fim)
+                  </label>
+                  <input
+                    type="datetime-local"
+                    required
+                    value={electionEndsAt}
+                    onChange={(e) => setElectionEndsAt(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-slate-800 text-[12px]"
+                  />
+                </div>
               </div>
 
               <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
