@@ -1554,13 +1554,17 @@ export default function CipaElectionTab() {
                               <div className="flex items-center justify-center gap-1.5">
                                 <button
                                   onClick={() =>
-                                    handleSendInvite(emp.id, "remind")
+                                    handleSendInvite(emp.id, (emp as any).cipaToken ? "remind" : "invite")
                                   }
-                                  className="flex items-center gap-1 text-[10px] font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-lg transition cursor-pointer"
+                                  className={`flex items-center gap-1 text-[10px] font-black px-3 py-1.5 rounded-lg transition cursor-pointer ${
+                                    (emp as any).cipaToken
+                                      ? 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                                      : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'
+                                  }`}
                                   title="Disparar convite por WhatsApp"
                                 >
                                   <Bell className="w-3 h-3" />
-                                  <span>Cobrar</span>
+                                  <span>{(emp as any).cipaToken ? 'Cobrar' : 'Enviar'}</span>
                                 </button>
 
                                 <button
