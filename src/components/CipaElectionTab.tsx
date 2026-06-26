@@ -294,6 +294,8 @@ export default function CipaElectionTab() {
         setShowAddModal(false);
         setNewName("");
         setNewSector("");
+        setSelectedCandidateForAdd(null);
+        setCandidateSearchQuery("");
         if (selectedElection) fetchCandidates(selectedElection.id);
       }
     } catch (err) {
