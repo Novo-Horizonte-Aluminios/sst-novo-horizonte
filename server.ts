@@ -588,6 +588,23 @@ async function startServer() {
     }
   });
 
+  // ── ROTA ADMIN: Limpar todas as entregas (apenas para reset de testes) ──
+  app.delete('/api/admin/clear-deliveries', async (req, res) => {
+    const { secret } = req.query;
+    if (secret !== 'NHA-RESET-2026') {
+      return res.status(403).json({ error: 'Acesso negado.' });
+    }
+    try {
+      const countRes = await query('SELECT COUNT(*) FROM deliveries');
+      const total = countRes.rows[0].count;
+      await query('DELETE FROM deliveries');
+      res.json({ success: true, message: `${total} entregas removidas com sucesso.` });
+    } catch (e: any) {
+      res.status(500).json({ error: 'DB Error: ' + e.message });
+    }
+  });
+
+
   app.post('/api/deliveries', async (req, res) => {
     try {
       const id = 'd_' + Date.now();
