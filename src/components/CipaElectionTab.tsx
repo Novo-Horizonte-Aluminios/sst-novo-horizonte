@@ -1336,7 +1336,7 @@ export default function CipaElectionTab() {
                                 </a>
                                 <button
                                   onClick={() =>
-                                    handleSendInvite(emp.id, "invite")
+                                    handleSendInvite(emp.id, (emp as any).cipaToken ? "remind" : "invite")
                                   }
                                   className={`flex items-center justify-center gap-1.5 text-[10px] font-black px-3 py-1.5 rounded-lg transition cursor-pointer ${
                                     (emp as any).cipaToken 
