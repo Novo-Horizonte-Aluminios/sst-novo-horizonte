@@ -234,6 +234,26 @@ export default function CompanyWorkerTab({
           if (!item.name.trim()) rowErrors.push('Nome Completo é obrigatório');
           if (!item.cpf.trim()) rowErrors.push('CPF é obrigatório');
 
+          // Checar duplicata no lote do CSV (mesmo CPF ou matrícula)
+          const normCpf = (item.cpf || '').replace(/[.\-]/g, '').trim();
+          const isDupInBatch = listTemp.some(prev => {
+            const prevCpf = (prev.data.cpf || '').replace(/[.\-]/g, '').trim();
+            if (normCpf && prevCpf && normCpf === prevCpf) return true;
+            if (item.matricula && prev.data.matricula && item.matricula.trim().toLowerCase() === prev.data.matricula.trim().toLowerCase()) return true;
+            return false;
+          });
+          if (isDupInBatch) rowErrors.push('⚠️ Duplicado no arquivo CSV (mesmo CPF ou matrícula)');
+
+          // Checar duplicata com colaboradores já existentes na empresa
+          const existsInDb = employees.some(e => {
+            if (e.companyId !== activeCompanyId) return false;
+            const eCpf = (e.cpf || '').replace(/[.\-]/g, '').trim();
+            if (normCpf && eCpf && normCpf === eCpf) return true;
+            if (item.matricula && e.matricula && item.matricula.trim().toLowerCase() === e.matricula.trim().toLowerCase()) return true;
+            return false;
+          });
+          if (existsInDb) rowErrors.push('⚠️ Colaborador já cadastrado no sistema (CPF ou matrícula duplicado)');
+
           listTemp.push({
             data: item,
             isValid: rowErrors.length === 0,
@@ -303,11 +323,18 @@ export default function CompanyWorkerTab({
 
   const handleCreateEmployee = async (empData: Partial<Employee>) => {
     if (!empData.name || !empData.cpf) return;
-    await onAddEmployee({
-      ...(empData as Omit<Employee, 'id'>),
-      status: 'Ativo'
-    });
-    setShowEmpModal(false);
+    try {
+      await onAddEmployee({
+        ...(empData as Omit<Employee, 'id'>),
+        status: 'Ativo'
+      });
+      setShowEmpModal(false);
+    } catch (err: any) {
+      const msg = err?.message || 'Erro ao cadastrar colaborador.';
+      import('../utils/swal').then(({ default: Swal }) => {
+        Swal.fire({ title: 'Cadastro não permitido', text: msg, icon: 'warning', confirmButtonColor: '#10b981' });
+      });
+    }
   };
 
   const handleUpdateEmployeeSubmit = async (empData: Partial<Employee>) => {

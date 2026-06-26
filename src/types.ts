@@ -8,6 +8,7 @@ export interface Company {
   address: string;
   sstResponsible: string;
   rhResponsible: string;
+  logoUrl?: string;
 }
 
 export interface Employee {

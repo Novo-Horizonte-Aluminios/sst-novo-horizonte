@@ -163,19 +163,19 @@ export default function App() {
   };
 
   const handleAddEmployee = async (newEmp: Omit<Employee, 'id'>) => {
-    try {
-      const res = await fetch('/api/employees', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newEmp)
-      });
-      const data = await res.json();
-      setEmployees(prev => [...prev, data]);
-      return data;
-    } catch (e) {
-      console.error(e);
+    const res = await fetch('/api/employees', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newEmp)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Erro ao cadastrar colaborador.');
     }
+    setEmployees(prev => [...prev, data]);
+    return data;
   };
+
 
   const handleUpdateEmployee = async (id: string, updatedEmp: Partial<Employee>) => {
     try {

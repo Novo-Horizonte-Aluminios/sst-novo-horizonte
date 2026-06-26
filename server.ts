@@ -441,6 +441,27 @@ async function startServer() {
       const id = 'e_' + Date.now();
       const status = 'Ativo';
       const { name, cpf, rg, birthDate, matricula, companyId, sector, role, manager, admissionDate, phone, email, signature, photoUrl, biometricTemplate, biometricFinger, pin } = req.body;
+
+      // ── Trava de duplicata: CPF ou matrícula já cadastrada na mesma empresa ──
+      if (cpf && cpf.trim()) {
+        const dupCpf = await query(
+          'SELECT id, name FROM employees WHERE REPLACE(REPLACE(cpf, \'.\', \'\'), \'-\', \'\') = REPLACE(REPLACE($1, \'.\', \'\'), \'-\', \'\') AND company_id = $2',
+          [cpf.trim(), companyId]
+        );
+        if (dupCpf.rows.length > 0) {
+          return res.status(409).json({ error: `Colaborador com CPF ${cpf} já está cadastrado na empresa (${dupCpf.rows[0].name}).` });
+        }
+      }
+      if (matricula && matricula.trim()) {
+        const dupMat = await query(
+          'SELECT id, name FROM employees WHERE LOWER(TRIM(matricula)) = LOWER(TRIM($1)) AND company_id = $2',
+          [matricula.trim(), companyId]
+        );
+        if (dupMat.rows.length > 0) {
+          return res.status(409).json({ error: `Matrícula "${matricula}" já está em uso pelo colaborador ${dupMat.rows[0].name}.` });
+        }
+      }
+
       await query(
         'INSERT INTO employees (id, name, cpf, rg, birth_date, matricula, company_id, sector, role, manager, admission_date, status, phone, email, signature, photo_url, biometric_template, biometric_finger, pin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)',
         [id, name, cpf, rg, birthDate || null, matricula, companyId, sector, role, manager, admissionDate || null, status, phone, email, signature || null, photoUrl || null, biometricTemplate || null, biometricFinger || null, pin || null]
@@ -451,10 +472,14 @@ async function startServer() {
         notifyN8N('/webhook/sst-welcome', {
           employee: { id, name, cpf, matricula, sector, role, manager, phone, email }
         });
-    } catch (e) {
+    } catch (e: any) {
+      if (e.code === '23505') {
+        return res.status(409).json({ error: 'Colaborador já cadastrado (duplicata detectada no banco de dados).' });
+      }
       res.status(500).json({ error: 'DB Error' });
     }
   });
+
 
   app.put('/api/employees/:id', async (req, res) => {
     try {
@@ -680,12 +705,12 @@ async function startServer() {
         if (empRes.rows.length > 0) empData = empRes.rows[0];
       } catch (_) {}
 
-      notifyN8N('/webhook/sst-epi-confirm-link', {
+      notifyN8N('/webhook/sst-signature-link', {
         deliveryId: id, employeeId,
         employeeName: empData.name || employeeName,
-        phone: empData.phone || '', email: empData.email || '',
+        employeePhone: empData.phone || '', employeeEmail: empData.email || '',
         ppeName, caNumber: caNumber || 'N/A', quantity: qty,
-        confirmUrl, expiresAt: expiresAt.toISOString(),
+        signatureLink: confirmUrl, expiresAt: expiresAt.toISOString(),
       });
 
       res.status(201).json({ id, confirmToken, confirmUrl, expiresAt, status: 'Pendente', employeeId, ppeName, quantity: qty });
@@ -713,12 +738,12 @@ async function startServer() {
       const appUrl = process.env.APP_URL || process.env.COOLIFY_URL || 'https://sst.novohorizonte.com';
       const confirmUrl = `${appUrl}/?tab=epi-confirm&token=${row.confirm_token}`;
 
-      notifyN8N('/webhook/sst-epi-confirm-link', {
+      notifyN8N('/webhook/sst-signature-link', {
         deliveryId: row.id, employeeId: row.employee_id,
         employeeName: row.emp_name || row.employee_name,
-        phone: row.emp_phone || '', email: row.emp_email || '',
+        employeePhone: row.emp_phone || '', employeeEmail: row.emp_email || '',
         ppeName: row.ppe_name, caNumber: row.ca_number || 'N/A', quantity: row.quantity,
-        confirmUrl, expiresAt: row.confirm_token_expires_at ? new Date(row.confirm_token_expires_at).toISOString() : null,
+        signatureLink: confirmUrl, expiresAt: row.confirm_token_expires_at ? new Date(row.confirm_token_expires_at).toISOString() : null,
       });
 
       res.json({ success: true, message: 'Link reenviado com sucesso.' });
@@ -789,8 +814,8 @@ async function startServer() {
 
       const result = await query(`
         SELECT d.id, d.status, d.employee_id, d.employee_name, d.ppe_name, d.ca_number, d.quantity, d.reason,
-               d.confirm_token_expires_at, d.confirmed_at,
-               e.pin AS employee_pin, e.name AS emp_name
+               d.confirm_token_expires_at, d.confirmed_at, d.ppe_id, d.delivery_date,
+               e.pin AS employee_pin, e.name AS emp_name, e.phone AS emp_phone, e.email AS emp_email
         FROM deliveries d
         JOIN employees e ON d.employee_id = e.id
         WHERE d.confirm_token = $1
@@ -825,6 +850,15 @@ async function startServer() {
       notifyN8N('/webhook/sst-epi-confirmed', {
         deliveryId: row.id, employeeName: row.emp_name || row.employee_name,
         ppeName: row.ppe_name, quantity: row.quantity, confirmedAt, confirmedIp: clientIp, integrityHash,
+      });
+
+      // Dispara o Fluxo 1 para enviar o recibo pelo WhatsApp (igual ao PC)
+      notifyN8N('/webhook/sst-epi-delivery', {
+        delivery: { id: row.id, deliveryDate: row.delivery_date, status: 'Entregue', ppeId: row.ppe_id, employeeId: row.employee_id, quantity: row.quantity, employeeName: row.emp_name || row.employee_name, ppeName: row.ppe_name, caNumber: row.ca_number, reason: row.reason, signingMethod: 'link' },
+        employee: { name: row.emp_name || row.employee_name, phone: row.emp_phone || '', email: row.emp_email || '' },
+        employeePhone: row.emp_phone || '', employeeName: row.emp_name || row.employee_name,
+        ppeName: row.ppe_name, caNumber: row.ca_number, deliveryDate: row.delivery_date,
+        technicianName: 'Assinado Eletronicamente (Link)'
       });
 
       res.json({ success: true, confirmedAt, integrityHash, deliveryId: row.id });

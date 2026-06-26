@@ -633,16 +633,23 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
   // Helper variables for combobox filtering
   const selectedEmployeeObj = companyEmployees.find(e => e.id === selectedEmpId);
-  const filteredEmployeesDelivery = companyEmployees.filter(emp => {
-    const term = searchTermDelivery.toLowerCase();
-    return (
-      emp.name.toLowerCase().includes(term) ||
-      (emp.matricula && emp.matricula.toLowerCase().includes(term)) ||
-      (emp.cpf && emp.cpf.toLowerCase().includes(term)) ||
-      (emp.role && emp.role.toLowerCase().includes(term)) ||
-      (emp.sector && emp.sector.toLowerCase().includes(term))
-    );
-  });
+  const filteredEmployeesDelivery = Array.from(
+    companyEmployees.filter(emp => {
+      const normalize = (s?: string) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const term = normalize(searchTermDelivery);
+      return (
+        normalize(emp.name).includes(term) ||
+        normalize(emp.matricula).includes(term) ||
+        normalize(emp.cpf).includes(term) ||
+        normalize(emp.role).includes(term) ||
+        normalize(emp.sector).includes(term)
+      );
+    }).reduce((acc, emp) => {
+      const key = emp.matricula || emp.cpf || emp.name.toLowerCase();
+      if (!acc.has(key)) acc.set(key, emp);
+      return acc;
+    }, new Map<string, Employee>()).values()
+  );
 
   return (
     <div className="space-y-4 text-xs">
@@ -720,11 +727,20 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                               selectedEmpId === emp.id ? "bg-safety-green/5 text-safety-green font-bold" : "text-slate-700 dark:text-slate-200"
                             }`}
                           >
-                            <div>
-                              <span className="block text-[14px] font-bold text-slate-800 dark:text-slate-100">{emp.name}</span>
-                              <span className="block text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                                {emp.role} {emp.sector ? `• ${emp.sector}` : ''}
-                              </span>
+                            <div className="flex items-center gap-3">
+                              {emp.photoUrl ? (
+                                <img src={emp.photoUrl} alt={emp.name} className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-600" />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                                  <User className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                </div>
+                              )}
+                              <div>
+                                <span className="block text-[14px] font-bold text-slate-800 dark:text-slate-100">{emp.name}</span>
+                                <span className="block text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                                  {emp.role} {emp.sector ? `• ${emp.sector}` : ''}
+                                </span>
+                              </div>
                             </div>
                             <span className="text-[9px] font-mono bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
                               Mat: {emp.matricula}
