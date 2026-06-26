@@ -2644,10 +2644,11 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
 
       // Gravar log de envio
       const logId = 'wl_' + Date.now();
-      const message = `Convite de votação CIPA enviado via ${method || 'ambos'} para ${employee.name}. Link: ${inviteUrl}`;
+      const messageTypeStr = actionType === 'remind' ? 'Cobrança de' : 'Convite de';
+      const message = `${messageTypeStr} votação CIPA enviado via ${method || 'ambos'} para ${employee.name}. Link: ${inviteUrl}`;
       await query(
         'INSERT INTO whatsapp_logs (id, employee_id, employee_name, alert_type, detail, phone, sent_at, status, message) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, $7, $8)',
-        [logId, employee.id, employee.name, 'CIPA Convite', 'Eleição Online CIPA', employee.phone || 'E-mail', 'Enviado', message]
+        [logId, employee.id, employee.name, actionType === 'remind' ? 'CIPA Cobrança' : 'CIPA Convite', 'Eleição Online CIPA', employee.phone || 'E-mail', 'Enviado', message]
       );
 
       res.json({ success: true, token, inviteUrl });
