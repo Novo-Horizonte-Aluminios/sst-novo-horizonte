@@ -360,17 +360,22 @@ export default function EmployeeWizard({ initialData, isEdit, onSave, onCancel }
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Setor</label>
-                    <select
-                      value={empData.sector || 'Usinagem'}
+                    <input
+                      type="text"
+                      list="sector-options"
+                      value={empData.sector || ''}
                       onChange={(e) => setEmpData({...empData, sector: e.target.value})}
-                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold cursor-pointer"
-                    >
-                      <option value="Usinagem">Usinagem</option>
-                      <option value="Soldagem">Soldagem</option>
-                      <option value="Extrusão">Extrusão</option>
-                      <option value="Logística">Logística / Almoxarifado</option>
-                      <option value="Administrativo">Administrativo</option>
-                    </select>
+                      placeholder="Ex: Usinagem"
+                      className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:border-safety-green text-xs font-semibold"
+                    />
+                    <datalist id="sector-options">
+                      {/* Mostra as opções padrão, se a pessoa quiser uma nova é só digitar */}
+                      <option value="Usinagem" />
+                      <option value="Soldagem" />
+                      <option value="Extrusão" />
+                      <option value="Logística" />
+                      <option value="Administrativo" />
+                    </datalist>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Cargo</label>
