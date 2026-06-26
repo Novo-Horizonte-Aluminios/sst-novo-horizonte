@@ -2139,9 +2139,7 @@ export default function CipaElectionTab() {
                         ))}
                       {employees.filter(
                         (emp) =>
-                          (emp.name || "")
-                            .toLowerCase()
-                            .includes(candidateSearchQuery.toLowerCase()) ||
+                          normalizeText(emp.name).includes(normalizeText(candidateSearchQuery)) ||
                           (emp.cpf || "").includes(candidateSearchQuery),
                       ).length === 0 && (
                         <div className="p-3 text-center text-slate-500 text-[10px]">
