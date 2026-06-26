@@ -182,7 +182,7 @@ export default function CipaPublicVote({ token }: { token: string }) {
               </label>
               <span className="text-[9px] text-slate-600 italic">Ordem sorteada aleatoriamente</span>
             </div>
-            <div className={`grid gap-3 ${
+            <div className={`grid gap-3 max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar ${
               candidates.length === 1 ? 'grid-cols-1' :
               candidates.length === 2 ? 'grid-cols-2' :
               candidates.length <= 4 ? 'grid-cols-2' :
@@ -203,9 +203,33 @@ export default function CipaPublicVote({ token }: { token: string }) {
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
                     </div>
                   )}
-                  <div className="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center text-2xl font-black text-slate-300 mb-2 shadow-inner overflow-hidden border-2 border-slate-600">
+                  <div 
+                    className="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center text-2xl font-black text-slate-300 mb-2 shadow-inner overflow-hidden border-2 border-slate-600 relative group"
+                    onClick={(e) => {
+                      if (c.photoUrl) {
+                        e.stopPropagation();
+                        Swal.fire({
+                          title: c.name,
+                          text: c.role || 'Candidato a CIPA',
+                          imageUrl: c.photoUrl,
+                          imageAlt: `Foto de ${c.name}`,
+                          background: '#0f172a',
+                          color: '#f8fafc',
+                          confirmButtonColor: '#10b981',
+                          confirmButtonText: 'Fechar',
+                          customClass: { popup: 'rounded-3xl border border-slate-800 shadow-2xl' },
+                          imageClass: 'rounded-xl max-h-[60vh] object-contain'
+                        });
+                      }
+                    }}
+                  >
                     {c.photoUrl ? (
-                      <img src={c.photoUrl} alt={c.name} className="w-full h-full object-cover" />
+                      <>
+                        <img src={c.photoUrl} alt={c.name} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                        </div>
+                      </>
                     ) : (
                       c.name.charAt(0).toUpperCase()
                     )}
