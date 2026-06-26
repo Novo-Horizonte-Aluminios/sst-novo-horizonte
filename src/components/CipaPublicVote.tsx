@@ -38,7 +38,9 @@ export default function CipaPublicVote({ token }: { token: string }) {
 
       const candRes = await fetch('/api/cipa/candidates');
       const candData = await candRes.json();
-      setCandidates(candData);
+      // ── Embaralha a ordem para evitar viés pelo primeiro candidato ──
+      const shuffled = [...candData].sort(() => Math.random() - 0.5);
+      setCandidates(shuffled);
       
     } catch (e: any) {
       setError(e.message || 'Erro ao carregar dados da eleição.');
@@ -173,22 +175,35 @@ export default function CipaPublicVote({ token }: { token: string }) {
 
         <form onSubmit={handleVoteSubmit} className="p-6 pt-0 space-y-6">
           
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold block">
-              Selecione seu Candidato
-            </label>
-            <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-              {candidates.map(c => (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold block">
+                Selecione seu Candidato
+              </label>
+              <span className="text-[9px] text-slate-600 italic">Ordem sorteada aleatoriamente</span>
+            </div>
+            <div className={`grid gap-3 ${
+              candidates.length === 1 ? 'grid-cols-1' :
+              candidates.length === 2 ? 'grid-cols-2' :
+              candidates.length <= 4 ? 'grid-cols-2' :
+              'grid-cols-2'
+            }`}>
+              {candidates.map((c, idx) => (
                 <div 
                   key={c.id}
                   onClick={() => setSelectedCandidate(c.id)}
-                  className={`flex flex-col items-center p-4 rounded-xl cursor-pointer border-2 transition-all duration-200 ${
+                  className={`flex flex-col items-center p-3 rounded-xl cursor-pointer border-2 transition-all duration-200 relative ${
                     selectedCandidate === c.id 
-                      ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 shadow-md shadow-emerald-500/10 scale-105' 
-                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-300 hover:shadow-md'
+                      ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 shadow-lg shadow-emerald-500/20 scale-[1.03]' 
+                      : 'border-slate-700 bg-slate-800/60 hover:border-emerald-400/50 hover:bg-slate-800'
                   }`}
                 >
-                  <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-3xl font-black text-slate-400 mb-3 shadow-inner overflow-hidden border border-slate-200 dark:border-slate-600">
+                  {selectedCandidate === c.id && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                  )}
+                  <div className="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center text-2xl font-black text-slate-300 mb-2 shadow-inner overflow-hidden border-2 border-slate-600">
                     {c.photoUrl ? (
                       <img src={c.photoUrl} alt={c.name} className="w-full h-full object-cover" />
                     ) : (
@@ -196,9 +211,9 @@ export default function CipaPublicVote({ token }: { token: string }) {
                     )}
                   </div>
                   <div className="text-center">
-                    <div className="font-bold text-slate-800 dark:text-slate-100">{c.name}</div>
-                    <div className="text-[10px] text-slate-500 font-semibold tracking-wider uppercase mt-1">CANDIDATO</div>
-                    {c.role && <div className="text-[10px] text-slate-400 mt-0.5">{c.role}</div>}
+                    <div className="font-bold text-slate-100 text-xs leading-tight">{c.name}</div>
+                    {c.role && <div className="text-[9px] text-slate-400 mt-0.5">{c.role}</div>}
+                    <div className="text-[9px] text-emerald-600 font-semibold tracking-wider uppercase mt-1">Candidato</div>
                   </div>
                 </div>
               ))}
