@@ -234,10 +234,10 @@ export default function CipaPublicVote({ token }: { token: string }) {
                       c.name.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <div className="text-center">
-                    <div className="font-bold text-slate-100 text-xs leading-tight">{c.name}</div>
-                    {c.role && <div className="text-[9px] text-slate-400 mt-0.5">{c.role}</div>}
-                    <div className="text-[9px] text-emerald-600 font-semibold tracking-wider uppercase mt-1">Candidato</div>
+                  <div className="text-center w-full px-1">
+                    <div className="font-bold text-slate-100 text-xs leading-tight line-clamp-2" title={c.name}>{c.name}</div>
+                    {c.role && <div className="text-[9px] text-slate-400 mt-1 truncate" title={c.role}>{c.role}</div>}
+                    {c.sector && <div className="text-[9px] text-emerald-500 font-semibold uppercase truncate mt-0.5" title={c.sector}>{c.sector}</div>}
                   </div>
                 </div>
               ))}
