@@ -332,8 +332,6 @@ export const initDb = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
-      DROP TABLE IF EXISTS cipa_voters CASCADE;
-      DROP TABLE IF EXISTS cipa_candidates CASCADE;
 
       CREATE TABLE IF NOT EXISTS cipa_elections (
         id VARCHAR(50) PRIMARY KEY,

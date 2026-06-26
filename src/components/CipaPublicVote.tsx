@@ -215,6 +215,7 @@ export default function CipaPublicVote({ token }: { token: string }) {
                           imageAlt: `Foto de ${c.name}`,
                           background: '#0f172a',
                           color: '#f8fafc',
+                          showCloseButton: true,
                           confirmButtonColor: '#10b981',
                           confirmButtonText: 'Fechar',
                           customClass: { popup: 'rounded-3xl border border-slate-800 shadow-2xl' },

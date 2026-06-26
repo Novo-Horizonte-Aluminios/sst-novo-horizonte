@@ -2824,13 +2824,14 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
 
       // 3. Registrar o voto e marcar eleitor numa transação única
       await query('BEGIN');
+      const voterId = 'vtr_' + Date.now();
+      const voteTimestamp = new Date().toISOString();
       try {
         // Incrementa voto do candidato
         await query('UPDATE cipa_candidates SET votes = votes + 1 WHERE id = $1 AND election_id = $2', [candidateId, election.id]);
         
         // Registra eleitor
-        const voterId = 'vtr_' + Date.now();
-        await query('INSERT INTO cipa_voters (id, election_id, employee_id, employee_name) VALUES ($1, $2, $3, $4)', [voterId, election.id, employeeId, employee.name]);
+        await query('INSERT INTO cipa_voters (id, election_id, employee_id, employee_name, voted_at) VALUES ($1, $2, $3, $4, $5)', [voterId, election.id, employeeId, employee.name, voteTimestamp]);
         
         // Consumir token se usado
         if (token) {
@@ -2856,7 +2857,12 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
         await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
       }
 
-      res.json({ success: true, message: 'Voto registrado com sucesso e computado na urna digital!' });
+      res.json({ 
+        success: true, 
+        message: 'Voto registrado com sucesso e computado na urna digital!',
+        receiptNumber: voterId,
+        timestamp: voteTimestamp
+      });
     } catch (e: any) {
       console.error(e);
       res.status(500).json({ error: 'Erro no banco de dados ao registrar o voto: ' + e.message });
