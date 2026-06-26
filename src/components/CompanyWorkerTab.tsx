@@ -669,7 +669,7 @@ export default function CompanyWorkerTab({
                         />
                         <div>
                           <p className="font-bold text-slate-800 dark:text-slate-100 text-[13px] leading-tight">{emp.name}</p>
-                          <p className="text-slate-400 text-[10px] mt-0.5">D.N: {emp.birthDate}</p>
+                          <p className="text-slate-400 text-[10px] mt-0.5">D.N: {emp.birthDate ? emp.birthDate.substring(0, 10).split('-').reverse().join('/') : '—'}</p>
                         </div>
                       </td>
                       <td className="p-4 font-mono font-bold text-slate-700 dark:text-slate-200">{emp.matricula}</td>
