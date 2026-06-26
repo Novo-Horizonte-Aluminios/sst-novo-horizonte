@@ -66,6 +66,7 @@ export default function CompanyWorkerTab({
   onUpdateCompany
 }: CompanyWorkerTabProps) {
   const [employeeSearch, setEmployeeSearch] = useState('');
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
   const [showEmpModal, setShowEmpModal] = useState(false);
   
   // Edit Employee State
@@ -373,6 +374,41 @@ export default function CompanyWorkerTab({
     return isCompany && matchesSearch;
   });
 
+  const sortedEmployees = React.useMemo(() => {
+    const sorted = [...filteredEmployees];
+    if (!sortConfig) return sorted;
+    
+    sorted.sort((a, b) => {
+      const { key, direction } = sortConfig;
+      let aVal = (a as any)[key] || '';
+      let bVal = (b as any)[key] || '';
+      
+      // Lida com datas formato pt-br (DD/MM/YYYY) para sort correto
+      if (key === 'admissionDate') {
+        if (typeof aVal === 'string' && aVal.includes('/')) aVal = aVal.split('/').reverse().join('-');
+        if (typeof bVal === 'string' && bVal.includes('/')) bVal = bVal.split('/').reverse().join('-');
+      }
+
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        const comp = aVal.localeCompare(bVal, 'pt-BR', { numeric: true, sensitivity: 'base' });
+        return direction === 'asc' ? comp : -comp;
+      }
+      
+      if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [filteredEmployees, sortConfig]);
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
   const activeCompany = companies.find(c => c.id === activeCompanyId) || companies[0];
 
   const handleUpdateCompanySubmit = async (e: React.FormEvent) => {
@@ -671,19 +707,33 @@ export default function CompanyWorkerTab({
               <table className="compact-table w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 text-[10px] uppercase font-bold tracking-wider">
-                    <th className="p-4 pl-6">Colaborador</th>
-                    <th className="p-4">Matrícula</th>
-                    <th className="p-4">CPF / RG</th>
-                    <th className="p-4">Setor / Cargo</th>
+                    <th className="p-4 pl-6 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition select-none" onClick={() => handleSort('name')}>
+                      Colaborador {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                    </th>
+                    <th className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition select-none" onClick={() => handleSort('matricula')}>
+                      Matrícula {sortConfig?.key === 'matricula' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                    </th>
+                    <th className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition select-none" onClick={() => handleSort('cpf')}>
+                      CPF / RG {sortConfig?.key === 'cpf' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                    </th>
+                    <th className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition select-none" onClick={() => handleSort('sector')}>
+                      Setor / Cargo {sortConfig?.key === 'sector' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                    </th>
                     <th className="p-4 font-semibold">Contato (SST/Mensageria)</th>
-                    <th className="p-4">Responsável Direto</th>
-                    <th className="p-4">Admissão</th>
-                    <th className="p-4">Status</th>
+                    <th className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition select-none" onClick={() => handleSort('manager')}>
+                      Responsável Direto {sortConfig?.key === 'manager' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                    </th>
+                    <th className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition select-none" onClick={() => handleSort('admissionDate')}>
+                      Admissão {sortConfig?.key === 'admissionDate' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                    </th>
+                    <th className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition select-none" onClick={() => handleSort('status')}>
+                      Status {sortConfig?.key === 'status' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                    </th>
                     <th className="p-4 pr-6 text-center">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredEmployees.map((emp) => (
+                  {sortedEmployees.map((emp) => (
                     <tr key={emp.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900/50 transition">
                       <td className="p-4 pl-6 flex items-center gap-3">
                         <img 
