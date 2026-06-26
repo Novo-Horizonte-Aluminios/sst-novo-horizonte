@@ -694,7 +694,7 @@ export default function CompanyWorkerTab({
                         </div>
                       </td>
                       <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">{emp.manager}</td>
-                      <td className="p-4 font-mono text-slate-600 dark:text-slate-300">{emp.admissionDate}</td>
+                      <td className="p-4 font-mono text-slate-600 dark:text-slate-300">{emp.admissionDate ? emp.admissionDate.substring(0, 10).split('-').reverse().join('/') : '—'}</td>
                       <td className="p-4">
                         <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase ${
                           emp.status === 'Ativo' 
