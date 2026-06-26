@@ -102,6 +102,12 @@ export default function CipaElectionTab() {
   const [urlToken, setUrlToken] = useState<string | null>(null);
   const [validatedTokenData, setValidatedTokenData] = useState<any>(null);
 
+  // Helper to ignore accents for search
+  const normalizeText = (text: string) => {
+    if (!text) return "";
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  };
+
   // Helper to format date for datetime-local input
   const formatDatetimeLocal = (dateString: string) => {
     if (!dateString) return "";
@@ -543,11 +549,11 @@ export default function CipaElectionTab() {
   };
 
   const filteredEmployeesList = employees.filter((emp) => {
-    const term = searchFilterQuery.toLowerCase();
+    const term = normalizeText(searchFilterQuery);
     return (
-      (emp.name || "").toLowerCase().includes(term) ||
+      normalizeText(emp.name).includes(term) ||
       (emp.cpf || "").includes(term) ||
-      (emp.matricula && emp.matricula.toLowerCase().includes(term))
+      (emp.matricula && normalizeText(emp.matricula).includes(term))
     );
   });
 
@@ -562,11 +568,11 @@ export default function CipaElectionTab() {
   };
 
   const filteredEmployeesForSecureVote = employees.filter((emp) => {
-    const term = searchEmployeeQuery.toLowerCase();
+    const term = normalizeText(searchEmployeeQuery);
     const matchesSearch =
-      (emp.name || "").toLowerCase().includes(term) ||
+      normalizeText(emp.name).includes(term) ||
       (emp.cpf || "").includes(term) ||
-      (emp.matricula && emp.matricula.toLowerCase().includes(term));
+      (emp.matricula && normalizeText(emp.matricula).includes(term));
     const alreadyVoted = voters.some((v) => v.employeeId === emp.id);
     return matchesSearch && !alreadyVoted;
   });
@@ -2091,18 +2097,14 @@ export default function CipaElectionTab() {
                 {candidateSearchQuery.length > 1 &&
                   !selectedCandidateForAdd && (
                     <div className="mt-2 max-h-32 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-lg custom-scrollbar">
-                      {employees
-                        .filter(
-                          (emp) =>
-                            (emp.name || "")
-                              .toLowerCase()
-                              .includes(candidateSearchQuery.toLowerCase()) ||
-                            (emp.cpf || "").includes(candidateSearchQuery) ||
-                            (emp.matricula &&
-                              emp.matricula
-                                .toLowerCase()
-                                .includes(candidateSearchQuery.toLowerCase())),
-                        )
+                        {employees
+                          .filter(
+                            (emp) =>
+                              normalizeText(emp.name).includes(normalizeText(candidateSearchQuery)) ||
+                              (emp.cpf || "").includes(candidateSearchQuery) ||
+                              (emp.matricula &&
+                                normalizeText(emp.matricula).includes(normalizeText(candidateSearchQuery))),
+                          )
                         .map((emp) => (
                           <div
                             key={emp.id}
