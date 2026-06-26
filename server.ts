@@ -2710,6 +2710,16 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     }
   });
 
+  app.delete('/api/cipa/candidates/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      await query('DELETE FROM cipa_candidates WHERE id = $1', [id]);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: 'DB Error' });
+    }
+  });
+
   app.post('/api/cipa/vote-secure', async (req, res) => {
     try {
       const { employeeId, pin, candidateId, token } = req.body;
