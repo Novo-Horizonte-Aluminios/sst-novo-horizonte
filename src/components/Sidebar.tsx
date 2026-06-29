@@ -133,8 +133,8 @@ export default function Sidebar({
           <>
             <div className="w-full flex justify-center bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
               <img 
-                src="/logo_horizontal.png" 
-                alt="Novo Horizonte Alumínios" 
+                src={companies.find(c => c.id === selectedCompanyId)?.logoUrl || "/logo_horizontal.png"}
+                alt={companies.find(c => c.id === selectedCompanyId)?.name || "SST Sistema"}
                 className="h-9 w-auto object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
