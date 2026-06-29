@@ -985,6 +985,35 @@ export default function CompanyWorkerTab({
                 />
               </div>
 
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Logo da Empresa</label>
+                <div className="flex items-center gap-3">
+                  {editingCompany.logoUrl && (
+                    <img src={editingCompany.logoUrl} alt="Logo" className="w-12 h-12 object-contain bg-slate-50 rounded border border-slate-200" />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setEditingCompany({ ...editingCompany, logoUrl: reader.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="flex-1 text-[10px] text-slate-500 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 dark:file:bg-slate-700 dark:file:text-slate-300"
+                  />
+                  {editingCompany.logoUrl && (
+                    <button type="button" onClick={() => setEditingCompany({ ...editingCompany, logoUrl: undefined })} className="text-[10px] text-rose-500 hover:underline">
+                      Remover
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="pt-3.5 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
                 <button
                   type="button"

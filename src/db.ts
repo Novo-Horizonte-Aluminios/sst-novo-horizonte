@@ -149,6 +149,7 @@ export const initDb = async () => {
       ALTER TABLE companies ADD COLUMN IF NOT EXISTS risk_degree INTEGER;
       ALTER TABLE companies ADD COLUMN IF NOT EXISTS sst_responsible VARCHAR(255);
       ALTER TABLE companies ADD COLUMN IF NOT EXISTS rh_responsible VARCHAR(255);
+      ALTER TABLE companies ADD COLUMN IF NOT EXISTS logo_url TEXT;
 
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS signature TEXT;
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS photo_url TEXT;

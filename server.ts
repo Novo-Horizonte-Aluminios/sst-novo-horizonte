@@ -397,12 +397,12 @@ async function startServer() {
   app.post('/api/companies', async (req, res) => {
     try {
       const id = 'c_' + Date.now();
-      const { name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible } = req.body;
+      const { name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible, logoUrl } = req.body;
       await query(
-        'INSERT INTO companies (id, name, trading_name, cnpj, address, cnae, risk_degree, sst_responsible, rh_responsible) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-        [id, name, tradingName, cnpj, address, cnae, riskDegree || null, sstResponsible || null, rhResponsible || null]
+        'INSERT INTO companies (id, name, trading_name, cnpj, address, cnae, risk_degree, sst_responsible, rh_responsible, logo_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+        [id, name, tradingName, cnpj, address, cnae, riskDegree || null, sstResponsible || null, rhResponsible || null, logoUrl || null]
       );
-      res.status(201).json({ id, name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible });
+      res.status(201).json({ id, name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible, logoUrl });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
@@ -411,16 +411,16 @@ async function startServer() {
   app.put('/api/companies/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible } = req.body;
+      const { name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible, logoUrl } = req.body;
       
       const check = await query('SELECT id FROM companies WHERE id = $1', [id]);
       if (check.rows.length === 0) return res.status(404).json({ error: 'Company not found' });
 
       await query(
-        'UPDATE companies SET name=$1, trading_name=$2, cnpj=$3, address=$4, cnae=$5, risk_degree=$6, sst_responsible=$7, rh_responsible=$8 WHERE id=$9',
-        [name, tradingName, cnpj, address, cnae, riskDegree || null, sstResponsible || null, rhResponsible || null, id]
+        'UPDATE companies SET name=$1, trading_name=$2, cnpj=$3, address=$4, cnae=$5, risk_degree=$6, sst_responsible=$7, rh_responsible=$8, logo_url=$9 WHERE id=$10',
+        [name, tradingName, cnpj, address, cnae, riskDegree || null, sstResponsible || null, rhResponsible || null, logoUrl || null, id]
       );
-      res.json({ id, name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible });
+      res.json({ id, name, tradingName, cnpj, address, cnae, riskDegree, sstResponsible, rhResponsible, logoUrl });
     } catch (e) {
       res.status(500).json({ error: 'DB Error' });
     }
