@@ -663,9 +663,9 @@ async function startServer() {
       // Fluxo 1: Recibo de entrega (WhatsApp ao colaborador)
       notifyN8N('/webhook/sst-epi-delivery', deliveryPayload);
 
-      // Fluxo 5: Link de assinatura digital (se método for 'link')
+      // Fluxo 5 / Fluxo 9: Link de assinatura digital (se método for 'link')
       if (signingMethod === 'link') {
-        notifyN8N('/webhook/sst-signature-link', {
+        notifyN8N('/webhook/sst-epi-confirm-link', {
           ...deliveryPayload,
           delivery: { ...deliveryPayload.delivery, signatureLink: `${process.env.APP_URL || 'https://sst.novohorizonte.com'}/assinar/${id}` }
         });
