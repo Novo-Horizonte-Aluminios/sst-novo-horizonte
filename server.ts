@@ -722,7 +722,7 @@ async function startServer() {
         if (empRes.rows.length > 0) empData = empRes.rows[0];
       } catch (_) {}
 
-      notifyN8N('/webhook/sst-signature-link', {
+      notifyN8N('/webhook/sst-epi-confirm-link', {
         deliveryId: id, employeeId,
         employeeName: empData.name || employeeName,
         employeePhone: empData.phone || '', employeeEmail: empData.email || '',
@@ -755,7 +755,7 @@ async function startServer() {
       const appUrl = process.env.APP_URL || process.env.COOLIFY_URL || 'https://sst.novohorizonte.com';
       const confirmUrl = `${appUrl}/?tab=epi-confirm&token=${row.confirm_token}`;
 
-      notifyN8N('/webhook/sst-signature-link', {
+      notifyN8N('/webhook/sst-epi-confirm-link', {
         deliveryId: row.id, employeeId: row.employee_id,
         employeeName: row.emp_name || row.employee_name,
         employeePhone: row.emp_phone || '', employeeEmail: row.emp_email || '',
