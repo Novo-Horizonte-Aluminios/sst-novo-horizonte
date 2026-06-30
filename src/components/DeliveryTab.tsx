@@ -1600,7 +1600,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                           </head>
                           <body>
                             <div class="header">
-                              <h1 class="logo-text">NOVO HORIZONTE ALUMÍNIOS</h1>
+                              <img src="/logo_horizontal.png" alt="Novo Horizonte Alumínios" style="max-height: 48px; margin-bottom: 12px; filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(5463%) prev-color;" onError="this.style.display='none';" />
                               <div class="subtitle">Segurança e Saúde do Trabalho</div>
                               <div class="title">Comprovante de Entrega de EPI</div>
                               <div class="protocol-badge">${protocolStr}</div>
