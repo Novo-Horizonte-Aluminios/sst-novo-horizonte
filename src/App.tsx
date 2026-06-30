@@ -455,6 +455,7 @@ export default function App() {
                   deliveries={deliveries}
                   employeeTrainings={employeeTrainings}
                   onNavigate={(tab) => setActiveTab(tab)}
+                  userRole={userRole}
                 />;
       case 'ai':
         return <AIChatTab />;

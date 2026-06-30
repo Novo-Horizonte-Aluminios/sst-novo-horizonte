@@ -34,6 +34,7 @@ interface WhatsAppTabProps {
   deliveries: PPEDelivery[];
   employeeTrainings: EmployeeTraining[];
   onNavigate: (tab: string) => void;
+  userRole?: string;
 }
 
 interface WhatsAppLog {
@@ -54,7 +55,8 @@ export default function WhatsAppTab({
   ppes,
   deliveries,
   employeeTrainings,
-  onNavigate
+  onNavigate,
+  userRole
 }: WhatsAppTabProps) {
   const [logs, setLogs] = useState<WhatsAppLog[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(true);
@@ -215,31 +217,35 @@ export default function WhatsAppTab({
       };
     });
 
-  // 2. PPE CA Alerts (Deliveries of PPE where its CA is Expired / Vencido)
-  // Let's analyze deliveries that are currently 'Entregue' (delivered) but where the PPE has an expired CA
-  const pendingCAs = deliveries
-    .filter(d => d.status === 'Entregue')
-    .reduce((acc: any[], delivery) => {
-      const ppe = ppes.find(p => p.id === delivery.ppeId);
-      if (ppe && ppe.caStatus !== 'Válido') {
-        // Prevent duplicate employee-ppe pairs for simplicity
-        const exists = acc.some(item => item.employeeId === delivery.employeeId && item.detail === ppe.name);
-        if (!exists) {
-          acc.push({
-            id: `ca_${delivery.id}`,
-            dbId: delivery.id,
-            employeeId: delivery.employeeId,
-            employeeName: delivery.employeeName,
-            alertType: 'ca_vencimento',
-            label: `CA Vencido [CA ${ppe.caNumber}]`,
-            detail: ppe.name,
-            codeOrDate: ppe.caNumber,
-            nr: 'NR-06',
-            phone: getEmployeePhone(delivery.employeeId),
-            riskLevel: 'Legal/NR'
-          });
+  // 2. PPE CA Alerts (Find employees holding an EPI that currently has an Expired CA)
+  const pendingCAs = employees
+    .filter(emp => emp.status === 'Ativo')
+    .reduce((acc: any[], emp) => {
+      // Find all deliveries for this employee that are 'Entregue'
+      const empDeliveries = deliveries.filter(d => d.employeeId === emp.id && d.status === 'Entregue');
+      
+      empDeliveries.forEach(delivery => {
+        const ppe = ppes.find(p => p.id === delivery.ppeId);
+        // If the PPE CA is expired (status is not 'Válido' or contains 'Vencido')
+        if (ppe && (ppe.caStatus === 'Vencido' || ppe.caStatus?.toLowerCase().includes('vencido') || ppe.caStatus === 'Expired')) {
+          const exists = acc.some(item => item.employeeId === emp.id && item.detail === ppe.name);
+          if (!exists) {
+            acc.push({
+              id: `ca_${delivery.id}_${emp.id}`,
+              dbId: delivery.id,
+              employeeId: emp.id,
+              employeeName: emp.name,
+              alertType: 'ca_vencimento',
+              label: `CA Vencido [CA ${ppe.caNumber || ppe.ca}]`,
+              detail: ppe.name,
+              codeOrDate: ppe.caExpiryDate ? new Date(ppe.caExpiryDate).toLocaleDateString("pt-BR") : (ppe.caNumber || ppe.ca || 'N/A'),
+              nr: 'NR-06',
+              phone: getEmployeePhone(emp.id),
+              riskLevel: 'Legal/NR'
+            });
+          }
         }
-      }
+      });
       return acc;
     }, []);
 
@@ -384,128 +390,132 @@ export default function WhatsAppTab({
       </div>
 
       {/* CONFIGURAÇÃO DE INTEGRAÇÃO */}
-      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm mt-4 transition-all hover:shadow-md">
-        <h3 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest mb-2 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
-          <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-          Configurações de Integração (n8n)
-        </h3>
-        <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
-          Defina o endereço base do seu servidor n8n. Por padrão, o sistema utiliza a URL de ambiente configurada no servidor.
-        </p>
-        <div className="flex flex-col gap-5 max-w-2xl">
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">URL do Webhook n8n</label>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  value={n8nWebhookUrl}
-                  onChange={(e) => setN8nWebhookUrl(e.target.value)}
-                  placeholder="https://n8n.novohorizonte.com"
-                  className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 font-mono text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
-                />
+      {userRole === 'Admin' && (
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm mt-4 transition-all hover:shadow-md">
+          <h3 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest mb-2 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
+            <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+            Configurações de Integração (n8n)
+          </h3>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
+            Defina o endereço base do seu servidor n8n. Por padrão, o sistema utiliza a URL de ambiente configurada no servidor.
+          </p>
+          <div className="flex flex-col gap-5 max-w-2xl">
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">URL do Webhook n8n</label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={n8nWebhookUrl}
+                    onChange={(e) => setN8nWebhookUrl(e.target.value)}
+                    placeholder="https://n8n.novohorizonte.com"
+                    className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 font-mono text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Intervalo de Cobrança Automática de EPI (WhatsApp)</label>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1">
-                <select
-                  value={epiReminderIntervalHours}
-                  onChange={(e) => setEpiReminderIntervalHours(e.target.value)}
-                  className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Intervalo de Cobrança Automática de EPI (WhatsApp)</label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <select
+                    value={epiReminderIntervalHours}
+                    onChange={(e) => setEpiReminderIntervalHours(e.target.value)}
+                    className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
+                  >
+                    <option value="4">A cada 4 horas</option>
+                    <option value="8">A cada 8 horas (Recomendado)</option>
+                    <option value="12">A cada 12 horas</option>
+                    <option value="24">A cada 24 horas (Diário)</option>
+                    <option value="0">Desativar cobrança automática</option>
+                  </select>
+                </div>
+                <button
+                  onClick={handleSaveSettings}
+                  disabled={isSavingSettings}
+                  className="bg-slate-900 hover:bg-slate-800 text-white text-xs px-6 py-3.5 rounded-xl font-bold transition-all hover:-translate-y-0.5 shadow-sm disabled:opacity-50 cursor-pointer self-start"
                 >
-                  <option value="4">A cada 4 horas</option>
-                  <option value="8">A cada 8 horas (Recomendado)</option>
-                  <option value="12">A cada 12 horas</option>
-                  <option value="24">A cada 24 horas (Diário)</option>
-                  <option value="0">Desativar cobrança automática</option>
-                </select>
+                  {isSavingSettings ? 'Salvando...' : 'Salvar Configurações'}
+                </button>
               </div>
-              <button
-                onClick={handleSaveSettings}
-                disabled={isSavingSettings}
-                className="bg-slate-900 hover:bg-slate-800 text-white text-xs px-6 py-3.5 rounded-xl font-bold transition-all hover:-translate-y-0.5 shadow-sm disabled:opacity-50 cursor-pointer self-start"
-              >
-                {isSavingSettings ? 'Salvando...' : 'Salvar Configurações'}
-              </button>
             </div>
           </div>
+          {saveSettingsResult && (
+            <div className="mt-3 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+              {saveSettingsResult}
+            </div>
+          )}
         </div>
-        {saveSettingsResult && (
-          <div className="mt-3 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-            {saveSettingsResult}
-          </div>
-        )}
-      </div>
+      )}
 
       {/* FERRAMENTAS DE TESTE (N8N) */}
-      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm mt-6 transition-all hover:shadow-md">
-        <h3 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
-          <Activity className="w-4 h-4 text-emerald-500" />
-          FERRAMENTAS DE TESTE (N8N)
-        </h3>
-        <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
-          Utilize estes botões para disparar eventos de teste diretamente para os Webhooks do n8n (modo <strong>Listen for test event</strong>).
-          Você não precisa cadastrar nada real no sistema para validar a conexão.
-        </p>
+      {userRole === 'Admin' && (
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm mt-6 transition-all hover:shadow-md">
+          <h3 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
+            <Activity className="w-4 h-4 text-emerald-500" />
+            FERRAMENTAS DE TESTE (N8N)
+          </h3>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
+            Utilize estes botões para disparar eventos de teste diretamente para os Webhooks do n8n (modo <strong>Listen for test event</strong>).
+            Você não precisa cadastrar nada real no sistema para validar a conexão.
+          </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          <button
-            onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
-            disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-          >
-            <Package className="w-6 h-6 text-emerald-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Recibo EPI</span>
-          </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            <button
+              onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <Package className="w-6 h-6 text-emerald-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Recibo EPI</span>
+            </button>
 
-          <button
-            onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
-            disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-          >
-            <Users className="w-6 h-6 text-indigo-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Boas Vindas</span>
-          </button>
+            <button
+              onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <Users className="w-6 h-6 text-indigo-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Boas Vindas</span>
+            </button>
 
-          <button
-            onClick={() => handleTestN8n('sst-training-new', { training: { employeeName: 'Colaborador Teste', trainingTitle: 'NR-35 Trabalho em Altura', issueDate: new Date().toISOString(), score: 10 } })}
-            disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-          >
-            <GraduationCap className="w-6 h-6 text-amber-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Treinamento</span>
-          </button>
+            <button
+              onClick={() => handleTestN8n('sst-training-new', { training: { employeeName: 'Colaborador Teste', trainingTitle: 'NR-35 Trabalho em Altura', issueDate: new Date().toISOString(), score: 10 } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <GraduationCap className="w-6 h-6 text-amber-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Treinamento</span>
+            </button>
 
-          <button
-            onClick={() => handleTestN8n('sst-inspection-new', { inspection: { title: 'Inspeção de Rotina (Teste)', type: 'Rotina', scheduledDate: new Date().toISOString(), responsible: 'Técnico Teste' } })}
-            disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-          >
-            <ClipboardCheck className="w-6 h-6 text-blue-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Inspeção</span>
-          </button>
+            <button
+              onClick={() => handleTestN8n('sst-inspection-new', { inspection: { title: 'Inspeção de Rotina (Teste)', type: 'Rotina', scheduledDate: new Date().toISOString(), responsible: 'Técnico Teste' } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <ClipboardCheck className="w-6 h-6 text-blue-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Inspeção</span>
+            </button>
 
-          <button
-            onClick={() => handleTestN8n('sst-accident', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
-            disabled={isTesting}
-            className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-          >
-            <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
-            <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Acidente</span>
-          </button>
-        </div>
-        
-        {testResult && (
-          <div className={"mt-3 p-3 rounded-xl text-[11px] font-bold flex items-center gap-2 " + (testResult.includes('Erro') ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200')}>
-            {testResult.includes('Erro') ? <AlertCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
-            {testResult}
+            <button
+              onClick={() => handleTestN8n('sst-accident', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Acidente</span>
+            </button>
           </div>
-        )}
-      </div>
+
+          {testResult && (
+            <div className={"mt-3 p-3 rounded-xl text-[11px] font-bold flex items-center gap-2 " + (testResult.includes('Erro') ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200')}>
+              {testResult.includes('Erro') ? <AlertCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
+              {testResult}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Primary Tab Bar */}
       <div className="border-b border-slate-200 dark:border-slate-700/80 flex gap-3 pb-px">
