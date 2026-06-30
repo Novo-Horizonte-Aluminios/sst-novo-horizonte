@@ -67,6 +67,7 @@ export default function WhatsAppTab({
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
   const [n8nWebhookUrl, setN8nWebhookUrl] = useState('');
+  const [epiReminderIntervalHours, setEpiReminderIntervalHours] = useState('8');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [saveSettingsResult, setSaveSettingsResult] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{
@@ -90,6 +91,7 @@ export default function WhatsAppTab({
       if (res.ok) {
         const data = await res.json();
         setN8nWebhookUrl(data.n8n_webhook_url || '');
+        setEpiReminderIntervalHours(data.epi_reminder_interval_hours || '8');
       }
     } catch (e) {
       console.error('Erro ao carregar configurações:', e);
@@ -103,7 +105,10 @@ export default function WhatsAppTab({
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ n8n_webhook_url: n8nWebhookUrl })
+        body: JSON.stringify({ 
+          n8n_webhook_url: n8nWebhookUrl,
+          epi_reminder_interval_hours: parseInt(epiReminderIntervalHours) || 0
+        })
       });
       const data = await res.json();
       if (res.ok) {
@@ -387,26 +392,50 @@ export default function WhatsAppTab({
         <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
           Defina o endereço base do seu servidor n8n. Por padrão, o sistema utiliza a URL de ambiente configurada no servidor.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
-          <div className="flex-1">
-            <input
-              type="text"
-              value={n8nWebhookUrl}
-              onChange={(e) => setN8nWebhookUrl(e.target.value)}
-              placeholder="https://n8n.novohorizonte.com"
-              className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 font-mono text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
-            />
+        <div className="flex flex-col gap-5 max-w-2xl">
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">URL do Webhook n8n</label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  value={n8nWebhookUrl}
+                  onChange={(e) => setN8nWebhookUrl(e.target.value)}
+                  placeholder="https://n8n.novohorizonte.com"
+                  className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 font-mono text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
+                />
+              </div>
+            </div>
           </div>
-          <button
-            onClick={handleSaveSettings}
-            disabled={isSavingSettings}
-            className="bg-slate-900 hover:bg-slate-800 text-white text-xs px-5 py-3 rounded-xl font-bold transition-all hover:-translate-y-0.5 shadow-sm disabled:opacity-50 cursor-pointer"
-          >
-            {isSavingSettings ? 'Salvando...' : 'Salvar URL'}
-          </button>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Intervalo de Cobrança Automática de EPI (WhatsApp)</label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <select
+                  value={epiReminderIntervalHours}
+                  onChange={(e) => setEpiReminderIntervalHours(e.target.value)}
+                  className="w-full text-[13px] p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:border-slate-600"
+                >
+                  <option value="4">A cada 4 horas</option>
+                  <option value="8">A cada 8 horas (Recomendado)</option>
+                  <option value="12">A cada 12 horas</option>
+                  <option value="24">A cada 24 horas (Diário)</option>
+                  <option value="0">Desativar cobrança automática</option>
+                </select>
+              </div>
+              <button
+                onClick={handleSaveSettings}
+                disabled={isSavingSettings}
+                className="bg-slate-900 hover:bg-slate-800 text-white text-xs px-6 py-3.5 rounded-xl font-bold transition-all hover:-translate-y-0.5 shadow-sm disabled:opacity-50 cursor-pointer self-start"
+              >
+                {isSavingSettings ? 'Salvando...' : 'Salvar Configurações'}
+              </button>
+            </div>
+          </div>
         </div>
         {saveSettingsResult && (
-          <div className="mt-2 text-[10px] font-bold text-slate-600 dark:text-slate-300">
+          <div className="mt-3 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
             {saveSettingsResult}
           </div>
         )}

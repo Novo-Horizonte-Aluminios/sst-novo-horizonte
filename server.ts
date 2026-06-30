@@ -216,7 +216,12 @@ async function startServer() {
   app.get('/api/settings', async (req, res) => {
     try {
       const webhookUrl = await getN8NWebhookUrl();
-      res.json({ n8n_webhook_url: webhookUrl });
+      const reminderRes = await query("SELECT value FROM system_settings WHERE key = 'epi_reminder_interval_hours'");
+      const reminderInterval = reminderRes.rows.length > 0 ? reminderRes.rows[0].value : '8';
+      res.json({ 
+        n8n_webhook_url: webhookUrl,
+        epi_reminder_interval_hours: reminderInterval 
+      });
     } catch (e: any) {
       console.error(e);
       res.status(500).json({ error: 'Erro ao buscar configurações.' });
@@ -225,22 +230,28 @@ async function startServer() {
 
   app.post('/api/settings', async (req, res) => {
     try {
-      const { n8n_webhook_url } = req.body;
-      if (!n8n_webhook_url) {
-        return res.status(400).json({ error: 'URL do Webhook é obrigatória.' });
-      }
+      const { n8n_webhook_url, epi_reminder_interval_hours } = req.body;
       
-      // Ensure the URL is valid
-      try {
-        new URL(n8n_webhook_url);
-      } catch (err) {
-        return res.status(400).json({ error: 'URL inválida.' });
+      if (n8n_webhook_url) {
+        // Ensure the URL is valid
+        try {
+          new URL(n8n_webhook_url);
+        } catch (err) {
+          return res.status(400).json({ error: 'URL inválida.' });
+        }
+        await query(
+          "INSERT INTO system_settings (key, value) VALUES ('n8n_webhook_url', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
+          [n8n_webhook_url.trim()]
+        );
       }
 
-      await query(
-        "INSERT INTO system_settings (key, value) VALUES ('n8n_webhook_url', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
-        [n8n_webhook_url.trim()]
-      );
+      if (epi_reminder_interval_hours !== undefined) {
+        await query(
+          "INSERT INTO system_settings (key, value) VALUES ('epi_reminder_interval_hours', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
+          [String(epi_reminder_interval_hours)]
+        );
+      }
+
       res.json({ success: true, message: 'Configurações salvas com sucesso.' });
     } catch (e: any) {
       console.error(e);
@@ -3070,22 +3081,32 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     console.log(`PROMPT MASTER SST Server listening on http://localhost:${PORT}`);
   });
 
-  // --- AUTOMATIC EPI WAITING SIGNATURE REMINDER DAEMON (8-hour window) ---
+  // --- AUTOMATIC EPI WAITING SIGNATURE REMINDER DAEMON (Dynamic interval) ---
   setInterval(async () => {
     try {
-      console.log('[Reminders] Verificando se há assinaturas pendentes para cobrança automática...');
+      // Busca o intervalo definido pelo usuário
+      const intervalRes = await query("SELECT value FROM system_settings WHERE key = 'epi_reminder_interval_hours'");
+      const intervalHours = parseInt(intervalRes.rows.length > 0 ? intervalRes.rows[0].value : '8') || 0;
       
-      // Busca entregas pendentes via link criadas há mais de 8 horas e cuja última notificação também foi há mais de 8 horas
+      // Se for 0, a rotina de lembretes automáticos está desativada
+      if (intervalHours <= 0) {
+        console.log('[Reminders] Cobrança automática desativada pelo usuário.');
+        return;
+      }
+
+      console.log(`[Reminders] Verificando assinaturas pendentes para cobrança automática (Janela: ${intervalHours} horas)...`);
+      
+      // Busca entregas pendentes via link criadas há mais de X horas e cuja última notificação também foi há mais de X horas
       const pendingDeliveries = await query(`
         SELECT d.*, e.name as emp_name, e.phone as emp_phone, e.email as emp_email
         FROM deliveries d
         JOIN employees e ON d.employee_id = e.id
         WHERE d.status = 'Pendente' 
           AND d.signing_method = 'link'
-          AND d.created_at <= NOW() - INTERVAL '8 hours'
-          AND (d.last_notified_at IS NULL OR d.last_notified_at <= NOW() - INTERVAL '8 hours')
+          AND d.created_at <= NOW() - ($1 * INTERVAL '1 hour')
+          AND (d.last_notified_at IS NULL OR d.last_notified_at <= NOW() - ($1 * INTERVAL '1 hour'))
           AND (d.confirm_token_expires_at IS NULL OR d.confirm_token_expires_at > NOW())
-      `);
+      `, [intervalHours]);
 
       if (pendingDeliveries.rows.length === 0) {
         console.log('[Reminders] Nenhuma entrega pendente precisa de cobrança automática neste ciclo.');
@@ -3121,7 +3142,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     } catch (e) {
       console.error('[Reminders Error] Falha ao rodar daemon de cobrança automática:', e);
     }
-  }, 1 * 60 * 60 * 1000); // Roda a cada 1 hora checking para as últimas 8 horas
+  }, 1 * 60 * 60 * 1000); // Roda a cada 1 hora checking de forma dinâmica
 }
 
 startServer();

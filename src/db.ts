@@ -428,6 +428,11 @@ export const initDb = async () => {
       `);
     }
 
+    // Seeder para Configurações de Sistema do reminder
+    await client.query(`
+      INSERT INTO system_settings (key, value) VALUES ('epi_reminder_interval_hours', '8') ON CONFLICT (key) DO NOTHING
+    `);
+
     // Verificar e criar usuários iniciais se não existirem
     const userCheck = await client.query("SELECT id FROM users WHERE username = 'admin'");
     if (userCheck.rows.length === 0) {
