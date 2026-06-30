@@ -213,62 +213,76 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Automatic MTE CA Checking tool */}
-        <div className="lg:col-span-1 bg-[#0f172a] text-slate-100 p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between text-[11px] shadow-lg">
+        <div className="lg:col-span-1 bg-slate-900 text-slate-100 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col justify-between text-[11.5px]">
           <div>
-            <div className="flex items-center gap-2 mb-3 pr-2">
-              <div className="bg-safety-green/20 text-safety-green p-1.5 rounded-lg">
-                <ShieldCheck className="w-4 h-4" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="bg-brand-primary/10 text-brand-primary p-2 rounded-xl border border-brand-primary/20">
+                <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="text-xs font-black tracking-tight text-white uppercase">Consulta MTE (CA)</h3>
+              <div>
+                <h3 className="text-xs font-black tracking-wider text-slate-200 uppercase">Consulta de CA</h3>
+                <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Base Nacional MTE</p>
+              </div>
             </div>
-            <p className="text-slate-400 text-[10.5px] leading-relaxed mb-4">
-              Pesquisa rápida em tempo real com a base nacional do Ministério do Trabalho e Emprego para validação de faturamento e vencimentos.
+            <p className="text-slate-400 text-[11px] leading-relaxed mb-5">
+              Validação cadastral em tempo real de faturamento, laudos técnicos, marca e prazos de validade do Certificado de Aprovação.
             </p>
 
-            <form onSubmit={handleScrapeCA} className="space-y-2">
-              <label className="text-[9px] text-slate-400 font-mono block font-bold uppercase tracking-wider">Certificado de Aprovação (CA)</label>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  required
-                  placeholder="Ex: 39712 ou 32145"
-                  value={caSearchNumber}
-                  onChange={(e) => setCaSearchNumber(e.target.value)}
-                  className="bg-slate-950 border-2 border-slate-800 text-white p-3 px-3.5 rounded-xl text-[12px] font-mono flex-1 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 transition-all font-bold"
-                />
-                <button
-                  type="submit"
-                  disabled={scraping}
-                  className="px-4 py-2.5 bg-safety-green hover:bg-safety-green-dark text-white font-black rounded-xl text-[11px] uppercase tracking-wider transition-all hover:-translate-y-0.5 shadow-md cursor-pointer flex items-center justify-center min-w-[85px] disabled:opacity-50"
-                >
-                  {scraping ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Consultar'}
-                </button>
+            <form onSubmit={handleScrapeCA} className="space-y-3">
+              <div>
+                <label className="text-[9px] text-slate-400 font-mono block font-black uppercase tracking-widest mb-1.5">Insira o Nº do CA</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    required
+                    placeholder="Ex: 12509"
+                    value={caSearchNumber}
+                    onChange={(e) => setCaSearchNumber(e.target.value)}
+                    className="bg-slate-950 border border-slate-800 text-white p-3 px-4 rounded-xl text-[13px] font-mono flex-1 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all font-bold"
+                  />
+                  <button
+                    type="submit"
+                    disabled={scraping}
+                    className="px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-dark text-slate-900 font-black rounded-xl text-[11px] uppercase tracking-wider transition-all hover:scale-[1.02] shadow-lg cursor-pointer flex items-center justify-center min-w-[95px] disabled:opacity-50"
+                  >
+                    {scraping ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Consultar'}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
 
-          <div className="mt-5 pt-4 border-t border-slate-800 flex-1 flex flex-col justify-center">
+          <div className="mt-6 pt-5 border-t border-slate-800/80 flex-1 flex flex-col justify-center">
             {caScrapeResult ? (
-              <div className="bg-slate-950/60 p-4 rounded-xl space-y-3 border border-slate-800/80 font-sans leading-relaxed text-[11px]">
-                <div className="flex justify-between items-center border-b border-slate-900 pb-2">
-                  <span className="font-black text-white text-[12px]">CA Nº {caScrapeResult.number}</span>
-                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+              <div className="bg-slate-950/80 p-5 rounded-xl space-y-3.5 border border-slate-800/80 font-sans leading-relaxed text-[11px] relative overflow-hidden animate-fade-in">
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-brand-primary to-emerald-500"></div>
+                <div className="flex justify-between items-center pb-2.5 border-b border-slate-900">
+                  <span className="font-black text-white text-[13px] tracking-tight">CA Nº {caScrapeResult.number}</span>
+                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider ${
                     caScrapeResult.status === 'Válido' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                   }`}>
                     {caScrapeResult.status}
                   </span>
                 </div>
 
-                <div className="space-y-2 text-slate-300">
-                  <p><span className="text-slate-500 dark:text-slate-400 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Equipamento</span> {caScrapeResult.equipment}</p>
-                  <p><span className="text-slate-500 dark:text-slate-400 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Fabricante</span> {caScrapeResult.manufacturer}</p>
-                  <p className="text-slate-400 font-mono text-[10px]">Validade: <strong className={caScrapeResult.status === 'Vencido' ? 'text-rose-400' : 'text-safety-green'}>{caScrapeResult.expiryDate}</strong></p>
+                <div className="space-y-2.5 text-slate-300">
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 font-black uppercase text-[8px] block tracking-widest mb-0.5">Equipamento Homologado</span>
+                    <p className="font-medium text-slate-200 text-[11.5px] leading-snug">{caScrapeResult.equipment}</p>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 font-black uppercase text-[8px] block tracking-widest mb-0.5">Razão Social / Fabricante</span>
+                    <p className="font-medium text-slate-200 text-[11px] leading-normal">{caScrapeResult.manufacturer}</p>
+                  </div>
+                  <div className="flex justify-between items-center pt-1.5 border-t border-slate-900/60">
+                    <span className="text-slate-500 font-bold uppercase text-[8.5px] tracking-wider">Prazo de Validade</span>
+                    <strong className={`font-mono text-[12px] ${caScrapeResult.status === 'Vencido' ? 'text-rose-400' : 'text-emerald-400'}`}>{caScrapeResult.expiryDate}</strong>
+                  </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => {
-                    // Pre-fill creation form state with values from national CA lookup
                     const [day, month, year] = caScrapeResult.expiryDate.split('/');
                     const formattedDate = (year && month && day) ? `${year}-${month}-${day}` : '';
                     
@@ -296,21 +310,21 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                     });
                     setShowAddModal(true);
                   }}
-                  className="w-full mt-2 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[10px] uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1"
+                  className="w-full mt-2 py-2.5 bg-brand-primary hover:bg-brand-primary-dark text-slate-900 font-black rounded-xl text-[10.5px] uppercase tracking-wider transition-all hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-4 h-4" />
                   <span>Importar para Cadastro</span>
                 </button>
               </div>
             ) : scraping ? (
-              <div className="text-center py-6 text-slate-400 flex flex-col items-center justify-center gap-2">
-                <RefreshCw className="w-6 h-6 animate-spin text-safety-green" />
-                <p className="animate-pulse text-[10px] font-bold">Consultando base do MTE Federal...</p>
+              <div className="text-center py-8 text-slate-400 flex flex-col items-center justify-center gap-2.5 bg-slate-950/40 border border-slate-800/60 rounded-2xl">
+                <RefreshCw className="w-7 h-7 animate-spin text-brand-primary" />
+                <p className="animate-pulse text-[10px] uppercase tracking-widest font-black text-slate-400">Consultando base nacional...</p>
               </div>
             ) : (
-              <div className="text-center py-6 text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center gap-2.5 border-2 border-dashed border-slate-800 rounded-xl">
-                <HelpCircle className="w-7 h-7 text-slate-700 dark:text-slate-200 animate-pulse" />
-                <p className="max-w-[200px] mx-auto text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-normal">Digite um CA acima e execute para validar na base oficial.</p>
+              <div className="text-center py-8 text-slate-500 dark:text-slate-450 flex flex-col items-center justify-center gap-2.5 border border-dashed border-slate-800 rounded-2xl bg-slate-950/20">
+                <HelpCircle className="w-8 h-8 text-slate-700 dark:text-slate-650" />
+                <p className="max-w-[190px] mx-auto text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider leading-relaxed">Digite um CA acima e execute para validar na base oficial.</p>
               </div>
             )}
           </div>
