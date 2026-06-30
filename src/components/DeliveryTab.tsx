@@ -1337,7 +1337,7 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                                     <button 
                                       onClick={() => handleResendLink(delivery.id)}
                                       title="Reenviar link para WhatsApp"
-                                      className="px-1.5 py-0.5 bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 hover:text-sky-600 rounded text-[7px] font-bold uppercase transition-colors flex items-center gap-1"
+                                      className="px-1.5 py-0.5 bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 hover:text-sky-600 rounded text-[7px] font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer"
                                     >
                                       <Send className="w-2 h-2" /> Reenviar
                                     </button>
