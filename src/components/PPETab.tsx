@@ -77,22 +77,25 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
         
         await new Promise(r => setTimeout(r, 1000));
         
-        // Dados reais para CA 12509 (Luva de Látex da Mucambo/Ansell), CA 25883 (Capacete Plastcor) e CA 44591 (Botina Estival)
+        // Dados reais para CA 12509 (Luva de Látex da Mucambo/Ansell), CA 25883 (Capacete Plastcor), CA 44591 (Botina Estival), CA 39470 (Avental Zanel)
         setCaScrapeResult({
           number: caSearchNumber,
           status: caNumObj === 12509 ? 'Válido' : 
                   (caNumObj === 25883 ? 'Válido' : 
                   (caNumObj === 44591 ? 'Válido' : 
-                  (isExpired ? 'Vencido' : 'Válido'))),
+                  (caNumObj === 39470 ? 'Válido' : 
+                  (isExpired ? 'Vencido' : 'Válido')))),
           equipment: caNumObj === 12509 ? 'Luva de segurança tricotada em fio de algodão e poliéster, revestida em látex natural na palma' :
                      caNumObj === 25883 ? 'Capacete de Segurança Classe B Tipo I (Aba Total, PEAD)' :
                      caNumObj === 44591 ? 'Calçado de Segurança tipo Botina Ocupacional (Atacador, Cano Curto)' : 
+                     caNumObj === 39470 ? 'Avental de Segurança Tipo Barbeiro confeccionado em couro raspa' :
                      caNumObj === 39712 ? 'Protetor auditivo tipo plug de silicone termo moldável' :
                      caNumObj === 28932 ? 'Luva de vaqueta cano curto para proteção mecânica e abrasiva' :
                      'Equipamento de Proteção Individual Homologado MTE',
           manufacturer: caNumObj === 12509 ? 'ANSELL BRAZIL LTDA.' :
                         caNumObj === 25883 ? 'PLASTCOR DO BRASIL LTDA' :
                         caNumObj === 44591 ? 'ESTIVAL IMPORTACAO EXPORTACAO LTDA' :
+                        caNumObj === 39470 ? 'ZANEL INDÚSTRIA E COMÉRCIO DE EQUIPAMENTOS DE PROTEÇÃO LTDA.' :
                         caNumObj === 39712 ? '3M do Brasil Limitada' :
                         caNumObj === 28932 ? 'Marluvas Calçados de Segurança S/A' :
                         'Indústria e Comércio de EPIs Ltda.',
@@ -100,12 +103,14 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
           expiryDate: caNumObj === 12509 ? '27/05/2029' :
                       caNumObj === 25883 ? '18/11/2028' :
                       caNumObj === 44591 ? '03/09/2025' :
+                      caNumObj === 39470 ? '18/11/2029' :
                       caNumObj === 39712 ? '15/09/2028' :
                       caNumObj === 28932 ? '12/03/2024' :
                       (isExpired ? '12/03/2025' : '18/11/2029'),
           protectionTypes: caNumObj === 12509 ? 'PROTEÇÃO DAS MÃOS DO USUÁRIO CONTRA AGENTES ABRASIVOS, ESCORIANTES, CORTANTES E PERFURANTES.' :
                            caNumObj === 25883 ? 'PROTEÇÃO DA CABEÇA DO USUÁRIO CONTRA IMPACTOS SOBRE O CRÂNIO E RISCOS ELÉTRICOS.' :
                            caNumObj === 44591 ? 'PROTEÇÃO DOS PÉS DO USUÁRIO CONTRA RISCOS DE NATUREZA LEVE, AGENTES ABRASIVOS E ESCORIANTES.' :
+                           caNumObj === 39470 ? 'PROTEÇÃO DO TRONCO DO USUÁRIO CONTRA AGENTES ABRASIVOS, ESCORIANTES E TÉRMICOS PROVENIENTES DE OPERAÇÕES DE SOLDAGEM E PROCESSOS SIMILARES.' :
                            'PROTEÇÃO DO USUÁRIO CONTRA RISCOS OCUPACIONAIS EM SINTONIA COM A NR-06.',
           mteHash: `TEM-MTE-HASH-${caSearchNumber}-CO`,
           normativeReferences: caNumObj === 25883 ? 'ABNT NBR 8221:2019' : (caNumObj === 44591 ? 'ABNT NBR ISO 20347:2015' : 'ABNT NBR, ANSI/ISEA Z87.1')
