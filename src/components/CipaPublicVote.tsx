@@ -143,13 +143,20 @@ export default function CipaPublicVote({ token }: { token: string }) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#070b13] flex flex-col items-center justify-center p-4">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
+      <div className="min-h-screen bg-[#070b13] flex flex-col items-center justify-center p-4 font-sans">
+        <div className="mb-6">
+          <img src="/logo_horizontal.png" alt="Logo Novo Horizonte Alumínios" className="h-14 w-auto object-contain" />
+        </div>
+        <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-rose-500 to-amber-500"></div>
           <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
             <ShieldCheck className="w-8 h-8 text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Acesso Restrito</h2>
-          <p className="text-slate-400 text-sm whitespace-pre-line leading-relaxed">{error}</p>
+          <h2 className="text-xl font-bold text-white mb-2 uppercase tracking-wide">Acesso de Votação CIPA</h2>
+          <p className="text-slate-400 text-sm whitespace-pre-line leading-relaxed font-medium">{error}</p>
+          <div className="mt-6 pt-4 border-t border-slate-800 text-[10px] text-slate-500 uppercase tracking-widest font-mono">
+            SESMT • Segurança em Primeiro Lugar
+          </div>
         </div>
       </div>
     );
