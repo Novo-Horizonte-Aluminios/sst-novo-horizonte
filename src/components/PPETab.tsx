@@ -306,7 +306,7 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                       caIssueDate: formattedApproval,
                       caExpiryDate: formattedExpiry,
                       fispqRelation: 'N/A',
-                      manualUrl: '',
+                      manualUrl: `https://consultaca.com/ca/${caScrapeResult.number}`,
                       stockCount: 50,
                       minStock: 10,
                       durabilityDays: 90,
