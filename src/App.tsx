@@ -530,13 +530,29 @@ export default function App() {
         
         <header className="h-[72px] bg-white dark:bg-slate-800/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700/60 dark:border-slate-800 px-8 flex justify-between items-center shrink-0 z-10 shadow-sm">
           <div className="flex items-center gap-6">
-            <div>
-              <h2 className="text-[9px] font-black tracking-[0.18em] text-brand-primary dark:text-brand-primary uppercase leading-relaxed">
-                Painel de Gestão SST
-              </h2>
-              <h1 className="text-[1.35rem] font-black text-slate-900 dark:text-white dark:text-white tracking-tight leading-tight">
-                Olá, {currentUser.name.split(' ')[0]}
-              </h1>
+            <div className="flex items-center gap-3">
+              <span className="text-xl">
+                {(() => {
+                  const hour = new Date().getHours();
+                  if (hour >= 6 && hour < 12) return '☀️';
+                  if (hour >= 12 && hour < 18) return '⛅';
+                  return '🌙';
+                })()}
+              </span>
+              <div>
+                <h1 className="text-[1.35rem] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                  {(() => {
+                    const hour = new Date().getHours();
+                    let greeting = 'Boa noite';
+                    if (hour >= 6 && hour < 12) greeting = 'Bom dia';
+                    else if (hour >= 12 && hour < 18) greeting = 'Boa tarde';
+                    return `${greeting}, ${currentUser.name.split(' ')[0]}`;
+                  })()}
+                </h1>
+                <h2 className="text-[9px] font-black tracking-[0.18em] text-emerald-500 dark:text-emerald-400 uppercase leading-relaxed mt-0.5">
+                  {currentUser.role === 'Admin' ? 'ADMIN ROOT' : 'TÉCNICO DE SEGURANÇA'}
+                </h2>
+              </div>
             </div>
 
           </div>
