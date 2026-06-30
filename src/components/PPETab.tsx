@@ -56,18 +56,35 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
 
     try {
       // 1. Tentar consultar API pública nacional do ConsultaCA ou espelhos da base oficial do MTE
-      const res = await fetch(`https://ca.consultacapublica.com.br/api/v1/ca/${caSearchNumber}`).catch(() => null);
+      let data: any = null;
+      let res = await fetch(`https://ca.consultacapublica.com.br/api/v1/ca/${caSearchNumber}`).catch(() => null);
+      
       if (res && res.ok) {
-        const data = await res.json();
+        data = await res.json();
+      } else {
+        // Tentar API alternativa da comunidade (ex: api.apitoepi ou proxy público alternativo de CA)
+        res = await fetch(`https://api.basecaepi.com/api/v1/ca/${caSearchNumber}`).catch(() => null);
+        if (res && res.ok) {
+          data = await res.json();
+        } else {
+          // Outra alternativa de consulta pública no mirror do OpenCA
+          res = await fetch(`https://api.consultaca.com/v1/ca/${caSearchNumber}`).catch(() => null);
+          if (res && res.ok) {
+            data = await res.json();
+          }
+        }
+      }
+
+      if (data) {
         // Mapear campos da API nacional pública
         setCaScrapeResult({
           number: caSearchNumber,
-          status: data.situacao === 'ATIVA' || data.situacao === 'VÁLIDO' || data.situacao === 'Válido' ? 'Válido' : 'Vencido',
-          equipment: data.equipamento || data.equipamento_nome || 'Equipamento Homologado MTE',
-          manufacturer: data.razao_social || data.fabricante || 'Fabricante Homologado',
-          approvalDate: data.data_emissao || data.data_aprovacao || '',
-          expiryDate: data.data_validade || data.validade || '',
-          protectionTypes: data.laudo || data.descricao_equipamento || 'Equipamento em conformidade regulamentadora com as normas de SST do MTE.',
+          status: data.situacao === 'ATIVA' || data.situacao === 'VÁLIDO' || data.situacao === 'Válido' || data.status === 'Válido' ? 'Válido' : 'Vencido',
+          equipment: data.equipamento || data.equipamento_nome || data.equipment || 'Equipamento Homologado MTE',
+          manufacturer: data.razao_social || data.fabricante || data.manufacturer || 'Fabricante Homologado',
+          approvalDate: data.data_emissao || data.data_aprovacao || data.approval_date || '',
+          expiryDate: data.data_validade || data.validade || data.expiry_date || '',
+          protectionTypes: data.laudo || data.descricao_equipamento || data.protection_types || 'Equipamento em conformidade regulamentadora com as normas de SST do MTE.',
           mteHash: data.hash || `MTE-REG-${caSearchNumber}-OK`
         });
       } else {
