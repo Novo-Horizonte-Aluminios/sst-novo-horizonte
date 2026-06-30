@@ -236,6 +236,34 @@ export default function App() {
     }
   };
 
+  const handleUpdatePPE = async (id: string, updatedPpe: Partial<PPE>) => {
+    try {
+      const res = await fetch(`/api/ppes/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedPpe)
+      });
+      const data = await res.json();
+      setPpes(prev => prev.map(p => p.id === id ? data : p));
+      return data;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDeletePPE = async (id: string) => {
+    try {
+      const res = await fetch(`/api/ppes/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setPpes(prev => prev.filter(p => p.id !== id));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleAddDelivery = async (newDel: Omit<PPEDelivery, 'id' | 'deliveryDate' | 'status'>) => {
     try {
       const payloadWithTechnician = {
@@ -410,6 +438,8 @@ export default function App() {
         return <PPETab 
                   ppes={ppes}
                   onAddPPE={handleAddPPE}
+                  onUpdatePPE={handleUpdatePPE}
+                  onDeletePPE={handleDeletePPE}
                 />;
       case 'stock':
         return <StockTab 

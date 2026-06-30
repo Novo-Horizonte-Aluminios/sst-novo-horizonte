@@ -10,16 +10,20 @@ import {
   RefreshCw,
   Clock,
   ShieldCheck,
-  Building
+  Building,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import { PPE } from '../types';
 
 interface PPETabProps {
   ppes: PPE[];
   onAddPPE: (ppe: Omit<PPE, 'id'>) => Promise<any>;
+  onUpdatePPE?: (id: string, updatedPpe: Partial<PPE>) => Promise<any>;
+  onDeletePPE?: (id: string) => Promise<any>;
 }
 
-export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
+export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPETabProps) {
   const [search, setSearch] = useState('');
   const [caSearchNumber, setCaSearchNumber] = useState('');
   const [caScrapeResult, setCaScrapeResult] = useState<any | null>(null);
@@ -28,6 +32,16 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
 
   // New PPE form state
   const [newPpe, setNewPpe] = useState({
+    name: '', internalCode: '', barCode: '', brand: '', manufacturer: '',
+    category: 'Proteção Ocular', caNumber: '', caIssueDate: '', caExpiryDate: '',
+    fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90,
+    photoUrl: ''
+  });
+
+  // Edit PPE states
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingPpeId, setEditingPpeId] = useState<string | null>(null);
+  const [editPpe, setEditPpe] = useState({
     name: '', internalCode: '', barCode: '', brand: '', manufacturer: '',
     category: 'Proteção Ocular', caNumber: '', caIssueDate: '', caExpiryDate: '',
     fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90,
@@ -108,6 +122,68 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
       photoUrl: ''
     });
     setShowAddModal(false);
+  };
+
+  const handleOpenEdit = (ppe: PPE) => {
+    setEditingPpeId(ppe.id);
+    setEditPpe({
+      name: ppe.name,
+      internalCode: ppe.internalCode,
+      barCode: ppe.barCode,
+      brand: ppe.brand,
+      manufacturer: ppe.manufacturer,
+      category: ppe.category,
+      caNumber: ppe.caNumber,
+      caIssueDate: ppe.caIssueDate ? ppe.caIssueDate.split('T')[0] : '',
+      caExpiryDate: ppe.caExpiryDate ? ppe.caExpiryDate.split('T')[0] : '',
+      fispqRelation: ppe.fispqRelation || 'N/A',
+      manualUrl: ppe.manualUrl || '#',
+      stockCount: ppe.stockCount,
+      minStock: ppe.minStock,
+      durabilityDays: ppe.durabilityDays || 90,
+      photoUrl: ppe.photoUrl || ''
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPpeId || !onUpdatePPE) return;
+    const isExpired = new Date(editPpe.caExpiryDate) < new Date();
+    await onUpdatePPE(editingPpeId, {
+      ...editPpe,
+      caStatus: isExpired ? 'Vencido' : 'Válido'
+    });
+    setShowEditModal(false);
+    setEditingPpeId(null);
+  };
+
+  const handleDeleteClick = async (ppeId: string) => {
+    if (!onDeletePPE) return;
+    
+    // Import Swal dynamic import or check global scope
+    const SwalModule = (window as any).Swal || await import('sweetalert2').then(m => m.default);
+    const confirm = await SwalModule.fire({
+      title: 'Excluir EPI?',
+      text: "Isso removerá as especificações técnicas permanentemente do almoxarifado.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#475569',
+      confirmButtonText: 'Confirmar Exclusão',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (confirm.isConfirmed) {
+      await onDeletePPE(ppeId);
+      SwalModule.fire({
+        title: 'Excluído!',
+        text: 'EPI removido com sucesso.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
   };
 
   const filteredPpes = ppes.filter(p => {
@@ -259,10 +335,26 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                       <span className="inline-block px-1.5 py-0.5 rounded text-[8.5px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">Crítico</span>
                     )}
                   </div>
-                  <a href={ppe.manualUrl} className="text-safety-green font-black hover:underline flex items-center gap-1 text-[11px]">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    Ficha / FISPQ
-                  </a>
+                  <div className="flex items-center gap-3">
+                    <a href={ppe.manualUrl} className="text-slate-550 dark:text-slate-400 font-bold hover:underline flex items-center gap-1 text-[11px]">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      Ficha Técnica
+                    </a>
+                    <button
+                      onClick={() => handleOpenEdit(ppe)}
+                      className="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition cursor-pointer"
+                      title="Editar Especificações"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(ppe.id)}
+                      className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                      title="Excluir EPI"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -442,6 +534,184 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                   className="px-5 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition"
                 >
                   Salvar EPI
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* --- EDIT PPE DIALOG MODAL --- */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-xl rounded-2xl shadow-xl overflow-hidden animate-fade-in text-xs border border-slate-100 dark:border-slate-700">
+            <div className="bg-slate-950 p-5 text-white flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base">Editar Equipamento de Proteção</h3>
+                <p className="text-[10px] text-slate-400 mt-1">Atualizar especificações técnicas e margens</p>
+              </div>
+              <button onClick={() => { setShowEditModal(false); setEditingPpeId(null); }} className="text-slate-400 hover:text-white font-bold text-sm">✖</button>
+            </div>
+
+            <form onSubmit={handleUpdateSubmit} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Descrição Comercial / Nome Comercial</label>
+                  <input
+                    type="text"
+                    required
+                    value={editPpe.name}
+                    onChange={(e) => setEditPpe({...editPpe, name: e.target.value})}
+                    placeholder="Ex: Protetor Auricular Plug de Silicone Termoplástico"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Categoria de Proteção</label>
+                  <select
+                    value={editPpe.category}
+                    onChange={(e) => setEditPpe({...editPpe, category: e.target.value})}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  >
+                    <option value="Proteção Ocular">Proteção Ocular / Facial</option>
+                    <option value="Proteção Auditiva">Proteção Auditiva</option>
+                    <option value="Proteção Respiratória">Proteção Respiratória</option>
+                    <option value="Proteção da Cabeça">Proteção da Cabeça (Capacetes)</option>
+                    <option value="Proteção dos Pés">Proteção dos Pés (Calçados de Segurança)</option>
+                    <option value="Trabalho em Altura">Trabalho em Altura (Corações, Cordas, Trava-quedas)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Código Interno de Almoxarifado</label>
+                  <input
+                    type="text"
+                    required
+                    value={editPpe.internalCode}
+                    onChange={(e) => setEditPpe({...editPpe, internalCode: e.target.value})}
+                    placeholder="Ex: EPI-AUD-99S"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Marca Comercial</label>
+                  <input
+                    type="text"
+                    required
+                    value={editPpe.brand}
+                    onChange={(e) => setEditPpe({...editPpe, brand: e.target.value})}
+                    placeholder="Ex: 3M, Kalipso, Marluvas"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Fabricante / Fornecedor</label>
+                  <input
+                    type="text"
+                    required
+                    value={editPpe.manufacturer}
+                    onChange={(e) => setEditPpe({...editPpe, manufacturer: e.target.value})}
+                    placeholder="Ex: Kalipso Equipamentos de Proteção"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Nº do CA MTE</label>
+                  <input
+                    type="text"
+                    required
+                    value={editPpe.caNumber}
+                    onChange={(e) => setEditPpe({...editPpe, caNumber: e.target.value})}
+                    placeholder="Ex: 39712"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Emissão do CA</label>
+                  <input
+                    type="date"
+                    required
+                    value={editPpe.caIssueDate}
+                    onChange={(e) => setEditPpe({...editPpe, caIssueDate: e.target.value})}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Validade do CA</label>
+                  <input
+                    type="date"
+                    required
+                    value={editPpe.caExpiryDate}
+                    onChange={(e) => setEditPpe({...editPpe, caExpiryDate: e.target.value})}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Quantidade de Estoque</label>
+                  <input
+                    type="number"
+                    required
+                    value={editPpe.stockCount}
+                    onChange={(e) => setEditPpe({...editPpe, stockCount: parseInt(e.target.value) || 0})}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Quantidade Mínima</label>
+                  <input
+                    type="number"
+                    required
+                    value={editPpe.minStock}
+                    onChange={(e) => setEditPpe({...editPpe, minStock: parseInt(e.target.value) || 0})}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Durabilidade (Dias)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editPpe.durabilityDays}
+                    onChange={(e) => setEditPpe({...editPpe, durabilityDays: parseInt(e.target.value) || 0})}
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">URL da Imagem do EPI</label>
+                <input
+                  type="text"
+                  value={editPpe.photoUrl}
+                  onChange={(e) => setEditPpe({...editPpe, photoUrl: e.target.value})}
+                  placeholder="Ex: https://sst.novohorizonte.com/imagens/oculos.png"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => { setShowEditModal(false); setEditingPpeId(null); }}
+                  className="px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-lg"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+                >
+                  Salvar Alterações
                 </button>
               </div>
             </form>

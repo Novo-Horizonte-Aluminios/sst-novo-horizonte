@@ -552,6 +552,59 @@ async function startServer() {
     }
   });
 
+  // Update PPE specs
+  app.put('/api/ppes/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus, manualUrl, durabilityDays, photoUrl, minStock } = req.body;
+      
+      const check = await query('SELECT * FROM ppes WHERE id = $1', [id]);
+      if (check.rows.length === 0) return res.status(404).json({ error: 'PPE not found' });
+
+      await query(
+        `UPDATE ppes SET 
+          name = COALESCE($1, name),
+          brand = COALESCE($2, brand),
+          manufacturer = COALESCE($3, manufacturer),
+          category = COALESCE($4, category),
+          ca_number = COALESCE($5, ca_number),
+          ca = COALESCE($5, ca),
+          ca_issue_date = COALESCE($6, ca_issue_date),
+          ca_expiry_date = COALESCE($7, ca_expiry_date),
+          validity_date = COALESCE($7, validity_date),
+          ca_status = COALESCE($8, ca_status),
+          manual_url = COALESCE($9, manual_url),
+          durability_days = COALESCE($10, durability_days),
+          photo_url = COALESCE($11, photo_url),
+          min_stock = COALESCE($12, min_stock)
+        WHERE id = $13`,
+        [name, brand, manufacturer, category, caNumber, caIssueDate || null, caExpiryDate || null, caStatus || 'Válido', manualUrl || '#', durabilityDays || 90, photoUrl || null, minStock || 10, id]
+      );
+
+      const updated = await query('SELECT * FROM ppes WHERE id = $1', [id]);
+      res.json(toCamel(updated.rows[0]));
+    } catch (e) {
+      console.error(e);
+      res.status(550).json({ error: 'DB Error' });
+    }
+  });
+
+  // Delete PPE from register
+  app.delete('/api/ppes/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await query('DELETE FROM ppes WHERE id = $1 RETURNING *', [id]);
+      if (result.rows.length > 0) {
+        res.json({ success: true, deleted: toCamel(result.rows[0]) });
+      } else {
+        res.status(404).json({ error: 'PPE not found' });
+      }
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({ error: 'DB Error or Constraint violation (EPI is referenced in deliveries).' });
+    }
+  });
+
   // Individual stock adjustment
   app.put('/api/ppes/:id/stock', async (req, res) => {
     try {
