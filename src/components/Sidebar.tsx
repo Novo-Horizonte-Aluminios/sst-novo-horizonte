@@ -131,11 +131,11 @@ export default function Sidebar({
       <div className="px-4 border-b flex flex-col items-center py-4 border-slate-200 dark:border-slate-700/80 transition-all">
         {!isCollapsed ? (
           <>
-            <div className="w-full flex justify-center bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+            <div className="w-full flex justify-center mb-1">
               <img 
                 src={companies.find(c => c.id === selectedCompanyId)?.logoUrl || "/logo_horizontal.png"}
                 alt={companies.find(c => c.id === selectedCompanyId)?.name || "SST Sistema"}
-                className="h-9 w-auto object-contain"
+                className="h-10 w-auto object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                   const textLogo = document.getElementById('sidebar-text-logo');
