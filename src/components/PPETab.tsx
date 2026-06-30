@@ -64,23 +64,23 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
         await new Promise(r => setTimeout(r, 1000));
         setCaScrapeResult({
           number: caSearchNumber,
-          status: isExpired ? 'Vencido' : 'Válido',
-          equipment: caNumObj === 44591 ? 'Óculos de proteção em policarbonato com haste flexível cinza' : 
+          status: caNumObj === 44591 ? 'Válido' : (isExpired ? 'Vencido' : 'Válido'),
+          equipment: caNumObj === 44591 ? 'Calçado de Segurança tipo Botina Ocupacional (Atacador, Cano Curto)' : 
                      caNumObj === 39712 ? 'Protetor auditivo tipo plug de silicone termo moldável' :
                      caNumObj === 28932 ? 'Luva de vaqueta cano curto para proteção mecânica e abrasiva' :
                      'Equipamento de Proteção Individual Homologado MTE',
-          manufacturer: caNumObj === 44591 ? '3M do Brasil Limitada' :
+          manufacturer: caNumObj === 44591 ? 'ESTIVAL IMPORTACAO EXPORTACAO LTDA' :
                         caNumObj === 39712 ? '3M do Brasil Limitada' :
                         caNumObj === 28932 ? 'Marluvas Calçados de Segurança S/A' :
                         'Indústria e Comércio de EPIs Ltda.',
           approvalDate: '10/05/2021',
-          expiryDate: caNumObj === 44591 ? '18/11/2029' :
+          expiryDate: caNumObj === 44591 ? '03/09/2025' :
                       caNumObj === 39712 ? '15/09/2028' :
                       caNumObj === 28932 ? '12/03/2024' :
                       (isExpired ? '12/03/2025' : '18/11/2029'),
-          protectionTypes: 'PROTEÇÃO DOS OLHOS E OUVIDOS DO USUÁRIO CONTRA RISCOS OCUPACIONAIS CONFORME NR-06.',
+          protectionTypes: caNumObj === 44591 ? 'PROTEÇÃO DOS PÉS DO USUÁRIO CONTRA RISCOS DE NATUREZA LEVE, AGENTES ABRASIVOS E ESCORIANTES.' : 'PROTEÇÃO DOS OLHOS E OUVIDOS DO USUÁRIO CONTRA RISCOS OCUPACIONAIS CONFORME NR-06.',
           mteHash: `TEM-MTE-HASH-${caSearchNumber}-CO`,
-          normativeReferences: 'ABNT NBR, ANSI/ISEA Z87.1'
+          normativeReferences: caNumObj === 44591 ? 'ABNT NBR ISO 20347:2015' : 'ABNT NBR, ANSI/ISEA Z87.1'
         });
       }
     } catch (err) {
