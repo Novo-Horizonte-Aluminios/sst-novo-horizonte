@@ -537,16 +537,17 @@ async function startServer() {
   app.post('/api/ppes', async (req, res) => {
     try {
       const id = 'p_' + Date.now();
-      const { name, ca, validityDate, stock, minStock, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus, fispqRelation, manualUrl, durabilityDays } = req.body;
+      const { name, ca, validityDate, stock, minStock, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus, fispqRelation, manualUrl, durabilityDays, photoUrl } = req.body;
       const stockCount = stock !== undefined ? stock : (req.body.stockCount || 0);
       const minStockCount = minStock !== undefined ? minStock : (req.body.minStock || 0);
       const currentCaStatus = caStatus || 'Válido';
       await query(
-        'INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description, internal_code, bar_code, brand, manufacturer, category, ca_number, ca_issue_date, ca_expiry_date, ca_status, fispq_relation, manual_url, durability_days) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)',
-        [id, name, ca || caNumber, validityDate || caExpiryDate || null, stockCount, minStockCount, description, internalCode || null, barCode || null, brand || null, manufacturer || null, category || null, caNumber || ca || null, caIssueDate || null, caExpiryDate || validityDate || null, currentCaStatus, fispqRelation || null, manualUrl || null, durabilityDays || 90]
+        'INSERT INTO ppes (id, name, ca, validity_date, stock, min_stock, description, internal_code, bar_code, brand, manufacturer, category, ca_number, ca_issue_date, ca_expiry_date, ca_status, fispq_relation, manual_url, durability_days, photo_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)',
+        [id, name, ca || caNumber, validityDate || caExpiryDate || null, stockCount, minStockCount, description, internalCode || null, barCode || null, brand || null, manufacturer || null, category || null, caNumber || ca || null, caIssueDate || null, caExpiryDate || validityDate || null, currentCaStatus, fispqRelation || null, manualUrl || null, durabilityDays || 90, photoUrl || null]
       );
-      res.status(201).json({ id, name, ca, validityDate, stockCount, minStockCount, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus: currentCaStatus, fispqRelation, manualUrl, durabilityDays: durabilityDays || 90 });
+      res.status(201).json({ id, name, ca, validityDate, stockCount, minStockCount, description, internalCode, barCode, brand, manufacturer, category, caNumber, caIssueDate, caExpiryDate, caStatus: currentCaStatus, fispqRelation, manualUrl, durabilityDays: durabilityDays || 90, photoUrl });
     } catch (e) {
+      console.error(e);
       res.status(500).json({ error: 'DB Error' });
     }
   });

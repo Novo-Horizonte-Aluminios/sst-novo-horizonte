@@ -108,6 +108,11 @@ export default function DeliveryTab({
   // Refs for click outside
   const deliveryDropdownRef = useRef<HTMLDivElement>(null);
   const receiptDropdownRef = useRef<HTMLDivElement>(null);
+  const ppeDropdownRef = useRef<HTMLDivElement>(null);
+
+  // PPE Combobox states
+  const [searchTermPpe, setSearchTermPpe] = useState('');
+  const [isOpenPpe, setIsOpenPpe] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -116,6 +121,9 @@ export default function DeliveryTab({
       }
       if (receiptDropdownRef.current && !receiptDropdownRef.current.contains(event.target as Node)) {
         setIsOpenReceipt(false);
+      }
+      if (ppeDropdownRef.current && !ppeDropdownRef.current.contains(event.target as Node)) {
+        setIsOpenPpe(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -757,21 +765,90 @@ function calculateSimilarity(sigA: string, sigB: string): number {
 
               {/* Select PPE and Qty */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
+                <div className="col-span-2 relative" ref={ppeDropdownRef}>
                   <label className="font-bold block mb-1 text-[10px] text-slate-500 dark:text-slate-400 uppercase">EPI a Fornecer</label>
-                  <select
-                    required
-                    value={selectedPpeId}
-                    onChange={(e) => setSelectedPpeId(e.target.value)}
-                    className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 text-[15px] tracking-tight text-slate-900 dark:text-white transition-all hover:border-slate-300 dark:border-slate-600 cursor-pointer"
+                  <input type="hidden" name="ppeId" value={selectedPpeId} required />
+                  <button
+                    type="button"
+                    onClick={() => setIsOpenPpe(!isOpenPpe)}
+                    className="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:border-safety-green focus:ring-4 focus:ring-safety-green/10 bg-white dark:bg-slate-800 text-[13px] text-left flex justify-between items-center cursor-pointer transition-all hover:border-slate-300 dark:border-slate-600"
                   >
-                    <option value="" className="text-[15px] text-slate-500 dark:text-slate-400">Selecione o EPI...</option>
-                    {ppes.map((p) => (
-                      <option key={p.id} value={p.id} disabled={p.caStatus !== 'Válido'}>
-                        {p.name} (CA: {p.caNumber} {p.caStatus !== 'Válido' ? '⚠️ EXPIRED' : ''})
-                      </option>
-                    ))}
-                  </select>
+                    <span className={selectedPpeId ? "text-[14px] text-slate-900 dark:text-white font-black tracking-tight" : "text-[14px] text-slate-500 dark:text-slate-400 font-bold"}>
+                      {selectedPpeId && ppes.find(p => p.id === selectedPpeId)
+                        ? `${ppes.find(p => p.id === selectedPpeId)?.name} (CA: ${ppes.find(p => p.id === selectedPpeId)?.caNumber})`
+                        : "Selecione o EPI..."}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  </button>
+
+                  {isOpenPpe && (
+                    <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-lg max-h-60 flex flex-col">
+                      <div className="p-1.5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900">
+                        <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <input
+                          type="text"
+                          placeholder="Buscar EPI por nome, CA, marca..."
+                          value={searchTermPpe}
+                          onChange={(e) => setSearchTermPpe(e.target.value)}
+                          className="w-full bg-transparent border-none focus:outline-none text-[14px] text-slate-700 dark:text-slate-200 py-1"
+                          autoFocus
+                        />
+                      </div>
+                      <ul className="overflow-y-auto py-1 max-h-48 text-[11px]">
+                        {ppes.filter(p => {
+                          const normalize = (s?: string) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                          const term = normalize(searchTermPpe);
+                          return normalize(p.name).includes(term) || normalize(p.caNumber).includes(term) || normalize(p.brand).includes(term);
+                        }).length === 0 ? (
+                          <li className="p-2 text-slate-400 italic text-center">Nenhum EPI encontrado</li>
+                        ) : (
+                          ppes.filter(p => {
+                            const normalize = (s?: string) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                            const term = normalize(searchTermPpe);
+                            return normalize(p.name).includes(term) || normalize(p.caNumber).includes(term) || normalize(p.brand).includes(term);
+                          }).map((p) => {
+                            const isCaExpired = p.caStatus !== 'Válido';
+                            return (
+                              <li
+                                key={p.id}
+                                onClick={() => {
+                                  if (!isCaExpired) {
+                                    setSelectedPpeId(p.id);
+                                    setIsOpenPpe(false);
+                                    setSearchTermPpe('');
+                                  }
+                                }}
+                                className={`p-2 px-3 hover:bg-safety-green/10 hover:text-safety-green flex justify-between items-center transition-colors ${
+                                  isCaExpired ? "opacity-50 cursor-not-allowed bg-rose-50/20" : "cursor-pointer"
+                                } ${selectedPpeId === p.id ? "bg-safety-green/5 text-safety-green font-bold" : "text-slate-700 dark:text-slate-200"}`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  {p.photoUrl ? (
+                                    <img src={p.photoUrl} alt={p.name} className="w-8 h-8 rounded-lg object-cover shrink-0 border border-slate-250 dark:border-slate-600" />
+                                  ) : (
+                                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-750 flex items-center justify-center shrink-0">
+                                      <Shield className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <span className="block text-[13px] font-bold text-slate-800 dark:text-slate-100">{p.name}</span>
+                                    <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                                      Marca: {p.brand} • Estoque: {p.stockCount} un
+                                    </span>
+                                  </div>
+                                </div>
+                                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-black ${
+                                  isCaExpired ? "bg-rose-100 text-rose-800" : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300"
+                                }`}>
+                                  CA: {p.caNumber} {isCaExpired ? '⚠️ EXPIRED' : ''}
+                                </span>
+                              </li>
+                            );
+                          })
+                        )}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 <div>

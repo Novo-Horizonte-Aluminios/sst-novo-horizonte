@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, RefreshCw, Calendar, FileText } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, RefreshCw, Calendar, FileText, Search, User, Shield, ChevronDown } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 interface Employee {
   id: string;
   name: string;
+  role?: string;
+  sector?: string;
+  matricula?: string;
+  photoUrl?: string;
 }
 
 interface Ppe {
   id: string;
   name: string;
+  brand?: string;
+  caNumber?: string;
+  photoUrl?: string;
 }
 
 interface EpiReturn {
@@ -29,6 +36,14 @@ export default function EpiReturnTab() {
   const [ppes, setPpes] = useState<Ppe[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // Combobox refs and states
+  const empDropdownRef = useRef<HTMLDivElement>(null);
+  const ppeDropdownRef = useRef<HTMLDivElement>(null);
+  const [searchTermEmp, setSearchTermEmp] = useState('');
+  const [isOpenEmp, setIsOpenEmp] = useState(false);
+  const [searchTermPpe, setSearchTermPpe] = useState('');
+  const [isOpenPpe, setIsOpenPpe] = useState(false);
 
   // New return form state
   const [newReturn, setNewReturn] = useState({
@@ -76,6 +91,19 @@ export default function EpiReturnTab() {
       setLoading(false);
     }
     load();
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (empDropdownRef.current && !empDropdownRef.current.contains(event.target as Node)) {
+        setIsOpenEmp(false);
+      }
+      if (ppeDropdownRef.current && !ppeDropdownRef.current.contains(event.target as Node)) {
+        setIsOpenPpe(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleCreateReturn = async (e: React.FormEvent) => {
@@ -197,34 +225,150 @@ export default function EpiReturnTab() {
             </div>
 
             <form onSubmit={handleCreateReturn} className="p-6 space-y-4">
-              <div>
+              {/* Employee Combobox Selection */}
+              <div className="relative" ref={empDropdownRef}>
                 <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Selecione o Colaborador</label>
-                <select
-                  value={newReturn.employeeId}
-                  onChange={(e) => setNewReturn({...newReturn, employeeId: e.target.value})}
-                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12px]"
-                  required
+                <input type="hidden" name="employeeId" value={newReturn.employeeId} required />
+                <button
+                  type="button"
+                  onClick={() => setIsOpenEmp(!isOpenEmp)}
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12.5px] text-left flex justify-between items-center cursor-pointer"
                 >
-                  <option value="">Selecione quem está devolvendo...</option>
-                  {employees.map(emp => (
-                    <option key={emp.id} value={emp.id}>{emp.name}</option>
-                  ))}
-                </select>
+                  <span className={newReturn.employeeId ? "text-slate-900 dark:text-white font-bold" : "text-slate-500"}>
+                    {newReturn.employeeId && employees.find(e => e.id === newReturn.employeeId)
+                      ? employees.find(e => e.id === newReturn.employeeId)?.name
+                      : "Selecione quem está devolvendo..."}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-slate-500" />
+                </button>
+
+                {isOpenEmp && (
+                  <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-lg max-h-56 flex flex-col">
+                    <div className="p-1.5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900">
+                      <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <input
+                        type="text"
+                        placeholder="Buscar por nome, matrícula..."
+                        value={searchTermEmp}
+                        onChange={(e) => setSearchTermEmp(e.target.value)}
+                        className="w-full bg-transparent border-none focus:outline-none text-[12px] text-slate-700 dark:text-slate-200 py-0.5"
+                        autoFocus
+                      />
+                    </div>
+                    <ul className="overflow-y-auto py-1 max-h-40 text-[11px]">
+                      {employees.filter(emp => {
+                        const normalize = (s?: string) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                        const term = normalize(searchTermEmp);
+                        return normalize(emp.name).includes(term) || normalize(emp.matricula).includes(term);
+                      }).length === 0 ? (
+                        <li className="p-2 text-slate-400 italic text-center">Nenhum colaborador encontrado</li>
+                      ) : (
+                        employees.filter(emp => {
+                          const normalize = (s?: string) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                          const term = normalize(searchTermEmp);
+                          return normalize(emp.name).includes(term) || normalize(emp.matricula).includes(term);
+                        }).map((emp) => (
+                          <li
+                            key={emp.id}
+                            onClick={() => {
+                              setNewReturn({ ...newReturn, employeeId: emp.id });
+                              setIsOpenEmp(false);
+                              setSearchTermEmp('');
+                            }}
+                            className={`p-2 px-3 hover:bg-brand-primary-light hover:text-brand-primary-dark cursor-pointer flex justify-between items-center transition-colors ${
+                              newReturn.employeeId === emp.id ? "bg-brand-primary-light text-brand-primary font-bold" : "text-slate-700 dark:text-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              {emp.photoUrl ? (
+                                <img src={emp.photoUrl} alt={emp.name} className="w-6 h-6 rounded-full object-cover shrink-0 border border-slate-200" />
+                              ) : (
+                                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                                  <User className="w-3.5 h-3.5 text-slate-500" />
+                                </div>
+                              )}
+                              <span>{emp.name}</span>
+                            </div>
+                            {emp.matricula && <span className="text-[9px] text-slate-400 font-mono">Mat: {emp.matricula}</span>}
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
 
-              <div>
+              {/* PPE Combobox Selection */}
+              <div className="relative" ref={ppeDropdownRef}>
                 <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Selecione o EPI</label>
-                <select
-                  value={newReturn.ppeId}
-                  onChange={(e) => setNewReturn({...newReturn, ppeId: e.target.value})}
-                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12px]"
-                  required
+                <input type="hidden" name="ppeId" value={newReturn.ppeId} required />
+                <button
+                  type="button"
+                  onClick={() => setIsOpenPpe(!isOpenPpe)}
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:border-brand-primary bg-white dark:bg-slate-800 text-[12.5px] text-left flex justify-between items-center cursor-pointer"
                 >
-                  <option value="">Selecione qual EPI está sendo entregue de volta...</option>
-                  {ppes.map(ppe => (
-                    <option key={ppe.id} value={ppe.id}>{ppe.name}</option>
-                  ))}
-                </select>
+                  <span className={newReturn.ppeId ? "text-slate-900 dark:text-white font-bold" : "text-slate-500"}>
+                    {newReturn.ppeId && ppes.find(p => p.id === newReturn.ppeId)
+                      ? ppes.find(p => p.id === newReturn.ppeId)?.name
+                      : "Selecione o EPI a devolver..."}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-slate-500" />
+                </button>
+
+                {isOpenPpe && (
+                  <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-lg max-h-56 flex flex-col">
+                    <div className="p-1.5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900">
+                      <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <input
+                        type="text"
+                        placeholder="Buscar EPI por nome, CA..."
+                        value={searchTermPpe}
+                        onChange={(e) => setSearchTermPpe(e.target.value)}
+                        className="w-full bg-transparent border-none focus:outline-none text-[12px] text-slate-700 dark:text-slate-200 py-0.5"
+                        autoFocus
+                      />
+                    </div>
+                    <ul className="overflow-y-auto py-1 max-h-40 text-[11px]">
+                      {ppes.filter(p => {
+                        const normalize = (s?: string) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                        const term = normalize(searchTermPpe);
+                        return normalize(p.name).includes(term) || normalize(p.caNumber || "").includes(term);
+                      }).length === 0 ? (
+                        <li className="p-2 text-slate-400 italic text-center">Nenhum EPI encontrado</li>
+                      ) : (
+                        ppes.filter(p => {
+                          const normalize = (s?: string) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                          const term = normalize(searchTermPpe);
+                          return normalize(p.name).includes(term) || normalize(p.caNumber || "").includes(term);
+                        }).map((p) => (
+                          <li
+                            key={p.id}
+                            onClick={() => {
+                              setNewReturn({ ...newReturn, ppeId: p.id });
+                              setIsOpenPpe(false);
+                              setSearchTermPpe('');
+                            }}
+                            className={`p-2 px-3 hover:bg-brand-primary-light hover:text-brand-primary-dark cursor-pointer flex justify-between items-center transition-colors ${
+                              newReturn.ppeId === p.id ? "bg-brand-primary-light text-brand-primary font-bold" : "text-slate-700 dark:text-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              {p.photoUrl ? (
+                                <img src={p.photoUrl} alt={p.name} className="w-6 h-6 rounded object-cover shrink-0 border border-slate-200" />
+                              ) : (
+                                <div className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                                  <Shield className="w-3.5 h-3.5 text-slate-500" />
+                                </div>
+                              )}
+                              <span>{p.name}</span>
+                            </div>
+                            {p.caNumber && <span className="text-[9px] text-slate-400 font-mono">CA: {p.caNumber}</span>}
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

@@ -30,7 +30,8 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
   const [newPpe, setNewPpe] = useState({
     name: '', internalCode: '', barCode: '', brand: '', manufacturer: '',
     category: 'Proteção Ocular', caNumber: '', caIssueDate: '', caExpiryDate: '',
-    fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90
+    fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90,
+    photoUrl: ''
   });
 
   const handleScrapeCA = (e: React.FormEvent) => {
@@ -73,7 +74,8 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
     setNewPpe({
       name: '', internalCode: '', barCode: '', brand: '', manufacturer: '',
       category: 'Proteção Ocular', caNumber: '', caIssueDate: '', caExpiryDate: '',
-      fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90
+      fispqRelation: 'N/A', manualUrl: '#', stockCount: 50, minStock: 10, durabilityDays: 90,
+      photoUrl: ''
     });
     setShowAddModal(false);
   };
@@ -194,8 +196,19 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                     </span>
                   </div>
 
-                  <h4 className="font-black text-[14px] text-slate-800 dark:text-slate-100 leading-snug tracking-tight">{ppe.name}</h4>
-                  <p className="text-slate-400 font-mono text-[9.5px] mt-1">Cód: {ppe.internalCode} • EAN: {ppe.barCode}</p>
+                  <div className="flex gap-3 items-start my-1.5">
+                    {ppe.photoUrl ? (
+                      <img src={ppe.photoUrl} alt={ppe.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                        <Shield className="w-6 h-6 text-slate-400" />
+                      </div>
+                    )}
+                    <div>
+                      <h4 className="font-black text-[13px] text-slate-800 dark:text-slate-100 leading-snug tracking-tight">{ppe.name}</h4>
+                      <p className="text-slate-400 font-mono text-[9px] mt-0.5">Cód: {ppe.internalCode} • EAN: {ppe.barCode}</p>
+                    </div>
+                  </div>
 
                   <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-700 mb-4 text-slate-650 font-sans font-bold">
                     <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">CA MTE</span> {ppe.caNumber}</p>
@@ -373,6 +386,17 @@ export default function PPETab({ ppes, onAddPPE }: PPETabProps) {
                     className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">URL da Imagem do EPI</label>
+                <input
+                  type="text"
+                  value={newPpe.photoUrl}
+                  onChange={(e) => setNewPpe({...newPpe, photoUrl: e.target.value})}
+                  placeholder="Ex: https://sst.novohorizonte.com/imagens/oculos.png"
+                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500"
+                />
               </div>
 
               <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 text-xs">

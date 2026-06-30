@@ -69,6 +69,7 @@ export interface PPE {
   stockCount: number;
   minStock: number;
   durabilityDays?: number;
+  photoUrl?: string;
 }
 
 export interface PPEDelivery {

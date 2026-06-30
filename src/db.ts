@@ -168,6 +168,7 @@ export const initDb = async () => {
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS fispq_relation VARCHAR(255);
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS manual_url TEXT;
       ALTER TABLE ppes ADD COLUMN IF NOT EXISTS durability_days INTEGER DEFAULT 90;
+      ALTER TABLE ppes ADD COLUMN IF NOT EXISTS photo_url TEXT;
 
       ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS employee_name VARCHAR(255);
       ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS ppe_name VARCHAR(255);
