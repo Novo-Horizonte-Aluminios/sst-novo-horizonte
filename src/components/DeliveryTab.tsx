@@ -98,6 +98,8 @@ export default function DeliveryTab({
 
   // Remote link confirmation states
   const [pendingLink, setPendingLink] = useState<{url: string; token: string; expiresAt: string} | null>(null);
+  const [selectedAuditDelivery, setSelectedAuditDelivery] = useState<PPEDelivery | null>(null);
+  const [showAuditReceipt, setShowAuditReceipt] = useState(false);
   const [pendingDeliveries, setPendingDeliveries] = useState<any[]>([]);
   const [showPendingPanel, setShowPendingPanel] = useState(false);
   const [loadingPending, setLoadingPending] = useState(false);
@@ -1310,9 +1312,16 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                                     <span className="text-[7px] font-bold text-sky-700 uppercase block mt-0.5 tracking-tighter">PIN Pessoal</span>
                                   </div>
                                 ) : (delivery.status === 'Entregue' && delivery.signingMethod === 'link') || delivery.confirmedAt ? (
-                                  <div className="text-center flex flex-col items-center">
-                                    <Lock className="w-4 h-4 text-emerald-600 mx-auto opacity-80" />
-                                    <span className="text-[7px] font-bold text-emerald-700 uppercase block mt-0.5 tracking-tighter">Link Validado</span>
+                                  <div 
+                                    onClick={() => {
+                                      setSelectedAuditDelivery(delivery);
+                                      setShowAuditReceipt(true);
+                                    }}
+                                    title="Clique para visualizar o recibo eletrônico completo"
+                                    className="text-center flex flex-col items-center cursor-pointer hover:bg-emerald-500/10 p-1 rounded transition-colors group"
+                                  >
+                                    <Lock className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform mx-auto opacity-80" />
+                                    <span className="text-[7px] font-bold text-emerald-700 uppercase block mt-0.5 tracking-tighter decoration-dotted group-hover:underline">Link Validado</span>
                                     {delivery.confirmedIp && (
                                       <span className="text-[6px] font-mono text-slate-500 dark:text-slate-400 block mt-0.5" title="IP de Autenticação">IP: {delivery.confirmedIp}</span>
                                     )}
@@ -1509,6 +1518,62 @@ function calculateSimilarity(sigA: string, sigB: string): number {
         </div>
       )}
 
+      {/* Audit Receipt Modal (Comprovante de Validacao por Link) */}
+      {showAuditReceipt && selectedAuditDelivery && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#111827] text-white rounded-3xl shadow-2xl w-full max-w-sm border border-slate-800 overflow-hidden transform animate-scale-in relative">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-blue-500" />
+            <button 
+              onClick={() => { setShowAuditReceipt(false); setSelectedAuditDelivery(null); }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition p-1 bg-slate-800/40 rounded-full hover:bg-slate-800"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="p-6">
+              <div className="flex justify-center mb-5 mt-2">
+                <img src="/logo_horizontal.png" alt="Novo Horizonte Alumínios" className="w-36 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+              </div>
+              <div className="flex flex-col items-center mb-4">
+                <div className="w-16 h-16 bg-emerald-500/10 border-2 border-emerald-500/30 rounded-full flex items-center justify-center mb-3">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h2 className="text-lg font-black text-white tracking-tight text-center">Recebimento Confirmado!</h2>
+                <p className="text-emerald-400 text-xs font-semibold mt-1 text-center">{selectedAuditDelivery.employeeName}</p>
+              </div>
+              <div className="flex justify-center mb-4">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3.5 py-1 flex items-center gap-1.5">
+                  <Shield className="w-3 h-3 text-emerald-400" />
+                  <span className="text-emerald-400 text-[10px] font-mono font-bold">
+                    PROT-{selectedAuditDelivery.integrityHash?.substring(0, 8).toUpperCase() || 'SEM-PROT'}
+                  </span>
+                </div>
+              </div>
+              <div className="bg-[#1B263B] rounded-2xl border border-slate-700/50 overflow-hidden mb-5">
+                <div className="px-4 py-2.5 bg-slate-950/30 border-b border-slate-700/50">
+                  <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest font-bold">Comprovante de Entrega</span>
+                </div>
+                <div className="p-4 space-y-2.5 text-xs">
+                  <div className="flex justify-between gap-2"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Colaborador</span><span className="text-white font-bold text-right">{selectedAuditDelivery.employeeName}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">EPI</span><span className="text-white font-bold text-right max-w-[55%]">{selectedAuditDelivery.ppeName}</span></div>
+                  {selectedAuditDelivery.caNumber && (<div className="flex justify-between gap-2"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">CA</span><span className="text-emerald-400 font-mono font-bold">{selectedAuditDelivery.caNumber} ✔</span></div>)}
+                  <div className="flex justify-between gap-2"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Quantidade</span><span className="text-white font-bold">{selectedAuditDelivery.quantity} unidade{(selectedAuditDelivery.quantity || 0) > 1 ? "s" : ""}</span></div>
+                  <div className="flex justify-between gap-2 border-t border-slate-700/50 pt-2.5"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Data</span><span className="text-white font-bold">{selectedAuditDelivery.confirmedAt ? new Date(selectedAuditDelivery.confirmedAt).toLocaleDateString("pt-BR") : "—"}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Hora</span><span className="text-white font-bold">{selectedAuditDelivery.confirmedAt ? new Date(selectedAuditDelivery.confirmedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—"}</span></div>
+                  {selectedAuditDelivery.confirmedIp && (<div className="flex justify-between gap-2"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">IP de Autenticação</span><span className="text-slate-300 font-mono">{selectedAuditDelivery.confirmedIp}</span></div>)}
+                  {selectedAuditDelivery.integrityHash && (<div className="border-t border-slate-700/50 pt-2.5"><span className="text-slate-400 font-bold uppercase tracking-wider text-[9px] block mb-1">Hash de Integridade</span><span className="text-emerald-400 font-mono text-[9px] break-all leading-relaxed select-all">{selectedAuditDelivery.integrityHash}</span></div>)}
+                </div>
+              </div>
+              <p className="text-[9px] text-slate-500 leading-relaxed text-center mb-4">Este comprovante tem validade jurídica conforme a Lei nº 14.063/2020 e a NR-06.</p>
+              <button 
+                onClick={() => { setShowAuditReceipt(false); setSelectedAuditDelivery(null); }} 
+                className="w-full py-3.5 rounded-2xl bg-[#1B263B] hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wide transition-all active:scale-95 border border-slate-700/50"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
