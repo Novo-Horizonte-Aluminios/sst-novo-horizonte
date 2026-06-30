@@ -708,6 +708,7 @@ async function startServer() {
       await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS confirmed_device TEXT`);
       await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS integrity_hash VARCHAR(64)`);
       await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW()`);
+      await query(`ALTER TABLE deliveries ADD COLUMN IF NOT EXISTS last_notified_at TIMESTAMP`);
     } catch (e) { /* columns may already exist */ }
   })();
 
@@ -727,8 +728,8 @@ async function startServer() {
       }
 
       await query(
-        `INSERT INTO deliveries (id, delivery_date, status, ppe_id, employee_id, quantity, employee_name, ppe_name, ca_number, reason, signing_method, confirm_token, confirm_token_expires_at, created_at)
-         VALUES ($1, $2, 'Pendente', $3, $4, $5, $6, $7, $8, $9, 'link', $10, $11, NOW())`,
+        `INSERT INTO deliveries (id, delivery_date, status, ppe_id, employee_id, quantity, employee_name, ppe_name, ca_number, reason, signing_method, confirm_token, confirm_token_expires_at, created_at, last_notified_at)
+         VALUES ($1, $2, 'Pendente', $3, $4, $5, $6, $7, $8, $9, 'link', $10, $11, NOW(), NOW())`,
         [id, deliveryDate, ppeId, employeeId, qty, employeeName || null, ppeName || null, caNumber || null, reason || null, confirmToken, expiresAt]
       );
 
@@ -773,6 +774,8 @@ async function startServer() {
       const row = result.rows[0];
       const appUrl = process.env.APP_URL || process.env.COOLIFY_URL || 'https://sst.novohorizonte.com';
       const confirmUrl = `${appUrl}/?tab=epi-confirm&token=${row.confirm_token}`;
+
+      await query('UPDATE deliveries SET last_notified_at = NOW() WHERE id = $1', [id]);
 
       notifyN8N('/webhook/sst-epi-confirm-link', {
         deliveryId: row.id, employeeId: row.employee_id,
@@ -3066,6 +3069,59 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`PROMPT MASTER SST Server listening on http://localhost:${PORT}`);
   });
+
+  // --- AUTOMATIC EPI WAITING SIGNATURE REMINDER DAEMON (8-hour window) ---
+  setInterval(async () => {
+    try {
+      console.log('[Reminders] Verificando se há assinaturas pendentes para cobrança automática...');
+      
+      // Busca entregas pendentes via link criadas há mais de 8 horas e cuja última notificação também foi há mais de 8 horas
+      const pendingDeliveries = await query(`
+        SELECT d.*, e.name as emp_name, e.phone as emp_phone, e.email as emp_email
+        FROM deliveries d
+        JOIN employees e ON d.employee_id = e.id
+        WHERE d.status = 'Pendente' 
+          AND d.signing_method = 'link'
+          AND d.created_at <= NOW() - INTERVAL '8 hours'
+          AND (d.last_notified_at IS NULL OR d.last_notified_at <= NOW() - INTERVAL '8 hours')
+          AND (d.confirm_token_expires_at IS NULL OR d.confirm_token_expires_at > NOW())
+      `);
+
+      if (pendingDeliveries.rows.length === 0) {
+        console.log('[Reminders] Nenhuma entrega pendente precisa de cobrança automática neste ciclo.');
+        return;
+      }
+
+      console.log(`[Reminders] Enviando cobrança para ${pendingDeliveries.rows.length} entrega(s) pendente(s)...`);
+
+      const appUrl = process.env.APP_URL || process.env.COOLIFY_URL || 'https://sst.novohorizonte.com';
+
+      for (const row of pendingDeliveries.rows) {
+        const confirmUrl = `${appUrl}/?tab=epi-confirm&token=${row.confirm_token}`;
+        
+        // Atualiza a hora da última notificação para evitar spam no próximo ciclo
+        await query('UPDATE deliveries SET last_notified_at = NOW() WHERE id = $1', [row.id]);
+
+        notifyN8N('/webhook/sst-epi-confirm-link', {
+          deliveryId: row.id,
+          employeeId: row.employee_id,
+          employeeName: row.emp_name || row.employee_name,
+          employeePhone: row.emp_phone || '',
+          employeeEmail: row.emp_email || '',
+          ppeName: row.ppe_name,
+          caNumber: row.ca_number || 'N/A',
+          quantity: row.quantity,
+          signatureLink: confirmUrl,
+          expiresAt: row.confirm_token_expires_at ? new Date(row.confirm_token_expires_at).toISOString() : null,
+          isAutomaticReminder: true
+        });
+        
+        console.log(`[Reminders] Cobrança automática enviada com sucesso para ${row.emp_name} (EPI: ${row.ppe_name}).`);
+      }
+    } catch (e) {
+      console.error('[Reminders Error] Falha ao rodar daemon de cobrança automática:', e);
+    }
+  }, 1 * 60 * 60 * 1000); // Roda a cada 1 hora checking para as últimas 8 horas
 }
 
 startServer();
