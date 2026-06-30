@@ -416,12 +416,6 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    {ppe.manualUrl && ppe.manualUrl !== '#' && ppe.manualUrl.trim() !== '' && (
-                      <a href={ppe.manualUrl} target="_blank" rel="noopener noreferrer" className="text-slate-550 dark:text-slate-400 font-bold hover:underline flex items-center gap-1 text-[11px]">
-                        <BookOpen className="w-3.5 h-3.5" />
-                        Ficha Técnica
-                      </a>
-                    )}
                     <button
                       onClick={() => handleOpenEdit(ppe)}
                       className="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition cursor-pointer"
@@ -599,16 +593,7 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                 </div>
               </div>
 
-              <div>
-                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Link da Ficha Técnica / Manual do EPI</label>
-                <input
-                  type="text"
-                  value={newPpe.manualUrl}
-                  onChange={(e) => setNewPpe({...newPpe, manualUrl: e.target.value})}
-                  placeholder="Ex: https://fabricante.com/manual-epi.pdf"
-                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
-                />
-              </div>
+
 
               <div>
                 <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">URL da Imagem do EPI</label>
@@ -795,16 +780,7 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                 </div>
               </div>
 
-              <div>
-                <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Link da Ficha Técnica / Manual do EPI</label>
-                <input
-                  type="text"
-                  value={editPpe.manualUrl}
-                  onChange={(e) => setEditPpe({...editPpe, manualUrl: e.target.value})}
-                  placeholder="Ex: https://fabricante.com/manual-epi.pdf"
-                  className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
-                />
-              </div>
+
 
               <div>
                 <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">URL da Imagem do EPI</label>
