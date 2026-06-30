@@ -295,12 +295,13 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                       barCode: `789${caScrapeResult.number}1212`,
                       brand: caScrapeResult.manufacturer.split(' ')[0] || '',
                       manufacturer: caScrapeResult.manufacturer,
-                      category: caScrapeResult.equipment.toLowerCase().includes('óculos') || caScrapeResult.equipment.toLowerCase().includes('ocular') ? 'Proteção Ocular' :
+                      category: caScrapeResult.equipment.toLowerCase().includes('óculos') || caScrapeResult.equipment.toLowerCase().includes('ocular') || caScrapeResult.equipment.toLowerCase().includes('facial') ? 'Proteção Ocular / Facial' :
                                 caScrapeResult.equipment.toLowerCase().includes('calçado') || caScrapeResult.equipment.toLowerCase().includes('botina') || caScrapeResult.equipment.toLowerCase().includes('bota') ? 'Proteção dos Pés' :
                                 caScrapeResult.equipment.toLowerCase().includes('protetor') || caScrapeResult.equipment.toLowerCase().includes('plug') || caScrapeResult.equipment.toLowerCase().includes('auricular') ? 'Proteção Auditiva' :
                                 caScrapeResult.equipment.toLowerCase().includes('capacete') ? 'Proteção da Cabeça' :
                                 caScrapeResult.equipment.toLowerCase().includes('respirador') || caScrapeResult.equipment.toLowerCase().includes('máscara') ? 'Proteção Respiratória' :
-                                'Proteção Ocular',
+                                caScrapeResult.equipment.toLowerCase().includes('luva') || caScrapeResult.equipment.toLowerCase().includes('mão') ? 'Proteção das Mãos' :
+                                'Proteção Ocular / Facial',
                       caNumber: caScrapeResult.number,
                       caIssueDate: formattedApproval,
                       caExpiryDate: formattedExpiry,
@@ -473,18 +474,25 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Categoria de Proteção</label>
-                  <select
+                  <input
+                    type="text"
+                    required
+                    list="ppe-categories-list"
                     value={newPpe.category}
                     onChange={(e) => setNewPpe({...newPpe, category: e.target.value})}
+                    placeholder="Ex: Proteção das Mãos ou Ocular"
                     className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
-                  >
-                    <option value="Proteção Ocular">Proteção Ocular / Facial</option>
-                    <option value="Proteção Auditiva">Proteção Auditiva</option>
-                    <option value="Proteção Respiratória">Proteção Respiratória</option>
-                    <option value="Proteção da Cabeça">Proteção da Cabeça (Capacetes)</option>
-                    <option value="Proteção dos Pés">Proteção dos Pés (Calçados de Segurança)</option>
-                    <option value="Trabalho em Altura">Trabalho em Altura (Corações, Cordas, Trava-quedas)</option>
-                  </select>
+                  />
+                  <datalist id="ppe-categories-list">
+                    <option value="Proteção Ocular / Facial" />
+                    <option value="Proteção Auditiva" />
+                    <option value="Proteção Respiratória" />
+                    <option value="Proteção da Cabeça" />
+                    <option value="Proteção dos Pés" />
+                    <option value="Proteção das Mãos" />
+                    <option value="Trabalho em Altura" />
+                    <option value="Proteção do Tronco" />
+                  </datalist>
                 </div>
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Código Interno de Almoxarifado</label>
@@ -662,18 +670,25 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Categoria de Proteção</label>
-                  <select
+                  <input
+                    type="text"
+                    required
+                    list="ppe-categories-list-edit"
                     value={editPpe.category}
                     onChange={(e) => setEditPpe({...editPpe, category: e.target.value})}
+                    placeholder="Ex: Proteção das Mãos ou Ocular"
                     className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:border-emerald-500 bg-white dark:bg-slate-800"
-                  >
-                    <option value="Proteção Ocular">Proteção Ocular / Facial</option>
-                    <option value="Proteção Auditiva">Proteção Auditiva</option>
-                    <option value="Proteção Respiratória">Proteção Respiratória</option>
-                    <option value="Proteção da Cabeça">Proteção da Cabeça (Capacetes)</option>
-                    <option value="Proteção dos Pés">Proteção dos Pés (Calçados de Segurança)</option>
-                    <option value="Trabalho em Altura">Trabalho em Altura (Corações, Cordas, Trava-quedas)</option>
-                  </select>
+                  />
+                  <datalist id="ppe-categories-list-edit">
+                    <option value="Proteção Ocular / Facial" />
+                    <option value="Proteção Auditiva" />
+                    <option value="Proteção Respiratória" />
+                    <option value="Proteção da Cabeça" />
+                    <option value="Proteção dos Pés" />
+                    <option value="Proteção das Mãos" />
+                    <option value="Trabalho em Altura" />
+                    <option value="Proteção do Tronco" />
+                  </datalist>
                 </div>
                 <div>
                   <label className="font-semibold block mb-1 text-slate-600 dark:text-slate-300">Código Interno de Almoxarifado</label>
