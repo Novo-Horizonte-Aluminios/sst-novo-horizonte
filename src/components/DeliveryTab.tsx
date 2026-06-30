@@ -1310,9 +1310,17 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                                     <span className="text-[7px] font-bold text-sky-700 uppercase block mt-0.5 tracking-tighter">PIN Pessoal</span>
                                   </div>
                                 ) : (delivery.status === 'Entregue' && delivery.signingMethod === 'link') || delivery.confirmedAt ? (
-                                  <div className="text-center">
-                                    <Lock className="w-5 h-5 text-emerald-600 mx-auto opacity-80" />
+                                  <div className="text-center flex flex-col items-center">
+                                    <Lock className="w-4 h-4 text-emerald-600 mx-auto opacity-80" />
                                     <span className="text-[7px] font-bold text-emerald-700 uppercase block mt-0.5 tracking-tighter">Link Validado</span>
+                                    {delivery.confirmedIp && (
+                                      <span className="text-[6px] font-mono text-slate-500 dark:text-slate-400 block mt-0.5" title="IP de Autenticação">IP: {delivery.confirmedIp}</span>
+                                    )}
+                                    {delivery.integrityHash && (
+                                      <span className="text-[5.5px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-1 rounded block mt-0.5 select-all" title="Protocolo de Auditoria">
+                                        PROT-{delivery.integrityHash.substring(0, 8).toUpperCase()}
+                                      </span>
+                                    )}
                                   </div>
                                 ) : delivery.status === 'Pendente' && delivery.signingMethod === 'link' ? (
                                   <div className="flex flex-col items-center gap-1">
