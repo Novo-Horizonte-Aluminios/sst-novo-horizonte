@@ -78,6 +78,7 @@ export default function App() {
   const [accidents, setAccidents] = useState<AccidentReport[]>([]);
   const [actionPlans, setActionPlans] = useState<ActionPlan[]>([]);
   const [fispqDocs, setFispqDocs] = useState<FISPQDocument[]>([]);
+  const [systemNotifications, setSystemNotifications] = useState<any[]>([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +87,7 @@ export default function App() {
     async function initFetch() {
       try {
         const [
-          resCos, resEmps, resPpes, resDels, resTrain, resCerts, resAccs, resPlans, resFis
+          resCos, resEmps, resPpes, resDels, resTrain, resCerts, resAccs, resPlans, resFis, resNotifs
         ] = await Promise.all([
           fetch('/api/companies'),
           fetch('/api/employees'),
@@ -96,11 +97,12 @@ export default function App() {
           fetch('/api/employee-trainings'),
           fetch('/api/accidents'),
           fetch('/api/action-plans'),
-          fetch('/api/fispq')
+          fetch('/api/fispq'),
+          fetch('/api/notifications')
         ]);
 
         const [
-          cos, emps, ppesData, dels, train, certs, accs, plans, fisData
+          cos, emps, ppesData, dels, train, certs, accs, plans, fisData, notifs
         ] = await Promise.all([
           resCos.json(),
           resEmps.json(),
@@ -110,7 +112,8 @@ export default function App() {
           resCerts.json(),
           resAccs.json(),
           resPlans.json(),
-          resFis.json()
+          resFis.json(),
+          resNotifs.json()
         ]);
 
         setCompanies(cos);
@@ -122,6 +125,7 @@ export default function App() {
         setAccidents(accs);
         setActionPlans(plans);
         setFispqDocs(fisData);
+        setSystemNotifications(notifs);
       } catch (err) {
         console.error('Error fetching dynamic database elements:', err);
       } finally {
@@ -129,6 +133,18 @@ export default function App() {
       }
     }
     initFetch();
+
+    // Poll notifications every 10 seconds to detect real-time confirmations
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/notifications');
+        if (res.ok) {
+          const data = await res.json();
+          setSystemNotifications(data);
+        }
+      } catch (e) {}
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   // Creation callback handlers writing to Express backend
@@ -499,11 +515,23 @@ export default function App() {
             {/* Global Notifications Bell */}
             <div className="relative">
               <button 
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={async () => {
+                  const nextShow = !showNotifications;
+                  setShowNotifications(nextShow);
+                  if (nextShow) {
+                    // Mark as read when opening dropdown
+                    try {
+                      await fetch('/api/notifications/mark-read', { method: 'POST' });
+                      setSystemNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+                    } catch (e) {}
+                  }
+                }}
                 className="relative p-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-primary/10 text-slate-500 dark:text-slate-400 hover:text-brand-primary rounded-xl transition-all cursor-pointer shadow-sm hover:shadow active:scale-95"
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
+                {systemNotifications.some(n => !n.isRead) && (
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
+                )}
               </button>
 
               <AnimatePresence>
@@ -517,24 +545,33 @@ export default function App() {
                   >
                     <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center">
                       <h3 className="font-black text-[13px] text-slate-800 dark:text-slate-100 uppercase tracking-tight">Notificações</h3>
-                      <span className="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full">2 Novas</span>
+                      {systemNotifications.filter(n => !n.isRead).length > 0 && (
+                        <span className="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          {systemNotifications.filter(n => !n.isRead).length} Nova(s)
+                        </span>
+                      )}
                     </div>
                     <div className="max-h-[300px] overflow-y-auto">
-                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition-colors cursor-pointer group">
-                        <p className="text-[12px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-primary transition-colors">EPI com CA Vencido detectado</p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Luva de Vaqueta está com CA 12345 vencido. Atualize o estoque.</p>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase mt-2 block">Há 5 minutos</span>
-                      </div>
-                      <div className="p-4 border-b border-slate-50 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition-colors cursor-pointer group">
-                        <p className="text-[12px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-primary transition-colors">Scanner Biométrico Desconectado</p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">A ponte local do Futronic parou de responder. Verifique a porta USB.</p>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase mt-2 block">Há 1 hora</span>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 text-center">
-                      <button className="text-[11px] font-bold text-brand-primary hover:text-brand-primary-dark transition-colors uppercase tracking-wider">
-                        Ver todas as notificações
-                      </button>
+                      {systemNotifications.length === 0 ? (
+                        <div className="p-8 text-center text-slate-400 font-mono italic text-[11px]">
+                          Nenhuma notificação registrada.
+                        </div>
+                      ) : (
+                        systemNotifications.map((notif) => {
+                          const dateObj = new Date(notif.createdAt);
+                          const timeString = isNaN(dateObj.getTime()) ? "agora" : dateObj.toLocaleDateString("pt-BR") + " " + dateObj.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
+                          return (
+                            <div key={notif.id} className={"p-4 border-b border-slate-50 hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-900 transition-colors cursor-pointer group " + (!notif.isRead ? "bg-amber-500/5 dark:bg-amber-500/5" : "")}>
+                              <p className="text-[12px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-primary transition-colors flex items-center gap-1.5">
+                                {!notif.isRead && <span className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block shrink-0"></span>}
+                                {notif.title}
+                              </p>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">{notif.description}</p>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase mt-2 block">{timeString}</span>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </motion.div>
                 )}

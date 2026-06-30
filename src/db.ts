@@ -311,6 +311,15 @@ export const initDb = async () => {
         value TEXT NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS notifications (
+        id VARCHAR(50) PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_read BOOLEAN DEFAULT false,
+        type VARCHAR(50) DEFAULT 'system'
+      );
+
       CREATE TABLE IF NOT EXISTS aso_certificates (
         id VARCHAR(50) PRIMARY KEY,
         employee_id VARCHAR(50) NOT NULL,
@@ -601,6 +610,17 @@ export const initDb = async () => {
         INSERT INTO psychosocial_assessments (id, employee_id, employee_name, answers, score, risk_level, assessment_date, evaluator) VALUES
         ('psy1', 'e1', 'Carlos Henrique Silva', '{"q1":2,"q2":3,"q3":2,"q4":4,"q5":3}', 14, 'Médio', '2026-06-20', 'Dr. Marcos Patrício'),
         ('psy2', 'e2', 'Juliana Montenegro', '{"q1":1,"q2":1,"q3":2,"q4":2,"q5":1}', 7, 'Baixo', '2026-06-21', 'Dr. Marcos Patrício')
+      `);
+    }
+
+    // Seeder para Notificações Iniciais
+    const notifCheck = await client.query("SELECT id FROM notifications LIMIT 1");
+    if (notifCheck.rows.length === 0) {
+      console.log('Semeando notificações iniciais...');
+      await client.query(`
+        INSERT INTO notifications (id, title, description, created_at, is_read, type) VALUES
+        ('n_init_1', 'EPI com CA Vencido detectado', 'Luva de Vaqueta está com CA 12345 vencido. Atualize o estoque.', NOW() - INTERVAL '5 minutes', false, 'system'),
+        ('n_init_2', 'Scanner Biométrico Desconectado', 'A ponte local do Futronic parou de responder. Verifique a porta USB.', NOW() - INTERVAL '1 hour', false, 'system')
       `);
     }
 

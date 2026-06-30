@@ -588,6 +588,25 @@ async function startServer() {
     }
   });
 
+  // System Notifications API
+  app.get('/api/notifications', async (req, res) => {
+    try {
+      const result = await query('SELECT * FROM notifications ORDER BY created_at DESC LIMIT 50');
+      res.json(result.rows.map(toCamel));
+    } catch (e: any) {
+      res.status(500).json({ error: 'DB Error: ' + e.message });
+    }
+  });
+
+  app.post('/api/notifications/mark-read', async (req, res) => {
+    try {
+      await query("UPDATE notifications SET is_read = true");
+      res.json({ success: true });
+    } catch (e: any) {
+      res.status(500).json({ error: 'DB Error: ' + e.message });
+    }
+  });
+
   // ── ROTA ADMIN: Limpar todas as entregas (apenas para reset de testes) ──
   app.delete('/api/admin/clear-deliveries', async (req, res) => {
     const { secret } = req.query;
@@ -863,6 +882,17 @@ async function startServer() {
         `UPDATE deliveries SET status = 'Entregue', confirmed_at = $1, confirmed_ip = $2, confirmed_device = $3, integrity_hash = $4 WHERE id = $5`,
         [confirmedAt, clientIp, userAgent, integrityHash, row.id]
       );
+
+      // Registrar notificação no sistema
+      try {
+        const notifId = 'n_del_' + Date.now();
+        await query(
+          `INSERT INTO notifications (id, title, description, created_at, is_read, type) VALUES ($1, $2, $3, NOW(), false, 'delivery')`,
+          [notifId, 'Recebimento de EPI por Link', `O colaborador ${row.emp_name || row.employee_name} confirmou o recebimento de ${row.quantity}x ${row.ppe_name}.`]
+        );
+      } catch (err) {
+        console.error('Erro ao registrar notificação de entrega:', err);
+      }
 
       notifyN8N('/webhook/sst-epi-confirmed', {
         deliveryId: row.id, employeeName: row.emp_name || row.employee_name,
@@ -2856,6 +2886,17 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
       for (let i = 0; i < allCands.rows.length; i++) {
         const isElected = i < 2; // Top 2
         await query('UPDATE cipa_candidates SET is_elected = $1 WHERE id = $2', [isElected, allCands.rows[i].id]);
+      }
+
+      // Registrar notificação no sistema
+      try {
+        const notifId = 'n_vote_' + Date.now();
+        await query(
+          `INSERT INTO notifications (id, title, description, created_at, is_read, type) VALUES ($1, $2, $3, NOW(), false, 'vote')`,
+          [notifId, 'Voto Computado na CIPA', `O colaborador ${employee.name} realizou a autenticação e votou com sucesso por Link/PIN.` ]
+        );
+      } catch (err) {
+        console.error('Erro ao registrar notificação de voto:', err);
       }
 
       res.json({ 
