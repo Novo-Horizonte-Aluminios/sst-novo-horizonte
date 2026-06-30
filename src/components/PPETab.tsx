@@ -283,8 +283,11 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                 <button
                   type="button"
                   onClick={() => {
-                    const [day, month, year] = caScrapeResult.expiryDate.split('/');
-                    const formattedDate = (year && month && day) ? `${year}-${month}-${day}` : '';
+                    const [dayExp, monthExp, yearExp] = caScrapeResult.expiryDate.split('/');
+                    const formattedExpiry = (yearExp && monthExp && dayExp) ? `${yearExp}-${monthExp}-${dayExp}` : '';
+                    
+                    const [dayApp, monthApp, yearApp] = (caScrapeResult.approvalDate || '10/05/2021').split('/');
+                    const formattedApproval = (yearApp && monthApp && dayApp) ? `${yearApp}-${monthApp}-${dayApp}` : '';
                     
                     setNewPpe({
                       name: caScrapeResult.equipment,
@@ -299,8 +302,8 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                                 caScrapeResult.equipment.toLowerCase().includes('respirador') || caScrapeResult.equipment.toLowerCase().includes('máscara') ? 'Proteção Respiratória' :
                                 'Proteção Ocular',
                       caNumber: caScrapeResult.number,
-                      caIssueDate: '',
-                      caExpiryDate: formattedDate,
+                      caIssueDate: formattedApproval,
+                      caExpiryDate: formattedExpiry,
                       fispqRelation: 'N/A',
                       manualUrl: '',
                       stockCount: 50,
@@ -383,7 +386,18 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
 
                   <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-700 mb-4 text-slate-650 font-sans font-bold">
                     <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">CA MTE</span> {ppe.caNumber}</p>
-                    <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Vencimento</span> {ppe.caExpiryDate}</p>
+                    <p>
+                      <span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Vencimento</span> 
+                      {(() => {
+                        if (!ppe.caExpiryDate) return 'N/D';
+                        // Handle ISO string fallback splits
+                        const parts = ppe.caExpiryDate.split('T')[0].split('-');
+                        if (parts.length === 3) {
+                          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                        }
+                        return ppe.caExpiryDate;
+                      })()}
+                    </p>
                     <p><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Marca</span> {ppe.brand}</p>
                     <p className="truncate"><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Fabricante</span> {ppe.manufacturer}</p>
                     <p className="col-span-2"><span className="text-slate-400 uppercase text-[8px] font-bold block mb-0.5">Durabilidade Sugerida</span> {ppe.durabilityDays} dias</p>
