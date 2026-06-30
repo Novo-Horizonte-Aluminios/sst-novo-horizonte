@@ -1564,12 +1564,94 @@ function calculateSimilarity(sigA: string, sigB: string): number {
                 </div>
               </div>
               <p className="text-[9px] text-slate-500 leading-relaxed text-center mb-4">Este comprovante tem validade jurídica conforme a Lei nº 14.063/2020 e a NR-06.</p>
-              <button 
-                onClick={() => { setShowAuditReceipt(false); setSelectedAuditDelivery(null); }} 
-                className="w-full py-3.5 rounded-2xl bg-[#1B263B] hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wide transition-all active:scale-95 border border-slate-700/50"
-              >
-                Fechar
-              </button>
+              
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => {
+                    const printWindow = window.open("", "_blank");
+                    if (printWindow) {
+                      const dateStr = selectedAuditDelivery.confirmedAt ? new Date(selectedAuditDelivery.confirmedAt).toLocaleDateString("pt-BR") : "—";
+                      const timeStr = selectedAuditDelivery.confirmedAt ? new Date(selectedAuditDelivery.confirmedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—";
+                      const protocolStr = selectedAuditDelivery.integrityHash ? "PROT-" + selectedAuditDelivery.integrityHash.substring(0, 8).toUpperCase() : "—";
+                      
+                      printWindow.document.write(`
+                        <html>
+                          <head>
+                            <title>Comprovante de Entrega de EPI - ${selectedAuditDelivery.employeeName}</title>
+                            <style>
+                              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b; padding: 40px; line-height: 1.6; }
+                              .header { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
+                              .logo-text { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.025em; }
+                              .subtitle { font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 0.1em; font-weight: 600; margin-top: 4px; }
+                              .title { font-size: 16px; font-weight: 800; text-transform: uppercase; margin-top: 15px; color: #1e293b; }
+                              .receipt-card { border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; background: #f8fafc; margin-bottom: 25px; }
+                              .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+                              .row:last-child { border-bottom: none; }
+                              .label { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+                              .value { font-size: 12px; font-weight: 700; color: #0f172a; }
+                              .protocol-badge { display: inline-block; background: #e2e8f0; border-radius: 9999px; padding: 4px 12px; font-size: 11px; font-weight: 700; font-family: monospace; margin: 15px 0; }
+                              .legal-text { font-size: 10px; color: #64748b; text-align: center; margin-top: 30px; line-height: 1.5; }
+                              .hash-box { margin-top: 15px; padding-top: 15px; border-t: 1px dashed #cbd5e1; font-family: monospace; font-size: 9px; word-break: break-all; color: #475569; }
+                              @media print {
+                                body { padding: 0; }
+                                .no-print { display: none; }
+                              }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="header">
+                              <h1 class="logo-text">NOVO HORIZONTE ALUMÍNIOS</h1>
+                              <div class="subtitle">Segurança e Saúde do Trabalho</div>
+                              <div class="title">Comprovante de Entrega de EPI</div>
+                              <div class="protocol-badge">${protocolStr}</div>
+                            </div>
+                            
+                            <div class="receipt-card">
+                              <div class="row"><span class="label">Colaborador</span><span class="value">${selectedAuditDelivery.employeeName}</span></div>
+                              <div class="row"><span class="label">Equipamento (EPI)</span><span class="value">${selectedAuditDelivery.ppeName}</span></div>
+                              ${selectedAuditDelivery.caNumber ? `<div class="row"><span class="label">CA (MTE)</span><span class="value">${selectedAuditDelivery.caNumber}</span></div>` : ''}
+                              <div class="row"><span class="label">Quantidade</span><span class="value">${selectedAuditDelivery.quantity} unidade(s)</span></div>
+                              <div class="row"><span class="label">Data de Confirmação</span><span class="value">${dateStr}</span></div>
+                              <div class="row"><span class="label">Hora de Confirmação</span><span class="value">${timeStr}</span></div>
+                              ${selectedAuditDelivery.confirmedIp ? `<div class="row"><span class="label">IP do Dispositivo</span><span class="value">${selectedAuditDelivery.confirmedIp}</span></div>` : ''}
+                              
+                              ${selectedAuditDelivery.integrityHash ? `
+                                <div class="hash-box">
+                                  <strong>HASH DE INTEGRIDADE (SHA-256):</strong><br/>
+                                  ${selectedAuditDelivery.integrityHash}
+                                </div>
+                              ` : ''}
+                            </div>
+                            
+                            <div class="legal-text">
+                              Declaração de autenticidade jurídica sob a égide da Lei Federal nº 14.063/2020 e Norma Regulamentadora NR-06 do Ministério do Trabalho.<br/>
+                              Este documento comprova a assinatura digital realizada pelo colaborador via PIN pessoal.
+                            </div>
+                            
+                            <script>
+                              window.onload = function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 500);
+                              };
+                            </script>
+                          </body>
+                        </html>
+                      `);
+                      printWindow.document.close();
+                    }
+                  }}
+                  className="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wide transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  Imprimir
+                </button>
+                <button 
+                  onClick={() => { setShowAuditReceipt(false); setSelectedAuditDelivery(null); }} 
+                  className="flex-1 py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wide transition-all active:scale-95 border border-slate-700"
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
           </div>
         </div>
