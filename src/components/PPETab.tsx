@@ -238,7 +238,7 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                     placeholder="Ex: 12509"
                     value={caSearchNumber}
                     onChange={(e) => setCaSearchNumber(e.target.value)}
-                    className="bg-slate-950 border border-slate-800 text-white p-3 px-4 rounded-xl text-[13px] font-mono flex-1 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all font-bold"
+                    className="bg-slate-950 border border-slate-800 text-white p-3 px-4 rounded-xl text-[13px] font-mono flex-1 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all font-bold appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <button
                     type="submit"
