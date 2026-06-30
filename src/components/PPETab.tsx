@@ -264,6 +264,43 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                   <p><span className="text-slate-500 dark:text-slate-400 font-bold uppercase text-[8px] block tracking-widest mb-0.5">Fabricante</span> {caScrapeResult.manufacturer}</p>
                   <p className="text-slate-400 font-mono text-[10px]">Validade: <strong className={caScrapeResult.status === 'Vencido' ? 'text-rose-400' : 'text-safety-green'}>{caScrapeResult.expiryDate}</strong></p>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Pre-fill creation form state with values from national CA lookup
+                    const [day, month, year] = caScrapeResult.expiryDate.split('/');
+                    const formattedDate = (year && month && day) ? `${year}-${month}-${day}` : '';
+                    
+                    setNewPpe({
+                      name: caScrapeResult.equipment,
+                      internalCode: `EPI-CA-${caScrapeResult.number}`,
+                      barCode: `789${caScrapeResult.number}1212`,
+                      brand: caScrapeResult.manufacturer.split(' ')[0] || '',
+                      manufacturer: caScrapeResult.manufacturer,
+                      category: caScrapeResult.equipment.toLowerCase().includes('óculos') || caScrapeResult.equipment.toLowerCase().includes('ocular') ? 'Proteção Ocular' :
+                                caScrapeResult.equipment.toLowerCase().includes('calçado') || caScrapeResult.equipment.toLowerCase().includes('botina') || caScrapeResult.equipment.toLowerCase().includes('bota') ? 'Proteção dos Pés' :
+                                caScrapeResult.equipment.toLowerCase().includes('protetor') || caScrapeResult.equipment.toLowerCase().includes('plug') || caScrapeResult.equipment.toLowerCase().includes('auricular') ? 'Proteção Auditiva' :
+                                caScrapeResult.equipment.toLowerCase().includes('capacete') ? 'Proteção da Cabeça' :
+                                caScrapeResult.equipment.toLowerCase().includes('respirador') || caScrapeResult.equipment.toLowerCase().includes('máscara') ? 'Proteção Respiratória' :
+                                'Proteção Ocular',
+                      caNumber: caScrapeResult.number,
+                      caIssueDate: '',
+                      caExpiryDate: formattedDate,
+                      fispqRelation: 'N/A',
+                      manualUrl: '',
+                      stockCount: 50,
+                      minStock: 10,
+                      durabilityDays: 90,
+                      photoUrl: ''
+                    });
+                    setShowAddModal(true);
+                  }}
+                  className="w-full mt-2 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-lg text-[10px] uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Importar para Cadastro</span>
+                </button>
               </div>
             ) : scraping ? (
               <div className="text-center py-6 text-slate-400 flex flex-col items-center justify-center gap-2">
@@ -350,10 +387,12 @@ export default function PPETab({ ppes, onAddPPE, onUpdatePPE, onDeletePPE }: PPE
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <a href={ppe.manualUrl} className="text-slate-550 dark:text-slate-400 font-bold hover:underline flex items-center gap-1 text-[11px]">
-                      <BookOpen className="w-3.5 h-3.5" />
-                      Ficha Técnica
-                    </a>
+                    {ppe.manualUrl && ppe.manualUrl !== '#' && ppe.manualUrl.trim() !== '' && (
+                      <a href={ppe.manualUrl} target="_blank" rel="noopener noreferrer" className="text-slate-550 dark:text-slate-400 font-bold hover:underline flex items-center gap-1 text-[11px]">
+                        <BookOpen className="w-3.5 h-3.5" />
+                        Ficha Técnica
+                      </a>
+                    )}
                     <button
                       onClick={() => handleOpenEdit(ppe)}
                       className="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition cursor-pointer"
