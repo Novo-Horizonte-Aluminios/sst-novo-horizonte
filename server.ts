@@ -2456,7 +2456,7 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
     try {
       const { webhookName, payload } = req.body;
       const baseUrl = await getN8NWebhookUrl();
-      const testPath = `/webhook-test/${webhookName}`;
+      const testPath = `/webhook/${webhookName}`;
       const fullUrl = new URL(testPath, baseUrl);
       const data = JSON.stringify(payload);
       

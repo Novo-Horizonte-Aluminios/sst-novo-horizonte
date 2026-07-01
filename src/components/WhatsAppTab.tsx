@@ -477,8 +477,8 @@ export default function WhatsAppTab({
             FERRAMENTAS DE TESTE (N8N)
           </h3>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
-            Utilize estes botões para disparar eventos de teste diretamente para os Webhooks do n8n (modo <strong>Listen for test event</strong>).
-            Você não precisa cadastrar nada real no sistema para validar a conexão.
+            Utilize estes botões para disparar eventos simulados diretamente para os Webhooks de Produção do n8n.
+            Certifique-se de que os fluxos estejam com o status <strong>Active</strong> no seu n8n para receber os testes instantaneamente.
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-3">
