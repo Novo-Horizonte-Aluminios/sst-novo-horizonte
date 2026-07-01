@@ -71,6 +71,8 @@ export default function WhatsAppTab({
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
+  const [testPhone, setTestPhone] = useState('5511999999999');
+  const [testEmail, setTestEmail] = useState('teste@seu-dominio.com.br');
   const [n8nWebhookUrl, setN8nWebhookUrl] = useState('');
   const [epiReminderIntervalHours, setEpiReminderIntervalHours] = useState('8');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
@@ -129,9 +131,10 @@ export default function WhatsAppTab({
     }
   };
 
-  const handleTestN8n = async (webhookName: string, payload: any) => {
+  const handleTestN8n = async (webhookName: string, basePayload: any) => {
     setIsTesting(true);
     setTestResult('Enviando teste...');
+    const payload = { ...basePayload, testPhone, testEmail };
     try {
       const res = await fetch('/api/test-n8n', {
         method: 'POST',
@@ -480,6 +483,29 @@ export default function WhatsAppTab({
             Utilize estes botões para disparar eventos simulados diretamente para os Webhooks de Produção do n8n.
             Certifique-se de que os fluxos estejam com o status <strong>Active</strong> no seu n8n para receber os testes instantaneamente.
           </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 mb-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="flex-1 space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">WhatsApp de Destino (Teste)</label>
+              <input 
+                type="text" 
+                value={testPhone}
+                onChange={e => setTestPhone(e.target.value)}
+                placeholder="5511999999999"
+                className="w-full bg-white dark:bg-slate-800 text-xs px-3 py-2 rounded border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-safety-green transition text-slate-700 dark:text-slate-200 font-mono"
+              />
+            </div>
+            <div className="flex-1 space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">E-mail de Destino (Teste)</label>
+              <input 
+                type="email" 
+                value={testEmail}
+                onChange={e => setTestEmail(e.target.value)}
+                placeholder="teste@dominio.com.br"
+                className="w-full bg-white dark:bg-slate-800 text-xs px-3 py-2 rounded border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-safety-green transition text-slate-700 dark:text-slate-200"
+              />
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-3">
             <button
