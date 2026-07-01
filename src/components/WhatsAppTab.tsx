@@ -71,8 +71,8 @@ export default function WhatsAppTab({
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
-  const [testPhone, setTestPhone] = useState('5511999999999');
-  const [testEmail, setTestEmail] = useState('teste@seu-dominio.com.br');
+  const [testPhone, setTestPhone] = useState(localStorage.getItem('n8nTestPhone') || '5511999999999');
+  const [testEmail, setTestEmail] = useState(localStorage.getItem('n8nTestEmail') || 'teste@seu-dominio.com.br');
   const [n8nWebhookUrl, setN8nWebhookUrl] = useState('');
   const [epiReminderIntervalHours, setEpiReminderIntervalHours] = useState('8');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
@@ -134,7 +134,22 @@ export default function WhatsAppTab({
   const handleTestN8n = async (webhookName: string, basePayload: any) => {
     setIsTesting(true);
     setTestResult('Enviando teste...');
-    const payload = { ...basePayload, testPhone, testEmail };
+    
+    // Inject the test values aggressively into common fields so the n8n workflows 
+    // catch them without the user needing to change their mapping logic
+    const payload = JSON.parse(JSON.stringify(basePayload));
+    payload.testPhone = testPhone;
+    payload.testEmail = testEmail;
+    payload.employeePhone = testPhone;
+    payload.employeeEmail = testEmail;
+    payload.phone = testPhone;
+    payload.email = testEmail;
+    
+    if (payload.employee) {
+      payload.employee.phone = testPhone;
+      payload.employee.email = testEmail;
+    }
+    
     try {
       const res = await fetch('/api/test-n8n', {
         method: 'POST',
@@ -490,7 +505,7 @@ export default function WhatsAppTab({
               <input 
                 type="text" 
                 value={testPhone}
-                onChange={e => setTestPhone(e.target.value)}
+                onChange={e => { setTestPhone(e.target.value); localStorage.setItem('n8nTestPhone', e.target.value); }}
                 placeholder="5511999999999"
                 className="w-full bg-white dark:bg-slate-800 text-xs px-3 py-2 rounded border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-safety-green transition text-slate-700 dark:text-slate-200 font-mono"
               />
@@ -500,7 +515,7 @@ export default function WhatsAppTab({
               <input 
                 type="email" 
                 value={testEmail}
-                onChange={e => setTestEmail(e.target.value)}
+                onChange={e => { setTestEmail(e.target.value); localStorage.setItem('n8nTestEmail', e.target.value); }}
                 placeholder="teste@dominio.com.br"
                 className="w-full bg-white dark:bg-slate-800 text-xs px-3 py-2 rounded border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-safety-green transition text-slate-700 dark:text-slate-200"
               />
