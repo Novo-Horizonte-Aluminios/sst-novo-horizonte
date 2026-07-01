@@ -2455,9 +2455,8 @@ O retorno deve ser OBRIGATORIAMENTE um JSON puro, sem textos adicionais, estrutu
   app.post('/api/test-n8n', async (req, res) => {
     try {
       const { webhookName, payload } = req.body;
-      const baseUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.novohorizonte.com';
-      // Append -test for explicit testing in UI (Changed to production /webhook/ for easier testing without n8n open)
-      const testPath = `/webhook/${webhookName}`;
+      const baseUrl = await getN8NWebhookUrl();
+      const testPath = `/webhook-test/${webhookName}`;
       const fullUrl = new URL(testPath, baseUrl);
       const data = JSON.stringify(payload);
       

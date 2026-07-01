@@ -24,7 +24,10 @@ import {
   GraduationCap,
   ClipboardCheck,
   AlertCircle,
-  Settings
+  Settings,
+  PenTool,
+  CheckSquare,
+  Mail
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, EmployeeTraining } from '../types';
 
@@ -259,12 +262,29 @@ export default function WhatsAppTab({
   );
 
   // Filter sent logs based on search query
-  const filteredLogs = logs.filter(log =>
-    log.employeeName.toLowerCase().includes(logsSearch.toLowerCase()) ||
-    log.detail.toLowerCase().includes(logsSearch.toLowerCase()) ||
-    log.alertType.toLowerCase().includes(logsSearch.toLowerCase()) ||
-    log.phone.includes(logsSearch)
-  );
+  const filteredLogs = logs.filter(log => {
+    const search = logsSearch.toLowerCase();
+    const safeStr = (val: any) => (val ? String(val).toLowerCase() : '');
+    return safeStr(log.employeeName).includes(search) ||
+           safeStr(log.detail).includes(search) ||
+           safeStr(log.alertType).includes(search) ||
+           safeStr(log.phone).includes(search);
+  });
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'Entregue':
+      case 'success':
+        return <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">Entregue</span>;
+      case 'Simulado':
+        return <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-indigo-50 text-indigo-700 border border-indigo-200">Simulado</span>;
+      case 'Erro':
+      case 'error':
+        return <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-rose-50 text-rose-700 border border-rose-200">Falha</span>;
+      default:
+        return <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-50 text-slate-700 border border-slate-200">{status}</span>;
+    }
+  };
 
   // Execute actual WhatsApp Trigger API request
   const handleTriggerAlert = async (alert: typeof allPendingAlerts[0]) => {
@@ -461,7 +481,7 @@ export default function WhatsAppTab({
             Você não precisa cadastrar nada real no sistema para validar a conexão.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-3">
             <button
               onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
               disabled={isTesting}
@@ -505,6 +525,33 @@ export default function WhatsAppTab({
             >
               <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Acidente</span>
+            </button>
+
+            <button
+              onClick={() => handleTestN8n('sst-epi-confirm-link', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmUrl: 'https://sistema.com/confirm/test' })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <Mail className="w-6 h-6 text-fuchsia-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Assinatura Link</span>
+            </button>
+
+            <button
+              onClick={() => handleTestN8n('sst-epi-confirmed', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmedAt: new Date().toISOString() })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <CheckSquare className="w-6 h-6 text-teal-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">EPI Assinado</span>
+            </button>
+
+            <button
+              onClick={() => handleTestN8n('sst-cipa-invite', { meetingId: 'test-cipa-123', meetingTitle: 'Reunião CIPA (Teste)', meetingDate: new Date().toISOString(), inviteeName: 'Colaborador Teste', inviteUrl: 'https://sistema.com/cipa/test' })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <PenTool className="w-6 h-6 text-orange-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Convite CIPA</span>
             </button>
           </div>
 
@@ -741,7 +788,7 @@ export default function WhatsAppTab({
                       </td>
                       <td className="p-3">
                         <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
-                          log.alertType.includes('EPI') 
+                          (log.alertType || '').includes('EPI') 
                             ? 'bg-amber-50 text-amber-700 border border-amber-200' 
                             : 'bg-red-50 text-red-700 border border-red-200'
                         }`}>
