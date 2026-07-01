@@ -145,10 +145,11 @@ export default function WhatsAppTab({
     payload.phone = testPhone;
     payload.email = testEmail;
     
-    if (payload.employee) {
-      payload.employee.phone = testPhone;
-      payload.employee.email = testEmail;
+    if (!payload.employee) {
+      payload.employee = {};
     }
+    payload.employee.phone = testPhone;
+    payload.employee.email = testEmail;
     
     try {
       const res = await fetch('/api/test-n8n', {
