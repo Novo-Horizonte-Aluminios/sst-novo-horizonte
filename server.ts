@@ -23,10 +23,63 @@ async function getN8NWebhookUrl(): Promise<string> {
 }
 
 // ─── n8n Webhook Helper ───────────────────────────────────────────────────────
+// Helper para salvar os disparos automáticos no histórico (whatsapp_logs)
+async function persistWhatsAppLog(path: string, payload: any) {
+  try {
+    let employeeName = payload.employeeName || (payload.employee && payload.employee.name) || (payload.delivery && payload.delivery.employeeName) || 'Sistema / Geral';
+    let phone = payload.phone || payload.employeePhone || payload.testPhone || (payload.employee && payload.employee.phone) || '';
+    let employeeId = payload.employeeId || (payload.employee && payload.employee.id) || (payload.delivery && payload.delivery.employeeId) || 'system';
+    
+    let alertType = 'Notificação n8n';
+    let detail = 'Envio Automático';
+    let message = 'Notificação processada pelo motor n8n.';
+    
+    if (path.includes('welcome')) {
+      alertType = 'Boas Vindas'; detail = 'Integração';
+      message = `Mensagem de boas vindas enviada para ${employeeName}.`;
+    } else if (path.includes('epi-delivery')) {
+      alertType = 'EPI'; detail = 'Recibo de Entrega';
+      message = `Recibo de EPI (${payload.ppeName || 'Equipamento'}) enviado para ${employeeName}.`;
+    } else if (path.includes('epi-confirm')) {
+      alertType = 'EPI'; detail = 'Assinatura Digital';
+      message = `Link de assinatura pendente enviado para ${employeeName}.`;
+    } else if (path.includes('training')) {
+      alertType = 'Treinamento'; detail = 'Vencido / Alerta';
+      message = `Alerta de treinamento enviado para ${employeeName}.`;
+    } else if (path.includes('inspection')) {
+      alertType = 'Inspeção'; detail = 'Pendente / Atrasada';
+      employeeName = payload.inspection?.responsible || 'Técnicos SST';
+      message = `Alerta de inspeção disparado: ${payload.inspection?.title || 'Verificação Geral'}.`;
+    } else if (path.includes('accident')) {
+      alertType = 'Acidente'; detail = 'Alerta Imediato';
+      employeeName = payload.accident?.reporterName || 'Técnicos SST';
+      message = `Alerta de ocorrência: ${payload.accident?.type || 'Registro de Acidente'}.`;
+    } else if (path.includes('cipa')) {
+      alertType = 'CIPA'; detail = 'Eleição Online';
+      message = `Comunicado de Eleição CIPA enviado para ${employeeName}.`;
+    } else if (path.includes('test')) {
+      alertType = 'Teste Sistema'; detail = 'Disparo Manual';
+      message = 'Disparo de teste acionado via painel.';
+    }
+
+    const logId = 'log_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+    await query(
+      'INSERT INTO whatsapp_logs (id, employee_id, employee_name, alert_type, detail, phone, sent_at, status, message) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+      [logId, employeeId, employeeName, alertType, detail, phone, new Date(), 'Enviado', message]
+    );
+  } catch (err) {
+    console.warn('[Webhook Logger] Falha ao persistir log:', err);
+  }
+}
+
 // Dispara webhooks para o n8n de forma assíncrona (não bloqueia a resposta da API)
 async function notifyN8N(path: string, payload: object): Promise<void> {
   const baseUrl = await getN8NWebhookUrl();
   console.log(`[Webhook] Trying to notify ${path}. N8N_WEBHOOK_URL is: "${baseUrl}"`);
+  
+  // Salvar no histórico de disparos
+  persistWhatsAppLog(path, payload);
+
   if (!baseUrl) {
     console.log('[Webhook] IGNORADO: N8N_WEBHOOK_URL nao esta configurado.');
     return;
