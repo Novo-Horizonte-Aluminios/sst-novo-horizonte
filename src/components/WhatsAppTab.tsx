@@ -526,6 +526,15 @@ export default function WhatsAppTab({
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-3">
             <button
+              onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <Users className="w-6 h-6 text-indigo-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Boas Vindas</span>
+            </button>
+
+            <button
               onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
               disabled={isTesting}
               className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
@@ -535,12 +544,30 @@ export default function WhatsAppTab({
             </button>
 
             <button
-              onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
+              onClick={() => handleTestN8n('sst-epi-change', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Luva de Vaqueta (Teste de Troca)', caNumber: '54321', expirationDate: new Date().toISOString() } })}
               disabled={isTesting}
               className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
             >
-              <Users className="w-6 h-6 text-indigo-600 mb-2" />
-              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Boas Vindas</span>
+              <AlertCircle className="w-6 h-6 text-orange-500 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Troca EPI</span>
+            </button>
+
+            <button
+              onClick={() => handleTestN8n('sst-epi-confirm-link', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmUrl: 'https://sistema.com/confirm/test' })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <Mail className="w-6 h-6 text-fuchsia-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Assinatura Link</span>
+            </button>
+
+            <button
+              onClick={() => handleTestN8n('sst-epi-confirmed', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmedAt: new Date().toISOString() })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <CheckSquare className="w-6 h-6 text-teal-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">EPI Assinado</span>
             </button>
 
             <button
@@ -562,15 +589,6 @@ export default function WhatsAppTab({
             </button>
 
             <button
-              onClick={() => handleTestN8n('sst-epi-change', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Luva de Vaqueta (Teste de Troca)', caNumber: '54321', expirationDate: new Date().toISOString() } })}
-              disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-            >
-              <AlertCircle className="w-6 h-6 text-orange-500 mb-2" />
-              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Troca EPI</span>
-            </button>
-
-            <button
               onClick={() => handleTestN8n('sst-accident-new', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
               disabled={isTesting}
               className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
@@ -586,24 +604,6 @@ export default function WhatsAppTab({
             >
               <Cpu className="w-6 h-6 text-slate-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Alerta Tec</span>
-            </button>
-
-            <button
-              onClick={() => handleTestN8n('sst-epi-confirm-link', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmUrl: 'https://sistema.com/confirm/test' })}
-              disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-            >
-              <Mail className="w-6 h-6 text-fuchsia-600 mb-2" />
-              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Assinatura Link</span>
-            </button>
-
-            <button
-              onClick={() => handleTestN8n('sst-epi-confirmed', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmedAt: new Date().toISOString() })}
-              disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
-            >
-              <CheckSquare className="w-6 h-6 text-teal-600 mb-2" />
-              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">EPI Assinado</span>
             </button>
 
             <button
