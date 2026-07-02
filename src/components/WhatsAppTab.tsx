@@ -561,7 +561,7 @@ export default function WhatsAppTab({
             </button>
 
             <button
-              onClick={() => handleTestN8n('sst-accident', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
+              onClick={() => handleTestN8n('sst-accident-new', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
               disabled={isTesting}
               className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
             >
