@@ -27,7 +27,8 @@ import {
   Settings,
   PenTool,
   CheckSquare,
-  Mail
+  Mail,
+  Cpu
 } from 'lucide-react';
 import { Employee, PPE, PPEDelivery, EmployeeTraining } from '../types';
 
@@ -561,12 +562,30 @@ export default function WhatsAppTab({
             </button>
 
             <button
+              onClick={() => handleTestN8n('sst-epi-change', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Luva de Vaqueta (Teste de Troca)', caNumber: '54321', expirationDate: new Date().toISOString() } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <AlertCircle className="w-6 h-6 text-orange-500 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Troca EPI</span>
+            </button>
+
+            <button
               onClick={() => handleTestN8n('sst-accident-new', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
               disabled={isTesting}
               className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
             >
               <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Acidente</span>
+            </button>
+
+            <button
+              onClick={() => handleTestN8n('sst-tech-alert', { alert: { type: 'Falha de Sistema (Teste)', description: 'Teste de alerta técnico', severity: 'Média', timestamp: new Date().toISOString() } })}
+              disabled={isTesting}
+              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+            >
+              <Cpu className="w-6 h-6 text-slate-600 mb-2" />
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Alerta Tec</span>
             </button>
 
             <button
