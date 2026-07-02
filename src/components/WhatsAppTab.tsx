@@ -71,6 +71,7 @@ export default function WhatsAppTab({
   const [phoneOverrides, setPhoneOverrides] = useState<Record<string, string>>({});
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState(false);
+  const [selectedTest, setSelectedTest] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<string | null>(null);
   const [testPhone, setTestPhone] = useState(localStorage.getItem('n8nTestPhone') || '5511999999999');
   const [testEmail, setTestEmail] = useState(localStorage.getItem('n8nTestEmail') || 'teste@seu-dominio.com.br');
@@ -132,9 +133,19 @@ export default function WhatsAppTab({
     }
   };
 
+
+  const getButtonClass = (webhookName: string) => {
+    const baseClass = "flex flex-col items-center justify-center p-4 border-2 rounded-2xl transition-all duration-250 cursor-pointer ";
+    if (selectedTest === webhookName) {
+      return baseClass + "border-emerald-500 bg-emerald-50 shadow-md ring-2 ring-emerald-500/20 dark:bg-emerald-900/20 dark:border-emerald-500 scale-[1.02] " + (isTesting ? "opacity-75 cursor-wait" : "");
+    }
+    return baseClass + "border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-emerald-500/50 hover:shadow-md hover:-translate-y-0.5 bg-slate-50 dark:bg-slate-900/50 " + (isTesting ? "opacity-50 cursor-not-allowed" : "");
+  };
+
   const handleTestN8n = async (webhookName: string, basePayload: any) => {
     setIsTesting(true);
     setTestResult('Enviando teste...');
+    setSelectedTest(webhookName);
     
     // Inject the test values aggressively into common fields so the n8n workflows 
     // catch them without the user needing to change their mapping logic
@@ -168,7 +179,7 @@ export default function WhatsAppTab({
       setTestResult(`❌ Falha de rede: ${e.message}`);
     } finally {
       setIsTesting(false);
-      setTimeout(() => setTestResult(null), 8000);
+      setTimeout(() => { setTestResult(null); setSelectedTest(null); }, 8000);
     }
   };
 
@@ -528,7 +539,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-welcome', { employee: { name: 'Novo Colaborador', cpf: '000.000.000-00', sector: 'Produção', role: 'Operador (Teste)' } })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <Users className="w-6 h-6 text-indigo-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Boas Vindas</span>
@@ -537,7 +548,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-epi-delivery', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', caNumber: '12345', deliveryDate: new Date().toISOString() } })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <Package className="w-6 h-6 text-emerald-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Recibo EPI</span>
@@ -546,7 +557,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-epi-change', { delivery: { employeeName: 'Colaborador Teste', ppeName: 'Luva de Vaqueta (Teste de Troca)', caNumber: '54321', expirationDate: new Date().toISOString() } })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <AlertCircle className="w-6 h-6 text-orange-500 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Troca EPI</span>
@@ -555,7 +566,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-epi-confirm-link', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmUrl: 'https://sistema.com/confirm/test' })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <Mail className="w-6 h-6 text-fuchsia-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Assinatura Link</span>
@@ -564,7 +575,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-epi-confirmed', { deliveryId: 'test-123', employeeName: 'Colaborador Teste', ppeName: 'Capacete de Segurança (Via Teste)', confirmedAt: new Date().toISOString() })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <CheckSquare className="w-6 h-6 text-teal-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">EPI Assinado</span>
@@ -573,7 +584,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-training-new', { training: { employeeName: 'Colaborador Teste', trainingTitle: 'NR-35 Trabalho em Altura', issueDate: new Date().toISOString(), score: 10 } })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <GraduationCap className="w-6 h-6 text-amber-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Treinamento</span>
@@ -582,7 +593,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-inspection-new', { inspection: { title: 'Inspeção de Rotina (Teste)', type: 'Rotina', scheduledDate: new Date().toISOString(), responsible: 'Técnico Teste' } })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <ClipboardCheck className="w-6 h-6 text-blue-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Inspeção</span>
@@ -591,7 +602,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-accident-new', { accident: { type: 'Incidente sem lesão (Teste)', description: 'Teste de disparo de alerta', severity: 'Baixa', date: new Date().toISOString() } })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <AlertTriangle className="w-6 h-6 text-rose-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Acidente</span>
@@ -600,7 +611,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-tech-alert', { alert: { type: 'Falha de Sistema (Teste)', description: 'Teste de alerta técnico', severity: 'Média', timestamp: new Date().toISOString() } })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <Cpu className="w-6 h-6 text-slate-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Alerta Tec</span>
@@ -609,7 +620,7 @@ export default function WhatsAppTab({
             <button
               onClick={() => handleTestN8n('sst-cipa-invite', { meetingId: 'test-cipa-123', meetingTitle: 'Reunião CIPA (Teste)', meetingDate: new Date().toISOString(), inviteeName: 'Colaborador Teste', inviteUrl: 'https://sistema.com/cipa/test' })}
               disabled={isTesting}
-              className="flex flex-col items-center justify-center p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800/80 hover:border-safety-green/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-250 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-slate-50 dark:bg-slate-900/50"
+              className={getButtonClass('sst-welcome')}
             >
               <PenTool className="w-6 h-6 text-orange-600 mb-2" />
               <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 text-center uppercase tracking-tighter">Convite CIPA</span>
